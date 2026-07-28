@@ -11,7 +11,8 @@
     },
     "workbench.colorCustomizations": {
         "titleBar.activeBackground": "#434d56ff",
-        "titleBar.inactiveBackground": "#484d51ff"
+        "titleBar.inactiveBackground": "#484d51ff",
+        "activityBar.background": "#033339"
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true,

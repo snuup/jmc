@@ -84,7 +84,7 @@ function sync(p: Element, i: number, he: Expr<H> | undefined, ns?: string): numb
                 const j = syncchildren(n, h, 0, ns)
                 removeexcesschildren(n, j)
             }
-            
+
             return i + 1
         }
 
@@ -151,7 +151,7 @@ function syncchildren(p: Element, h: HElement | HComp | HFragment, i: number, ns
 let uc: IUpdateContext = {}
 
 export function patch(e: Node | null, h: Expr<H>) {
-    if (!e) return    
+    if (!e) return
     if (uc.replace) (e as HTMLElement).replaceChildren()
     const p = e.parentElement as HTMLElement
     const i = [].indexOf.call<any, any, any>(p.childNodes, e)
@@ -183,11 +183,13 @@ function updateviewinternal(...sels: Selector[]): void {
 }
 
 export function jsx(tag: any, p: any, ...cn: any[]): HC {
+    console.log("jsx", tag)
     p ??= {}
     return { tag, p, cn }
 }
 
 // declare fragment function with similar signature as a function component
 export function jsxf(props: any, ...cn: any[]): HFragment {
+    console.log("jsxf", cn)
     return { cn }
 }

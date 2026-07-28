@@ -59,7 +59,7 @@ declare global {
 //#endregion
 //#region src/jmc.d.ts
 declare function patch(e: Node | null, h: Expr<H>): void;
-declare function updateviewuc(uc: IUpdateContext, ...sels: Selectors): void;
+declare function updateviewuc(u: IUpdateContext, ...sels: Selectors): void;
 declare function updateview(...sels: Selectors): void;
 declare function jsx(tag: any, p: any, ...cn: any[]): HC;
 declare function jsxf(props: any, ...cn: any[]): HFragment;

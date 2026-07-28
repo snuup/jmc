@@ -10,7 +10,7 @@ export default defineConfig({
     plugins: [
         {
             name: "strip-pure",
-            renderChunk: (code: string) => code.replace(/\/\*\s*@__PURE__\s*\*\/\s*/g, "")
+            transform: (code: string) => code.replace(/\/\*\s*@__PURE__\s*\*\/\s*/g, "")
         }
     ],
     build: {

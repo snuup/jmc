@@ -48,12 +48,11 @@ let setprops = (e, newprops = {}) => {
 * if a fragment with 5 nodes was added, it returns i + 5
 * when a single element or component is added, it is i+1 since they always create exactly 1 node
 */
-function sync(p, i, h, ns) {
-	console.log("%csync", "background:orange", p.tagName, i, h, ns);
-	if (h === null || h === void 0) return i;
+function sync(p, i, he, ns) {
+	console.log("%csync", "background:orange", p.tagName, i, he, ns);
+	if (he === null || he === void 0) return i;
 	let c = p.childNodes[i];
-	let horiginal = h;
-	h = evaluate(h);
+	let h = evaluate(he);
 	if (isobject(h)) {
 		if (isfragment(h)) return syncchildren(p, h, i, ns);
 		const props = h.p;
@@ -68,10 +67,10 @@ function sync(p, i, h, ns) {
 			} else {
 				n = c;
 				setprops(n, props);
-				if (props?.update?.(c, globaluc)) return i + 1;
+				if (props?.update?.(c, uc)) return i + 1;
 			}
-			n.h = horiginal;
-			if (!globaluc.patchElementOnly && !iswebcomponent(h)) {
+			n.h = he;
+			if (!uc.patchElementOnly && !iswebcomponent(h)) {
 				const j = syncchildren(n, h, 0, ns);
 				removeexcesschildren(n, j);
 			}
@@ -84,12 +83,12 @@ function sync(p, i, h, ns) {
 				if (isclasscomponent(h)) {
 					h.i = isupdate ? h.i : rebind(new h.tag(props));
 					h.i.props = props;
-					if (isupdate && h.i.update(globaluc)) return i + 1;
+					if (isupdate && h.i.update(uc)) return i + 1;
 					hr = h.i.view();
 				} else hr = h.tag(props, h.cn);
 				let j = sync(p, i, hr, ns);
 				let cn = p.childNodes[i];
-				if (cn && !isfragmentfunction(h)) cn.h = horiginal;
+				if (cn && !isfragmentfunction(h)) cn.h = he;
 				if (isclasscomponent(h)) {
 					h.i.element = cn;
 					if (!isupdate) h.i?.mounted?.();
@@ -111,19 +110,19 @@ function syncchildren(p, h, i, ns) {
 	h.cn?.flat().forEach((hc) => i = sync(p, i, hc, ns));
 	return i;
 }
-let globaluc = {};
+let uc = {};
 function patch(e, h) {
 	if (!e) return;
-	if (globaluc.replace) e.replaceChildren();
+	if (uc.replace) e.replaceChildren();
 	const p = e.parentElement;
 	sync(p, [].indexOf.call(p.childNodes, e), h);
 }
-function updateviewuc(uc, ...sels) {
-	globaluc = uc;
+function updateviewuc(u, ...sels) {
+	uc = u;
 	updateviewinternal(...sels);
 }
 function updateview(...sels) {
-	globaluc = {};
+	uc = {};
 	updateviewinternal(...sels);
 }
 function updateviewinternal(...sels) {

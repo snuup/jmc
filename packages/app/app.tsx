@@ -8,7 +8,9 @@ import {
     type HtmlHTMLAttributes,
     type IntrinsicElementAttributes,
     Selector,
-    Selectors
+    Selectors,
+    updateviewuc,
+    cc
 } from '../jmc'
 import './lab.css'
 
@@ -96,37 +98,78 @@ let D = ({ value }: { value: number }) => (
     </div>
 )
 
-let App = () => {
-    let i = 10
-    return (
-        <body class={m.x.toString()} onclick={() => alert(2)}>
-            <aside>aside</aside>
-            <D value={i++} />
-            <D value={i++} />
-            hase war da 12: <Lab />
-            <Compo mm={m} />
-        </body>
-    )
+// let App = () => {
+//     let i = 10
+//     return (
+//         <body class={m.x.toString()} onclick={() => alert(2)}>
+//             <aside>aside</aside>
+//             <D value={i++} />
+//             <D value={i++} />
+//             hase war da 12: <Lab />
+//             <Compo mm={m} />
+//         </body>
+//     )
+// }
+
+// let App2 = () => (
+//     <body>
+//         <>
+//             <div>1</div>
+//             <div>2</div>
+//             <div>3</div>
+//         </>
+//     </body>
+// )
+
+// patch(document.body, <App2 />)
+
+// let x = () => <a href={(() => '4') as any as string}></a>
+
+// mount({ m, updateview })
+
+// window.ondblclick = () => {
+//     console.log('dbl')
+//     m.x = 7788
+//     updateview('div')
+// }
+
+let m2 = {
+    sidepanel: false,
+    longlist: [1, 2, 3]
 }
 
-let App2 = () => (
-    <body>
-        <>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-        </>
-    </body>
-)
-
-patch(document.body, <App2 />)
-
-let x = () => <a href={(() => '4') as any as string}></a>
-
-mount({ m, updateview })
-
-window.ondblclick = () => {
-    console.log('dbl')
-    m.x = 7788
-    updateview('div')
+let B = ({ x }: { x: number }) => {
+    console.log("compute B")
+    return <i><b>{x}</b></i>
 }
+
+let I = ({ x }: { x: number }) => {
+    console.log("compute I")
+    return <i><B x={x} /></i>
+}
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements extends IntrinsicElementAttributes {
+            side: HtmlHTMLAttributes
+        }
+    }
+}
+
+let Side = <side>
+    <B x={1} />
+    <B x={2} />
+    <B x={4} />
+</side>
+
+let App = () => <body class={cc({ sidepanel: m2.sidepanel })}>
+    <Side />
+</body>
+
+patch(document.body, App)
+
+console.log("updating")
+m2.sidepanel = true
+updateviewuc({ patchElementOnly: true }, "body")
+
+mount({ updateviewuc })

@@ -1,4 +1,4 @@
-import { jsx, jsxf, patch, HElement, JMXComp, HCompClass, Expr, H, updateview } from '../jmc/src/index'
+import { jsx, jsxf, patch, HElement, JMXComp, HCompClass, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc } from '../jmc/src/index'
 import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
@@ -225,4 +225,107 @@ describe('JMX dom tests', () => {
         updateview()
         expect(document.body.outerHTML).toBe("<body>bunny</body>")
     })
+
+    it('patchelementonly does not expand the whole subtree', () => {
+
+        let m = {
+            sidepanel: false,
+            longlist: [1, 2, 3]
+        }
+
+        let B = ({ x }: { x: number }) => {
+            console.log("compute B")
+            return <b>{x}</b>
+        }
+
+        let Side = <side>
+            {m.longlist.map(x => <B x={x} />)}
+        </side>
+
+        let App = () => <body>
+            <Side />
+        </body>
+
+        patch(document.body, App)
+        expect(document.body.outerHTML).toBe("<body><side><b>1</b><b>2</b><b>3</b></side></body>")
+
+        console.log("updating")
+        m.sidepanel = true
+
+        updateviewuc({ patchElementOnly: true }, "body")
+    })
+
+    it('patchelementonly does not expand the whole subtree 2', () => {
+
+        let m = {
+            sidepanel: false,
+            longlist: [1, 2, 3]
+        }
+
+        let B = ({ x }: { x: number }) => {
+            console.log("compute B")
+            return <b>{x}</b>
+        }
+
+        let Side = () => <side>
+            {m.longlist.map(x => <B x={x} />)}
+        </side>
+
+        let App = () => <body>
+            <Side />
+        </body>
+
+        console.log("patch initial")
+        patch(document.body, App)
+        expect(document.body.outerHTML).toBe("<body><side><b>1</b><b>2</b><b>3</b></side></body>")
+
+        console.log("updating")
+        m.sidepanel = true
+
+        updateviewuc({ patchElementOnly: true }, "body")
+    })
+
+    it('patchelementonly does not expand the whole subtree 3', () => {
+
+        let m = {
+            sidepanel: false,
+            longlist: [1, 2, 3]
+        }
+
+        let B = ({ x }: { x: number }) => {
+            console.log("compute B")
+            return <i><b>{x}</b></i>
+        }
+
+        let I = ({ x }: { x: number }) => {
+            console.log("compute I")
+            return <i><B x={x} /></i>
+        }
+
+        let Side = <side>
+            <B x={1} />
+            <B x={2} />
+            <B x={4} />
+        </side>
+
+        let App = () => <body>
+            <Side />
+        </body>
+
+        patch(document.body, App)
+        expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
+        
+        console.log("updating")
+        m.sidepanel = true
+        updateviewuc({ patchElementOnly: true }, "body")
+        expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
+    })
 })
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements extends IntrinsicElementAttributes {
+            side: HtmlHTMLAttributes
+        }
+    }
+}
