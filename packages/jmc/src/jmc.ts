@@ -1,5 +1,5 @@
-import { closestby, rebind } from './base'
-import { Expr, H, HC, HComp, HCompClass, HCompFun, HElement, HFragment, IUpdateContext, J, Props, Selector, Selectors } from './h'
+import { rebind } from './base'
+import { Expr, H, HComp, HCompClass, HCompFun, HEC, HElement, HFragment, IUpdateContext, J, Props, Selector, Selectors } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3,
@@ -167,5 +167,5 @@ function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
         .forEach(e => { patch(e, e.h!, uc) })
 }
 
-export const jsx = (tag: any, p: any = {}, ...cn: any[]) => ({ tag, p: p ?? {}, cn })
+export const jsx = (tag: any, p: any = {}, ...cn: any[]): HEC => ({ tag, p: p ?? {}, cn })
 export const jsxf = (props: any, ...cn: any[]): HFragment => ({ cn })

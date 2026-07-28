@@ -75,12 +75,16 @@ export type H = // a hyperscript atom that describes a ...
     | HText
     | HElement // a tag, like p, div with attributes and children
     | HComp // a dynamic component computing any other HNode
-    | HFragment
+    | HFragment // a fragment
 
-export type HC = // a hyperscript atom that describes a ...
+export type HECF = // a hyperscript atom that describes a ...
     | HElement // a tag, like p, div with attributes and children
     | HComp // a dynamic component computing any other HNode
-    | HFragment
+    | HFragment // a fragment
+
+export type HEC = // a hyperscript atom that describes a ...
+    | HElement // a tag, like p, div with attributes and children
+    | HComp // a dynamic component computing any other HNode
 
 export interface IUpdateContext {
     patchElementOnly?: boolean
