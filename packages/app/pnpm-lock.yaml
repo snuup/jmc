@@ -1,0 +1,22 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      jmc:
+        specifier: file:..\jmc
+        version: file:../jmc
+
+packages:
+
+  jmc@file:../jmc:
+    resolution: {directory: ../jmc, type: directory}
+
+snapshots:
+
+  jmc@file:../jmc: {}

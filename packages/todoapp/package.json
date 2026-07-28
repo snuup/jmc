@@ -1,0 +1,12 @@
+{
+	"dependencies": {
+		"chalk": "^6.0.0",
+		"jmc": "file:../jmc",
+		"todomvc-app-css": "^2.1.0",
+		"todomvc-common": "^1.0.0"
+	},
+	"type": "module",
+	"scripts": {
+        "build": "vite build"
+    }
+}
