@@ -58,7 +58,7 @@ function sync(uc: IUpdateContext, p: Element, i: number, he: Expr<H> | undefined
     // element node
     if (isobject(h)) {
 
-        if (isfragment(h)) return syncchildren(p, h, i, ns)
+        if (isfragment(h)) return syncchildren(uc, p, h, i, ns)
 
         const props = h.p // tbd - check after simplification
 
@@ -158,36 +158,14 @@ export function patch(e: Node | null, h: Expr<H>, uc = {} as IUpdateContext) {
     sync(uc, p, i, h)
 }
 
-export function updateviewuc(u: IUpdateContext, ...sels: Selectors): void {
-    {
-        updateviewinternal(u, ...sels)
-    }
-}
-export function updateview(...sels: Selectors): void {
-    {
-        updateviewinternal({}, ...sels)
-    }
-}
+export function updateviewuc(u: IUpdateContext, ...sels: Selectors): void { updateviewinternal(u, ...sels) }
+export function updateview(...sels: Selectors): void { updateviewinternal({}, ...sels) }
 
 function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
     if (!sels.length) sels.push('body')
-    sels.flatMap(s => (typeof s == 'string' ? [...document.querySelectorAll(s)] : s ? [s] : [])).forEach(e => {
-        //let comp = closestby(e, ee => ee.h!.tag instanceof Function) // walk up to function component. user can remove this line for finer update granularity at the risk of stale views
-        //if (!comp) comp = e
-        //patch(comp, comp.h!)
-        patch(e, e.h!, uc)
-    })
+    sels.flatMap(s => (typeof s == 'string' ? [...document.querySelectorAll(s)] : s ? [s] : []))
+        .forEach(e => { patch(e, e.h!, uc) })
 }
 
-export function jsx(tag: any, p: any, ...cn: any[]): HC {
-    p ??= {}
-    return { tag, p, cn }
-}
-
-// declare fragment function with similar signature as a function component
-export function jsxf(props: any, ...cn: any[]): HFragment {
-    console.log("jsxf", cn)
-    return { cn }
-}
-// declare fragment function with similar signature as a function component
-//export const jsxf = (props: any, ...cn: any[]): HFragment => ({ cn })
+export const jsx = (tag: any, p: any = {}, ...cn: any[]) => ({ tag, p: p ?? {}, cn })
+export const jsxf = (props: any, ...cn: any[]): HFragment => ({ cn })
