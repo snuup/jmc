@@ -46,7 +46,7 @@ let setprops = (e: Element, newprops: Props = {}) => {
  * if a fragment with 5 nodes was added, it returns i + 5
  * when a single element or component is added, it is i+1 since they always create exactly 1 node
  */
-function sync(p: Element, i: number, he: Expr<H> | undefined, ns?: string): number {
+function sync(uc: IUpdateContext, p: Element, i: number, he: Expr<H> | undefined, ns?: string): number {
     console.log('%csync', "background:orange", p.tagName, i, he, ns)
 
     if (he === null || he === undefined) return i // skip this element. not that !!h would forbid to render the number 0 or the boolean value false
@@ -81,7 +81,7 @@ function sync(p: Element, i: number, he: Expr<H> | undefined, ns?: string): numb
 
             if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
                 // tbd: make "island" attribute
-                const j = syncchildren(n, h, 0, ns)
+                const j = syncchildren(uc, n, h, 0, ns)
                 removeexcesschildren(n, j)
             }
 
@@ -111,7 +111,7 @@ function sync(p: Element, i: number, he: Expr<H> | undefined, ns?: string): numb
                     hr = h.tag(props, h.cn)
                 }
 
-                let j = sync(p, i, hr, ns)
+                let j = sync(uc, p, i, hr, ns)
                 let cn = p.childNodes[i]! // now the dom element exists
 
                 if (cn && !isfragmentfunction(h)) cn.h = he as Expr<HElement | HCompFun | HCompClass> // attach h onto the materialized component node
@@ -125,7 +125,7 @@ function sync(p: Element, i: number, he: Expr<H> | undefined, ns?: string): numb
                 return j
 
             case 'object':
-                return sync(p, i, h.tag, ns) // fragments cause nested vnodes
+                return sync(uc, p, i, h.tag, ns) // fragments cause nested vnodes
 
             default:
                 throw '1' // unexpected tag
@@ -143,47 +143,43 @@ function sync(p: Element, i: number, he: Expr<H> | undefined, ns?: string): numb
 }
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
-function syncchildren(p: Element, h: HElement | HComp | HFragment, i: number, ns: string | undefined): number {
-    h.cn?.flat().forEach(hc => (i = sync(p, i, hc, ns)))
+function syncchildren(uc: IUpdateContext, p: Element, h: HElement | HComp | HFragment, i: number, ns: string | undefined): number {
+    h.cn?.flat().forEach(hc => (i = sync(uc, p, i, hc, ns)))
     return i
 }
 
-let uc: IUpdateContext = {}
-
-export function patch(e: Node | null, h: Expr<H>) {
+export function patch(e: Node | null, h: Expr<H>, uc = {} as IUpdateContext) {
     if (!e) return
+    delete uc.patchElementOnly
     if (uc.replace) (e as HTMLElement).replaceChildren()
     const p = e.parentElement as HTMLElement
     const i = [].indexOf.call<any, any, any>(p.childNodes, e)
     // always called deferred, because removing elements can trigger events and their handlers (like blur)
-    sync(p, i, h)
+    sync(uc, p, i, h)
 }
 
 export function updateviewuc(u: IUpdateContext, ...sels: Selectors): void {
     {
-        uc = u
-        updateviewinternal(...sels)
+        updateviewinternal(u, ...sels)
     }
 }
 export function updateview(...sels: Selectors): void {
     {
-        uc = {}
-        updateviewinternal(...sels)
+        updateviewinternal({}, ...sels)
     }
 }
 
-function updateviewinternal(...sels: Selector[]): void {
+function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
     if (!sels.length) sels.push('body')
     sels.flatMap(s => (typeof s == 'string' ? [...document.querySelectorAll(s)] : s ? [s] : [])).forEach(e => {
         //let comp = closestby(e, ee => ee.h!.tag instanceof Function) // walk up to function component. user can remove this line for finer update granularity at the risk of stale views
         //if (!comp) comp = e
         //patch(comp, comp.h!)
-        patch(e, e.h!)
+        patch(e, e.h!, uc)
     })
 }
 
 export function jsx(tag: any, p: any, ...cn: any[]): HC {
-    console.log("jsx", tag)
     p ??= {}
     return { tag, p, cn }
 }
@@ -193,3 +189,5 @@ export function jsxf(props: any, ...cn: any[]): HFragment {
     console.log("jsxf", cn)
     return { cn }
 }
+// declare fragment function with similar signature as a function component
+//export const jsxf = (props: any, ...cn: any[]): HFragment => ({ cn })

@@ -88,11 +88,11 @@ export interface IUpdateContext {
 }
 
 declare global {
-    export interface Window {
-        jmx?: {
-            getnamespace: (tag: string) => string | undefined
-        }
-    }
+    // export interface Window {
+    //     jmx?: {
+    //         getnamespace: (tag: string) => string | undefined
+    //     }
+    // }
     export interface Node {
         h?: Expr<HElement | HCompFun | HCompClass>
     }
