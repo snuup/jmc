@@ -2,8 +2,6 @@
 // the following types describe the js expression we get from tsx after conversion be our jmx plugin
 // they can be useful for users as well, components might return them.
 
-import { isobject } from "./base"
-
 export type Func<T> = () => T
 export type Expr<T> = T | Func<T>
 
@@ -84,7 +82,7 @@ export const enum HKind {
 export type HComp = HFunctionComponent | HClassComponent
 
 export type H =
-    | HText
+    | HText & { kind: undefined }
     | HElement
     | HFunctionComponent
     | HClassComponent
