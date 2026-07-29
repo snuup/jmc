@@ -5,19 +5,25 @@ export default defineConfig({
     plugins: [
         {
             name: "strip-pure",
-            renderChunk: (code: string) => code.replace(/\/\*\s*@__PURE__\s*\*\/\s*/g, "")
+            transform: (code: string) => code.replace(/\/\*\s*@__PURE__\s*\*\/\s*/g, "")
         }
     ],
     build: {
         minify: false,
         lib: {
-            entry: 'jmc.test.tsx',
+            entry: 'h.test.tsx',
             name: 'jmc-test',
             fileName: 'index'
         },
-        rollupOptions: {
+        rolldownOptions: {
+            treeshake: false,
             // Keep dependencies from being bundled into your library
-            external: ['vitest', 'happy-dom']
+            external: ['vitest', 'happy-dom'],
+            // transform: {
+            //     jsx: {
+            //         pure: false, // Prevents marking JSX transformations as pure side-effect-free code
+            //     },
+            // },
         }
     }
 })

@@ -19,5 +19,9 @@
     "debug.javascript.skipFiles": [
         "<node_internals>/**",
         "${workspaceFolder}/node_modules/**"
+    ],
+    "vitest.debugExclude": [
+        "<node_internals>/**",
+        "**/node_modules/**"
     ]
 }

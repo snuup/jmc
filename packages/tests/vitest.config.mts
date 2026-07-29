@@ -16,12 +16,13 @@ export default defineConfig({
             provider: 'v8', // or 'istanbul'
             reporter: ['text', 'json', 'html'],
         },
-        environment: 'happy-dom'
-    },
-    resolve: {
-        alias: {
-            // Add aliases for each package (optional but recommended)
-            // '@': path.resolve(__dirname, './src'),  // Matches `@/*` in tsconfig.json
+        environment: 'happy-dom',
+        snapshotFormat: {
+            printBasicPrototype: false, // Prevents printing "Object" / "Array" headers
+            escapeString: false,
         },
-    },
+        diff: {
+            printBasicPrototype: false, // Disables "Object" and "Array" type headers in diffs
+        },
+    }
 })
