@@ -22,7 +22,7 @@ let isproperty = (e: Element, name: string, value: any) =>
 
 let setprops = (e: Element, newprops: Props = {}) => {
 
-    let oldprops = e.p // if e is a dom element that was never jmc-d then it has no h attached
+    let oldprops = e.h?.p // if e is a dom element that was never jmc-d then it has no h attached
 
     for (let p in oldprops)
         if (!(p in newprops))
@@ -35,7 +35,7 @@ let setprops = (e: Element, newprops: Props = {}) => {
             ? (e as J)[p] = newprops[p]
             : e.setAttribute(p, newprops[p])
 
-    e.p = newprops
+    if(newprops) e.h.p = newprops
 }
 
 function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns?: string): number {
@@ -68,15 +68,15 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                     ns = p.xmlns ?? ns
                     n = ns ? document.createElementNS(ns, tag) : document.createElement(tag)
                     c ? c.replaceWith(n) : parent.appendChild(n)
+                    n.h = he
                     setprops(n, p)
                     p?.mounted?.(n)
                 } else {
                     n = c as Element
+                    n.h = he
                     setprops(n, p)
                     if (p?.update?.(c, uc)) return i + 1
                 }
-
-                n.h = he as any // need to attach this to *every* node for property update.
 
                 if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
                     // tbd: make "island" attribute

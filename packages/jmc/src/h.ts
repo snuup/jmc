@@ -102,7 +102,7 @@ declare global {
     //     }
     // }
     export interface Node {
-        h?: Expr<H>
+        h?: Expr<H> & { p?: Props }
     }
 }
 

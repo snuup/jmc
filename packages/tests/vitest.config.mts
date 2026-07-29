@@ -2,27 +2,19 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
     test: {
-        include: ['*test.{js,ts,tsx}'], // Include tests in all packages
-        //exclude: ['node_modules', '**/cases.d.ts'], // Exclude node_modules
-        // browser: {
-        //     provider: 'preview', // or 'webdriverio'
-        //     enabled: true,
-        //     // at least one instance is required
-        //     instances: [
-        //         { browser: 'chrome' },
-        //     ],
-        // },
+        include: ['./tests/*.test.{js,ts,tsx}'],
         coverage: {
-            provider: 'v8', // or 'istanbul'
+            provider: 'v8',
             reporter: ['text', 'json', 'html'],
+            // include: ['**/*.{ts,tsx}']            
         },
         environment: 'happy-dom',
         snapshotFormat: {
-            printBasicPrototype: false, // Prevents printing "Object" / "Array" headers
+            printBasicPrototype: false,
             escapeString: false,
         },
         diff: {
-            printBasicPrototype: false, // Disables "Object" and "Array" type headers in diffs
+            printBasicPrototype: false,
         },
     }
 })
