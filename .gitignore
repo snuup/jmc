@@ -3,3 +3,5 @@
 /.VSCodeCounter/
 /packages/jmc/dist/
 **/dist/
+**/build/
+**/dist/

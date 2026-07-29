@@ -8,8 +8,8 @@
         "sourceMap": true,
         "preserveConstEnums": false
     },
-    // "include": [
-    //     "src",
-    //     "."
-    // ]
+    "include": [
+        "src",
+        "."
+    ]
 }

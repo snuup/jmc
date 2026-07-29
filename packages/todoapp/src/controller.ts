@@ -1,4 +1,4 @@
-import { updateview, rebind, loggedmethods, loggedmethodsex, mount } from '../../jmc/src/index'
+import { updateview, rebind, loggedmethods, loggedmethodsex, mount } from '../../jmc/dist/src/index.js'
 import { mraw as m, Todo } from './model'
 
 class Controller {

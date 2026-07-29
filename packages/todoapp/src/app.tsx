@@ -1,4 +1,4 @@
-import { cc, jsx, patch, When } from '../../jmc/src'
+import { cc, jsx, patch, When } from '../../jmc/dist/src/index.js'
 
 import { c } from './controller'
 import { m, type Todo } from './model'
