@@ -11,9 +11,6 @@ importers:
       chalk:
         specifier: ^6.0.0
         version: 6.0.0
-      jmc:
-        specifier: file:../jmc
-        version: file:../jmc
       todomvc-app-css:
         specifier: ^2.1.0
         version: 2.4.3
@@ -23,18 +20,9 @@ importers:
 
 packages:
 
-  '@types/react@19.2.17':
-    resolution: {integrity: sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw==}
-
   chalk@6.0.0:
     resolution: {integrity: sha512-2uNTXIuTTxk7ciZgAU1BQcgnchcG0xXnrs6jzkQfj9SsRa9M2s5zE8WT96hS6KmG4MzWHSrvH43DF1m4XRkrFg==}
     engines: {node: '>=22'}
-
-  csstype@3.2.3:
-    resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
-
-  jmc@file:../jmc:
-    resolution: {directory: ../jmc, type: directory}
 
   todomvc-app-css@2.4.3:
     resolution: {integrity: sha512-mSnWZaKBWj9aQcFRsGguY/a8O8NR8GmecD48yU1rzwNemgZa/INLpIsxxMiToFGVth+uEKBrQ7IhWkaXZxwq5Q==}
@@ -45,17 +33,7 @@ packages:
 
 snapshots:
 
-  '@types/react@19.2.17':
-    dependencies:
-      csstype: 3.2.3
-
   chalk@6.0.0: {}
-
-  csstype@3.2.3: {}
-
-  jmc@file:../jmc:
-    dependencies:
-      '@types/react': 19.2.17
 
   todomvc-app-css@2.4.3: {}
 

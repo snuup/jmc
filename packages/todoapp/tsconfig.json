@@ -46,6 +46,7 @@
         /* Advanced Options */
         "skipLibCheck": true, /* Skip type checking of declaration files. */
         "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
-        //"annotateForClosureCompiler": false
+        //"annotateForClosureCompiler": false,
+        "preserveConstEnums": false
     }
 }

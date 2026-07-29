@@ -11,7 +11,7 @@ import {
     Selectors,
     updateviewuc,
     cc
-} from '../jmc'
+} from '../jmc/src'
 import './lab.css'
 
 let m = {

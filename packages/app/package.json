@@ -1,16 +1,5 @@
 {
-  "name": "lab",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.14.0",
-  "dependencies": {
-    "jmc": "file:..\\jmc"
-  }
+  "name": "jmc-app",
+  "description": "lab application",
+  "packageManager": "pnpm@10.14.0"
 }

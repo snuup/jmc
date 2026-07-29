@@ -14,7 +14,7 @@ export default defineConfig({
         }
     ],
     build: {
-        minify: false,
+        minify: true,
         modulePreload: false,
         rolldownOptions: {
             platform: 'browser',

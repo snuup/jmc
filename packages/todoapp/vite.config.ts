@@ -16,7 +16,7 @@ export default defineConfig({
         minify: 'oxc',
         rolldownOptions: {
             output: {
-                minify: true,
+                minify: false,
 
                 // format: 'es',
                 // Use [name] so the entry maps to app.js instead of clashing

@@ -2,3 +2,4 @@
 .idea/
 /.VSCodeCounter/
 /packages/jmc/dist/
+**/dist/

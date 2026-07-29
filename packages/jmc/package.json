@@ -15,7 +15,7 @@
         }
     },
     "scripts": {
-        "build": "tsdown"
+        "build": "tsc -p tsconfig.build.json"
     },
     "devDependencies": {
         "tsdown": "^0.22.14",
