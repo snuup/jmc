@@ -15,7 +15,7 @@
         }
     },
     "scripts": {
-        "build": "tsdown --format esm --dts"
+        "build": "tsdown"
     },
     "devDependencies": {
         "tsdown": "^0.22.14",
