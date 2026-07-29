@@ -211,18 +211,14 @@ describe('jsx results', () => {
     })
 
     test('adhoc 1', () => {
-        let F = (
-            <>
-                <b>1</b>
-                <b>2</b>
-            </>
-        )
+        let F = <>
+            <b>1</b>
+            <b>2</b>
+        </>
 
-        let h = (
-            <body>
-                <F />
-            </body>
-        )
+        let h = <body>
+            <F />
+        </body>
 
         let f_is = jsx(jsxf, null, jsx('b', null, '1'), jsx('b', null, '2'))
         let h_is = jsx('body', null, jsx(f_is, null))
@@ -232,14 +228,11 @@ describe('jsx results', () => {
             tag: 'body',
             cn: [
                 {
-                    kind: 1,
-                    tag: {
-                        kind: 4,
-                        cn: [
-                            { kind: 1, tag: 'b', cn: ['1'] },
-                            { kind: 1, tag: 'b', cn: ['2'] },
-                        ],
-                    },
+                    kind: 4,
+                    cn: [
+                        { kind: 1, tag: 'b', cn: ['1'] },
+                        { kind: 1, tag: 'b', cn: ['2'] },
+                    ],
                 },
             ],
         }
