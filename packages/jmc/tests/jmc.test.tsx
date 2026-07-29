@@ -1,4 +1,4 @@
-import { jsx, jsxf, patch, HElement, JMXComp, HCompClass, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc } from '../src/index'
+import { jsx, jsxf, patch, HElement, JMXComp, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc, HClassComponent } from '../src/index'
 import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
@@ -139,7 +139,7 @@ describe('JMX dom tests', () => {
         }
 
         patch(document.body, <body><C /></body>)
-        let h = document.querySelector("div")?.h as HCompClass
+        let h = document.querySelector("div")?.h as HClassComponent
         expect(h.i).toBeDefined()
     })
 

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40.9% </span>
+                <span class="strong">22.72% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/22</span>
+                <span class='fraction'>5/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/9</span>
+                <span class='fraction'>0/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30.76% </span>
+                <span class="strong">7.69% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/13</span>
+                <span class='fraction'>1/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">25% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/16</span>
+                <span class='fraction'>4/16</span>
             </div>
         
             
@@ -93,39 +93,39 @@
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">166x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export function rebind&lt;T extends object&gt;(o: T, proto = Object.getPrototypeOf(o)): T {
-    Object.entries(Object.getOwnPropertyDescriptors(proto))
-        .filter(([name, p]) =&gt; name != 'constructor' &amp;&amp; p.value instanceof Function)
-        .forEach(([name]) =&gt; (o as any)[name] = (o as any)[name].bind(o))
-    return o
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export function <span class="fstat-no" title="function not covered" >rebind&lt;T extends object&gt;(o</span>: T, proto = <span class="branch-0 cbranch-no" title="branch not covered" >Object.getPrototypeOf(o)): T {</span>
+<span class="cstat-no" title="statement not covered" >    Object.entries(Object.getOwnPropertyDescriptors(proto))</span>
+        .<span class="fstat-no" title="function not covered" >filter(([</span>name, p]) =&gt; <span class="cstat-no" title="statement not covered" >name != 'constructor' &amp;&amp; p.value instanceof Function)</span>
+        .<span class="fstat-no" title="function not covered" >forEach(([</span>name]) =&gt; <span class="cstat-no" title="statement not covered" >(o as any)[name] = (o as any)[name].bind(o))</span>
+<span class="cstat-no" title="statement not covered" >    return o</span>
 }
 &nbsp;
 export let isobject = (o: any): o is object =&gt; typeof o === 'object'
@@ -157,7 +157,7 @@ export function <span class="fstat-no" title="function not covered" >closestby(e
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-29T19:07:26.689Z
+                at 2026-07-29T19:08:34.072Z
             </div>
         <script src="prettify.js"></script>
         <script>

@@ -20,9 +20,10 @@ let isproperty = (e: Element, name: string, value: any) =>
     value instanceof Object ||
     value instanceof Function
 
-let setprops = (e: Element, newprops: Props = {}) => {
+let setprops = (e: Element, oldprops: Props | undefined, newprops: Props | undefined) => {
 
-    let oldprops = e.h?.p // if e is a dom element that was never jmc-d then it has no h attached
+    oldprops ??= {}
+    newprops ??= {}
 
     for (let p in oldprops)
         if (!(p in newprops))
@@ -34,8 +35,6 @@ let setprops = (e: Element, newprops: Props = {}) => {
         isproperty(e, p, newprops[p])
             ? (e as J)[p] = newprops[p]
             : e.setAttribute(p, newprops[p])
-
-    if(newprops) e.h.p = newprops
 }
 
 function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns?: string): number {
@@ -60,21 +59,20 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
             case HKind.Element:
 
                 let n: Element
-                let { tag, p, cn } = h
-                p ??= {} // simplifies processing, if p is null, need to process like having no props and attach {} to n
+                let { tag, cn, p } = h
                 cn ??= []
 
                 if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                    ns = p.xmlns ?? ns
+                    ns = p?.xmlns ?? ns
                     n = ns ? document.createElementNS(ns, tag) : document.createElement(tag)
                     c ? c.replaceWith(n) : parent.appendChild(n)
                     n.h = he
-                    setprops(n, p)
+                    setprops(n, {}, p)
                     p?.mounted?.(n)
                 } else {
                     n = c as Element
+                    setprops(n, n.h?.p, p)
                     n.h = he
-                    setprops(n, p)
                     if (p?.update?.(c, uc)) return i + 1
                 }
 
