@@ -2,7 +2,7 @@ import { isobject, rebind } from './base'
 import { Expr, H, HElement, HKind, IUpdateContext, J, Props, Selector, Selectors, Children, jsxf } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
-    TextNode = 3,
+    TextNode = 3
 }
 
 let removeexcesschildren = (n: Element, i: number) => {
@@ -12,29 +12,25 @@ let removeexcesschildren = (n: Element, i: number) => {
     }
 }
 let evaluate = <T>(expr: Expr<T>): T => (expr instanceof Function ? expr() : expr)
-let iswebcomponent = (h: HElement) => (h.tag as string).includes('-')
-
+let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
 let isproperty = (e: Element, name: string, value: any) =>
     name in e ||
     value instanceof Object ||
     value instanceof Function
 
-let setprops = (e: Element, oldprops: Props | undefined, newprops: Props | undefined) => {
-
-    oldprops ??= {}
-    newprops ??= {}
-
-    for (let p in oldprops)
-        if (!(p in newprops))
-            isproperty(e, p, oldprops[p])
-                ? (e as J)[p] = typeof oldprops[p] === 'boolean' ? false : ''
+let setprops = (e: Element & J, old: Props | undefined, now: Props | undefined) => {
+    old ??= {}
+    now ??= {}
+    for (let p in old)
+        if (!(p in now))
+            isproperty(e, p, old[p])
+                ? e[p] = typeof old[p] === 'boolean' ? false : ''
                 : e.removeAttribute(p)
-
-    for (let p in newprops)
-        isproperty(e, p, newprops[p])
-            ? (e as J)[p] = newprops[p]
-            : e.setAttribute(p, newprops[p])
+    for (let p in now)
+        isproperty(e, p, now[p])
+            ? e[p] = now[p]
+            : e.setAttribute(p, now[p])
 }
 
 function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns?: string): number {
@@ -48,9 +44,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
     }
 
     if (he === null || he === undefined) return i // skip this element. not that !!h would forbid to render the number 0 or the boolean value false
-
     let c = parent.childNodes[i] // is often null, eg during fresh creation
-
     let h = evaluate(he)
 
     if (isobject(h)) {
@@ -63,8 +57,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                 cn ??= []
 
                 if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                    ns = p?.xmlns ?? ns
-                    n = ns ? document.createElementNS(ns, tag) : document.createElement(tag)
+                    n = (ns = p?.xmlns ?? ns) ? document.createElementNS(ns, tag) : document.createElement(tag)
                     c ? c.replaceWith(n) : parent.appendChild(n)
                     n.h = he
                     setprops(n, {}, p)
@@ -121,8 +114,6 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                     return j
                 }
         }
-
-
     } else {
         // textnode
         let s = h as string // coerce type as the js runtime does

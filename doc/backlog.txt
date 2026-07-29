@@ -1,6 +1,7 @@
+- const attribute for islands
 
 
-. svg auto namespace, remove need to configure
+
 
 - find a place for open source
 - remove some evaluate calls
@@ -14,3 +15,4 @@
 + rename into jmc
 + unit tests
 + currently patch does not accept a class component
++ svg auto namespace, remove need to configure

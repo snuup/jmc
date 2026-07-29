@@ -20,7 +20,7 @@ export default defineConfig({
 
                 // format: 'es',
                 // Use [name] so the entry maps to app.js instead of clashing
-                entryFileNames: '[name].js',
+                entryFileNames: 'app.js',
                 assetFileNames: '[name].[ext]',
             }
         },
