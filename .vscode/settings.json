@@ -1,14 +1,14 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/package-lock.json": true,
-        "**/node_modules": false
-    },
+    // "files.exclude": {
+    //     "**/.git": true,
+    //     "**/.svn": true,
+    //     "**/.hg": true,
+    //     "**/CVS": true,
+    //     "**/.DS_Store": true,
+    //     "**/Thumbs.db": true,
+    //     "**/package-lock.json": true,
+    //     "**/node_modules": false
+    // },
     "workbench.colorCustomizations": {
         "titleBar.activeBackground": "#434d56ff",
         "titleBar.inactiveBackground": "#484d51ff",
@@ -23,6 +23,5 @@
     "vitest.debugExclude": [
         "<node_internals>/**",
         "**/node_modules/**"
-    ],
-     "vitest.workspaceConfig": "packages/tests/vitest.config.mts"
+    ]
 }

@@ -1,6 +1,20 @@
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+    oxc: {
+        jsx: {
+            development: false,
+            runtime: "classic",
+            pragma: "jsx",
+            pragmaFrag: "jsxf",
+        }
+    },
+    plugins: [
+        {
+            name: "strip-pure",
+            transform: (code: string) => code.replace(/\/\*\s*@__PURE__\s*\*\/\s*/g, "")
+        }
+    ],
     test: {
         include: ['./tests/*.test.{js,ts,tsx}'],
         coverage: {

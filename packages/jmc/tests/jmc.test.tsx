@@ -1,4 +1,4 @@
-import { jsx, jsxf, patch, HElement, JMXComp, HCompClass, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc } from '../jmc/src/index'
+import { jsx, jsxf, patch, HElement, JMXComp, HCompClass, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc } from '../src/index'
 import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 

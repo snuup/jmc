@@ -6,10 +6,10 @@ import {
     HFragment,
     HClassComponent,
     HFunctionComponent,
-} from '../jmc/src/index'
+} from '../src/index'
 import { describe, expect, it, test, vitest } from 'vitest'
 
-describe('jsx results', () => {
+describe('jsx hyperscript', () => {
     it('HElement empty', () => {
         let h: HElement = <div />
 
