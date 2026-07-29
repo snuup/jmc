@@ -2,6 +2,8 @@
 // the following types describe the js expression we get from tsx after conversion be our jmx plugin
 // they can be useful for users as well, components might return them.
 
+import { isobject } from "./base"
+
 export type Func<T> = () => T
 export type Expr<T> = T | Func<T>
 
@@ -104,6 +106,8 @@ declare global {
     }
 }
 
+let isclass = (X: Function) => /^class\s|^class\{/.test(X.toString())
+
 export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment {
 
     if (tag == jsxf)
@@ -112,37 +116,19 @@ export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionCompone
             ...(cn?.length ? { cn } : {})
         }
     else if (tag instanceof Function) {
-        return (/^class\s|^class\{/.test(tag.toString())) ?
-            {
-                kind: HKind.ClassComponent,
-                tag,
-                ...(p ? { p } : {}),
-                ...(cn?.length ? { cn } : {})
-            } :
-            {
-                kind: HKind.FunctionComponent,
-                tag,
-                ...(p ? { p } : {}),
-                ...(cn?.length ? { cn } : {})
-            }
-    }
-    else if (tag && typeof tag === 'object' && 'kind' in tag) { // tbd: simplify to object test
-        // tag is already a resolved vnode (e.g. <F/> where F is a fragment/element
-        // built by a nested/hoisted jsx() call) — substitute it directly instead
-        // of wrapping it in a new {kind: Element, tag: ...} node.
-        // (props on the <F/> usage itself are dropped/ignored here — see note below)
-
-        console.log("strip!")        
-
-        return tag
-    }
-    else {
         return {
-            kind: HKind.Element,
+            kind: isclass(tag) ? HKind.ClassComponent : HKind.FunctionComponent,
             tag,
             ...(p ? { p } : {}),
             ...(cn?.length ? { cn } : {})
         }
+    }
+    else if ((tag as any).kind) return tag // flatten tree
+    else return {
+        kind: HKind.Element,
+        tag,
+        ...(p ? { p } : {}),
+        ...(cn?.length ? { cn } : {})
     }
 }
 

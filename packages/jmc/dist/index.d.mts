@@ -20,49 +20,52 @@ interface CComponent {
 type Children = (H | undefined)[];
 type HText = string | number | boolean;
 type HFragment = {
-  cn: Children;
-};
-type HElement = {
-  tag: string;
-  p: Props;
-  cn: Children;
-  i?: any;
-};
-type HCompFun = {
-  tag: FComponent;
-  p: Props;
+  kind: HKind.Fragment;
   cn?: Children;
 };
-type HCompClass = {
-  tag: CComponent;
-  p: Props;
-  cn: Children;
-  i: IClassComponent;
+type HElement = {
+  kind: HKind.Element;
+  tag: string;
+  p?: Props;
+  cn?: Children;
 };
-type HComp = HCompFun | HCompClass;
-type H = HText | HElement | HComp | HFragment;
-type HC = HElement | HComp | HFragment;
+type HFunctionComponent = {
+  kind: HKind.FunctionComponent;
+  tag: FComponent;
+  p?: Props;
+  cn?: Children;
+};
+type HClassComponent = {
+  kind: HKind.ClassComponent;
+  tag: CComponent;
+  p?: Props;
+  cn?: Children;
+  i?: IClassComponent;
+};
+declare const enum HKind {
+  Element = 1,
+  FunctionComponent = 2,
+  ClassComponent = 3,
+  Fragment = 4
+}
+type HComp = HFunctionComponent | HClassComponent;
+type H = HText | HElement | HFunctionComponent | HClassComponent | HFragment;
 interface IUpdateContext {
   patchElementOnly?: boolean;
   replace?: boolean;
 }
 declare global {
-  export interface Window {
-    jmx?: {
-      getnamespace: (tag: string) => string | undefined;
-    };
-  }
   export interface Node {
-    h?: Expr<HElement | HCompFun | HCompClass>;
+    h?: Expr<H>;
   }
 }
+declare function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment;
+declare function jsxf(props: any, ...cn: any[]): HFragment;
 //#endregion
 //#region src/jmc.d.ts
-declare function patch(e: Node | null, h: Expr<H>): void;
+declare function patch(e: Node | null, h: Expr<H>, uc?: IUpdateContext): void;
 declare function updateviewuc(u: IUpdateContext, ...sels: Selectors): void;
 declare function updateview(...sels: Selectors): void;
-declare function jsx(tag: any, p: any, ...cn: any[]): HC;
-declare function jsxf(props: any, ...cn: any[]): HFragment;
 //#endregion
 //#region src/lib.d.ts
 type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; };
@@ -783,5 +786,5 @@ interface IntrinsicElementAttributes {
   wbr: HTMLAttributes;
 }
 //#endregion
-export { AdditionalElementAttributes, AllHTMLAttributes, AnchorHTMLAttributes, AreaHTMLAttributes, AudioHTMLAttributes, BaseHTMLAttributes, BlockquoteHTMLAttributes, ButtonHTMLAttributes, CComponent, CanvasHTMLAttributes, Children, ColHTMLAttributes, ColgroupHTMLAttributes, DeepReadonly, DelHTMLAttributes, DetailsHTMLAttributes, EmbedHTMLAttributes, Expr, FComponent, FieldsetHTMLAttributes, FormHTMLAttributes, Func, H, HC, HComp, HCompClass, HCompFun, HElement, HFragment, HTMLAttributes, HText, HtmlHTMLAttributes, IClassComponent, IUpdateContext, IframeHTMLAttributes, ImgHTMLAttributes, InputHTMLAttributes, InsHTMLAttributes, IntrinsicElementAttributes, J, JMXComp, KeygenHTMLAttributes, LabelHTMLAttributes, LiHTMLAttributes, LinkHTMLAttributes, MapHTMLAttributes, MediaHTMLAttributes, MenuHTMLAttributes, MetaHTMLAttributes, MeterHTMLAttributes, ObjectHTMLAttributes, OlHTMLAttributes, OptgroupHTMLAttributes, OptionHTMLAttributes, OutputHTMLAttributes, ParamHTMLAttributes, ProgressHTMLAttributes, Props, QuoteHTMLAttributes, ScriptHTMLAttributes, SelectHTMLAttributes, Selector, Selectors, SourceHTMLAttributes, StyleHTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, TextareaHTMLAttributes, ThHTMLAttributes, TimeHTMLAttributes, TrackHTMLAttributes, VideoHTMLAttributes, When, cc, closestby, jsx, jsxf, loggedmethods, loggedmethodscolored, loggedmethodsex, mount, patch, rebind, updateview, updateviewuc };
+export { AdditionalElementAttributes, AllHTMLAttributes, AnchorHTMLAttributes, AreaHTMLAttributes, AudioHTMLAttributes, BaseHTMLAttributes, BlockquoteHTMLAttributes, ButtonHTMLAttributes, CComponent, CanvasHTMLAttributes, Children, ColHTMLAttributes, ColgroupHTMLAttributes, DeepReadonly, DelHTMLAttributes, DetailsHTMLAttributes, EmbedHTMLAttributes, Expr, FComponent, FieldsetHTMLAttributes, FormHTMLAttributes, Func, H, HClassComponent, HComp, HElement, HFragment, HFunctionComponent, HKind, HTMLAttributes, HText, HtmlHTMLAttributes, IClassComponent, IUpdateContext, IframeHTMLAttributes, ImgHTMLAttributes, InputHTMLAttributes, InsHTMLAttributes, IntrinsicElementAttributes, J, JMXComp, KeygenHTMLAttributes, LabelHTMLAttributes, LiHTMLAttributes, LinkHTMLAttributes, MapHTMLAttributes, MediaHTMLAttributes, MenuHTMLAttributes, MetaHTMLAttributes, MeterHTMLAttributes, ObjectHTMLAttributes, OlHTMLAttributes, OptgroupHTMLAttributes, OptionHTMLAttributes, OutputHTMLAttributes, ParamHTMLAttributes, ProgressHTMLAttributes, Props, QuoteHTMLAttributes, ScriptHTMLAttributes, SelectHTMLAttributes, Selector, Selectors, SourceHTMLAttributes, StyleHTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, TextareaHTMLAttributes, ThHTMLAttributes, TimeHTMLAttributes, TrackHTMLAttributes, VideoHTMLAttributes, When, cc, closestby, jsx, jsxf, loggedmethods, loggedmethodscolored, loggedmethodsex, mount, patch, rebind, updateview, updateviewuc };
 //# sourceMappingURL=index.d.mts.map
