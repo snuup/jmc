@@ -133,7 +133,4 @@ export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionCompone
 }
 
 // declare fragment function with similar signature as a function component
-export function jsxf(props: any, ...cn: any[]): HFragment {
-    throw "never called"
-    // return { cn, kind: HKind.Fragment }
-}
+export function jsxf(props: any, ...cn: any[]): HFragment { throw 2 }
