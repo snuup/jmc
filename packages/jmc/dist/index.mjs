@@ -3,6 +3,7 @@ function rebind(o, proto = Object.getPrototypeOf(o)) {
 	Object.entries(Object.getOwnPropertyDescriptors(proto)).filter(([name, p]) => name != "constructor" && p.value instanceof Function).forEach(([name]) => o[name] = o[name].bind(o));
 	return o;
 }
+let isobject = (o) => typeof o === "object";
 function mount(o) {
 	Object.assign(globalThis, o);
 }
@@ -27,26 +28,20 @@ let HKind = /* @__PURE__ */ function(HKind) {
 	HKind[HKind["Fragment"] = 4] = "Fragment";
 	return HKind;
 }({});
+let isclass = (X) => /^class\s|^class\{/.test(X.toString());
 function jsx(tag, p, ...cn) {
 	if (tag == jsxf) return {
 		kind: 4,
 		...cn?.length ? { cn } : {}
 	};
-	else if (tag instanceof Function) return /^class\s|^class\{/.test(tag.toString()) ? {
-		kind: 3,
-		tag,
-		...p ? { p } : {},
-		...cn?.length ? { cn } : {}
-	} : {
-		kind: 2,
+	else if (tag instanceof Function) return {
+		kind: isclass(tag) ? 3 : 2,
 		tag,
 		...p ? { p } : {},
 		...cn?.length ? { cn } : {}
 	};
-	else if (tag && typeof tag === "object" && "kind" in tag) {
-		console.log("strip!");
-		return tag;
-	} else return {
+	else if (tag.kind) return tag;
+	else return {
 		kind: 1,
 		tag,
 		...p ? { p } : {},
@@ -54,7 +49,7 @@ function jsx(tag, p, ...cn) {
 	};
 }
 function jsxf(props, ...cn) {
-	throw "never called";
+	throw 2;
 }
 //#endregion
 //#region src/jmc.ts
@@ -66,7 +61,6 @@ let removeexcesschildren = (n, i) => {
 };
 let evaluate = (expr) => expr instanceof Function ? expr() : expr;
 let iswebcomponent = (h) => h.tag.includes("-");
-let isobject = (o) => typeof o === "object";
 let isproperty = (e, name, value) => name in e || value instanceof Object || value instanceof Function;
 let setprops = (e, newprops = {}) => {
 	let oldprops = e.p;
@@ -182,6 +176,6 @@ function cc(...namesOrObjects) {
 	return namesOrObjects.flatMap((n) => n.trim ? n : Object.keys(n).filter((k) => n[k])).join(" ");
 }
 //#endregion
-export { HKind, JMXComp, When, cc, closestby, jsx, jsxf, loggedmethods, loggedmethodscolored, loggedmethodsex, mount, patch, rebind, updateview, updateviewuc };
+export { HKind, JMXComp, When, cc, closestby, isobject, jsx, jsxf, loggedmethods, loggedmethodscolored, loggedmethodsex, mount, patch, rebind, updateview, updateviewuc };
 
 //# sourceMappingURL=index.mjs.map

@@ -288,7 +288,6 @@ describe('jsx results', () => {
 
     // with functions, that wont work
     test('adhoc 1 with funs, does not work for testing that simple', () => {
-        console.log('!!!!!!!!!!')
 
         let F = () => (
             <>

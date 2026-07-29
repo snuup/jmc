@@ -26,6 +26,7 @@
 		Object.entries(Object.getOwnPropertyDescriptors(proto)).filter(([name, p]) => name != "constructor" && p.value instanceof Function).forEach(([name]) => o[name] = o[name].bind(o));
 		return o;
 	}
+	var isobject = (o) => typeof o === "object";
 	function closestby(e, pred) {
 		return e == null || pred(e) ? e : closestby(e.parentNode, pred);
 	}
@@ -38,22 +39,19 @@
 		HKind[HKind["Fragment"] = 4] = "Fragment";
 		return HKind;
 	}({});
+	var isclass = (X) => /^class\s|^class\{/.test(X.toString());
 	function jsx(tag, p, ...cn) {
 		if (tag == jsxf) return {
 			kind: 4,
 			...cn?.length ? { cn } : {}
 		};
-		else if (tag instanceof Function) return /^class\s|^class\{/.test(tag.toString()) ? {
-			kind: 3,
-			tag,
-			...p ? { p } : {},
-			...cn?.length ? { cn } : {}
-		} : {
-			kind: 2,
+		else if (tag instanceof Function) return {
+			kind: isclass(tag) ? 3 : 2,
 			tag,
 			...p ? { p } : {},
 			...cn?.length ? { cn } : {}
 		};
+		else if (tag.kind) return tag;
 		else return {
 			kind: 1,
 			tag,
@@ -62,7 +60,7 @@
 		};
 	}
 	function jsxf(props, ...cn) {
-		throw "never called";
+		throw 2;
 	}
 	//#endregion
 	//#region ../jmc/src/jmc.ts
@@ -74,7 +72,6 @@
 	};
 	var evaluate = (expr) => expr instanceof Function ? expr() : expr;
 	var iswebcomponent = (h) => h.tag.includes("-");
-	var isobject = (o) => typeof o === "object";
 	var isproperty = (e, name, value) => name in e || value instanceof Object || value instanceof Function;
 	var setprops = (e, newprops = {}) => {
 		let oldprops = e.p;
@@ -83,7 +80,6 @@
 		e.p = newprops;
 	};
 	function sync(uc, parent, i, he, ns) {
-		console.log("%csync2", "background:orange", parent.tagName, i, he, ns);
 		/** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
 		function syncchildren(p, cn, i, ns) {
 			cn.flat().forEach((hc) => i = sync(uc, p, i, hc, ns));
@@ -294,67 +290,46 @@
 				kind: 1,
 				tag: "body",
 				cn: [{
-					kind: 1,
-					tag: {
-						kind: 4,
-						cn: [{
-							kind: 1,
-							tag: "b",
-							cn: ["1"]
-						}, {
-							kind: 1,
-							tag: "b",
-							cn: ["2"]
-						}]
-					}
+					kind: 4,
+					cn: [{
+						kind: 1,
+						tag: "b",
+						cn: ["1"]
+					}, {
+						kind: 1,
+						tag: "b",
+						cn: ["2"]
+					}]
 				}]
 			});
 		});
 		(0, vitest.test)("adhoc 2", () => {
 			let h = jsx("body", null, jsx(jsx(jsxf, null, jsx(jsx(jsxf, null, "hasen"), null)), null), "hopp");
-			jsx("body", null, jsx(jsx(jsxf, null, jsx(jsx(jsxf, null, "hasen"), null)), null), "hopp");
-			jsx("body", null, jsx(jsx(jsxf, null, jsx(jsx(jsxf, null, "hasen"), null)), null), "hopp");
+			console.dir(h, { depth: null });
 			(0, vitest.expect)(h).toEqual({
 				kind: 1,
 				tag: "body",
 				cn: [{
-					kind: 1,
-					tag: {
+					kind: 4,
+					cn: [{
 						kind: 4,
-						cn: [{
-							kind: 1,
-							tag: {
-								kind: 4,
-								cn: ["hasen"]
-							}
-						}]
-					}
+						cn: ["hasen"]
+					}]
 				}, "hopp"]
 			});
 		});
-		vitest.test.skip("adhoc 1 with funs, does not work for testing that simple", () => {
-			console.log("!!!!!!!!!!");
+		(0, vitest.test)("adhoc 1 with funs, does not work for testing that simple", () => {
 			let F = () => jsx(jsxf, null, jsx("b", null, "1"));
 			let h = () => jsx("body", null, jsx(F, null));
 			let f_is = () => jsx(jsxf, null, jsx("b", null, "1"));
-			let h_is = () => jsx("body", null, jsx(F, null));
-			console.dir(f_is);
-			console.dir(h_is);
-			(0, vitest.expect)(h.toString()).toEqual({
-				kind: 1,
-				tag: "body",
-				cn: [{
-					kind: 1,
-					tag: {
-						kind: 4,
-						cn: [{
-							kind: 1,
-							tag: "b",
-							cn: ["1"]
-						}]
-					}
-				}]
-			}.toString());
+			let h_is = () => jsx("body", null, jsx(f_is, null));
+			console.log([
+				F,
+				h,
+				f_is,
+				h_is
+			]);
+			console.dir(h_is());
 		});
 	});
 	//#endregion

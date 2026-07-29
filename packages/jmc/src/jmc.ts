@@ -1,5 +1,5 @@
-import { closestby, isobject, rebind } from './base'
-import { Expr, H, HComp, HClassComponent, HFunctionComponent, HElement, HFragment, HKind, IUpdateContext, J, Props, Selector, Selectors, HText, Children, HEFCR } from './h'
+import { isobject, rebind } from './base'
+import { Expr, H, HElement, HKind, IUpdateContext, J, Props, Selector, Selectors, Children, jsxf } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3,
@@ -91,21 +91,10 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
 
             case HKind.FunctionComponent:
                 {
-                    let { tag, p, cn } = h
-                    p ??= {} // simplifies processing, if p is null, need to process like having no props and attach {} to n
-                    cn ??= []
-
-                    let hr = tag(h.p, h.cn)
-
+                    let hr = h.tag(h.p, h.cn)
                     let j = sync(uc, parent, i, hr, ns)
-
-                    let n = parent.childNodes[i]! // now the dom element exists
-
-                    // tbd:
-                    // if (n && h.tag as any != jsxf) cn.h = he
-
-                    if (n) n.h = he
-
+                    let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
+                    if (n) n.h = h
                     return j
                 }
 
@@ -124,9 +113,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                     if (isupdate && h.i.update(uc)) return i + 1
 
                     let hr = h.i.view()
-
                     let j = sync(uc, parent, i, hr, ns)
-
                     let n = parent.childNodes[i]!
                     if (n) n.h = he
 

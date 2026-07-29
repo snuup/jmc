@@ -234,7 +234,6 @@ describe('JMX dom tests', () => {
         }
 
         let B = ({ x }: { x: number }) => {
-            console.log("compute B")
             return <b>{x}</b>
         }
 
@@ -263,7 +262,6 @@ describe('JMX dom tests', () => {
         }
 
         let B = ({ x }: { x: number }) => {
-            console.log("compute B")
             return <b>{x}</b>
         }
 
@@ -293,12 +291,10 @@ describe('JMX dom tests', () => {
         }
 
         let B = ({ x }: { x: number }) => {
-            console.log("compute B")
             return <i><b>{x}</b></i>
         }
 
         let I = ({ x }: { x: number }) => {
-            console.log("compute I")
             return <i><B x={x} /></i>
         }
 
