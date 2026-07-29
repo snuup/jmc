@@ -3,7 +3,19 @@ import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {
-    const window = new Window()
+    const window = new Window({
+        url: "http://localhost/"
+    });
+
+    window.document.documentElement.innerHTML = `
+<html>
+<body></body>
+</html>
+`;
+
+    console.log(window.document.body.namespaceURI);
+
+
     // @ts-expect-error assigning globals
     globalThis.window = window
     // @ts-expect-error assigning globals
@@ -310,7 +322,7 @@ describe('JMX dom tests', () => {
 
         patch(document.body, App)
         expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
-        
+
         console.log("updating")
         m.sidepanel = true
         updateviewuc({ patchElementOnly: true }, "body")

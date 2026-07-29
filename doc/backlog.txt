@@ -1,6 +1,6 @@
 - const attribute for islands
-
-
+- more tests on component life cycles and element life cycles
+- the update of a thunked class component is presumably wrong: recheck expressions and their attachment
 
 
 - find a place for open source

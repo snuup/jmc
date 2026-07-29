@@ -33,19 +33,19 @@ let setprops = (e: Element & J, old: Props | undefined, now: Props | undefined) 
             : e.setAttribute(p, now[p])
 }
 
-function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns?: string): number {
+function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns: string): number {
 
     // console.log('%csync2', "background:orange", parent.tagName, i, he, ns)
 
     /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
-    function syncchildren(p: Element, cn: Children, i: number, ns: string | undefined): number {
+    function syncchildren(p: Element, cn: Children, i: number, ns: string): number {
         cn.flat().forEach(hc => (i = sync(uc, p, i, hc, ns)))
         return i
     }
 
-    if (he === null || he === undefined) return i // skip this element. not that !!h would forbid to render the number 0 or the boolean value false
-    let c = parent.childNodes[i] // is often null, eg during fresh creation
     let h = evaluate(he)
+    if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
+    let c = parent.childNodes[i]
 
     if (isobject(h)) {
 
@@ -57,7 +57,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                 cn ??= []
 
                 if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                    n = (ns = p?.xmlns ?? ns) ? document.createElementNS(ns, tag) : document.createElement(tag)
+                    n = document.createElementNS(ns = p?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
                     c ? c.replaceWith(n) : parent.appendChild(n)
                     n.h = he
                     setprops(n, {}, p)
@@ -91,25 +91,22 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
 
             case HKind.ClassComponent:
                 {
-                    let isupdate = c?.h == h
+                    //let isupdate = c?.h == h
+                    let isupdate = (c?.h as any)?.tag == h.tag
 
-                    let { tag, p, cn } = h
-                    p ??= {} // simplifies processing, if p is null, need to process like having no props and attach {} to n
-                    cn ??= []
-
-                    h.i = isupdate ? h.i! : rebind(new tag(h.p))
-                    h.i.props = h.p // for  the update case we set props
+                    let ci = h.i = isupdate ? h.i! : rebind(new h.tag(h.p))
+                    ci.props = h.p // for  the update case we set props
 
                     // if component instance returns truthy for update(), then this update substitutes syncing
-                    if (isupdate && h.i.update(uc)) return i + 1
+                    if (isupdate && ci.update(uc)) return i + 1
 
-                    let hr = h.i.view()
+                    let hr = ci.view()
                     let j = sync(uc, parent, i, hr, ns)
                     let n = parent.childNodes[i]!
-                    if (n) n.h = he
+                    if (n) n.h = he // tbd: this could disallow component updates ?? i guess it is right
 
-                    h.i.element = n
-                    if (!isupdate) h.i?.mounted?.()
+                    ci.element = n
+                    if (!isupdate) ci?.mounted?.()
 
                     return j
                 }
@@ -135,7 +132,7 @@ export function patch(e: Node | null, h: Expr<H>, uc = {} as IUpdateContext) {
     const p = e.parentElement as HTMLElement
     const i = [].indexOf.call<any, any, any>(p.childNodes, e)
     // always called deferred, because removing elements can trigger events and their handlers (like blur)
-    sync(uc, p, i, h)
+    sync(uc, p, i, h, p.namespaceURI!) // is this safe? use default html namespace?
 }
 
 export function updateviewuc(u: IUpdateContext, ...sels: Selectors): void { updateviewinternal(u, ...sels) }
