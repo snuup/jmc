@@ -1,5 +1,5 @@
 import { rebind } from './base'
-import { Expr, H, HElement, HKind, IUpdateContext, J, Props, Selector, Selectors, Children } from './h'
+import { Expr, H, HElement, HKind, IUpdateContext, J, Selector, Selectors, Children } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3
@@ -19,13 +19,13 @@ let isproperty = (e: Element, name: string, value: any) =>
     value instanceof Object ||
     value instanceof Function
 
-let setprops = (e: Element & J, old: Props | undefined, now: Props | undefined) => {
+let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     old ??= {}
     now ??= {}
     for (let p in old)
         if (!(p in now))
             isproperty(e, p, old[p])
-                ? e[p] = typeof old[p] === 'boolean' ? false : ''
+                ? e[p] = typeof old[p] === 'boolean' ? false : '' // not sure about this. safest handling of initial values would be to track them. tbd: unit test
                 : e.removeAttribute(p)
     for (let p in now)
         isproperty(e, p, now[p])
@@ -56,16 +56,15 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
 
             if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
                 n = document.createElementNS(ns = p?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
-                c ? c.replaceWith(n) : parent.appendChild(n)
-                n.h = he
+                c ? c.replaceWith(n) : parent.appendChild(n)                
                 setprops(n, {}, p)
                 p?.mounted?.(n)
             } else {
                 n = c as Element
                 setprops(n, n.h?.p, p)
-                n.h = he
                 if (p?.update?.(c, uc)) return i + 1
             }
+            n.h = he
 
             if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
                 // tbd: make "island" attribute

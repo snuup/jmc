@@ -1,11 +1,11 @@
-import { Children, Props, IClassComponent, IUpdateContext, H } from './h';
+import { Children, IClassComponent, IUpdateContext, H, J } from './h';
 import { updateview } from './jmc'
 
 export type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; }
 
 export const When = ({ cond }: { cond: boolean }, cn: Children) => cond ? { cn } : void 0;
 
-export abstract class JMXComp<P extends Props = {}> implements IClassComponent {
+export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 
     element!: HTMLElement // assigned by jmx framework
     constructor(public props: P) { }

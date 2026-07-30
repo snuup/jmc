@@ -6,13 +6,12 @@ export type Func<T> = () => T
 export type Expr<T> = T | Func<T>
 
 export type J = Record<string, any> // a json record
-export type Props = J
 
 // Overload signatures
 export type Selector = string | Node | undefined | null
 export type Selectors = Selector[]
 
-export type FComponent = (props: Props | undefined, children?: Children) => HElement // show an example for usage of children
+export type FComponent = (props: J | undefined, children?: Children) => HElement // show an example for usage of children
 //export type FComponentT<P> = (pcn: P, cn?: Children) => H | void
 
 export interface IClassComponent {
@@ -53,21 +52,21 @@ export type HFragment = {
 export type HElement = {
     kind: HKind.Element
     tag: string
-    p?: Props
+    p?: J
     cn?: Children
 }
 
 export type HFunctionComponent = {
     kind: HKind.FunctionComponent
     tag: FComponent
-    p?: Props
+    p?: J
     cn?: Children
 }
 
 export type HClassComponent = {
     kind: HKind.ClassComponent
     tag: CComponent
-    p?: Props
+    p?: J
     cn?: Children
     i?: IClassComponent
 }
@@ -82,7 +81,7 @@ export const enum HKind {
 export type HComp = HFunctionComponent | HClassComponent
 
 export type H =
-    | HText & { kind: undefined }
+    | HText & { kind?: undefined } // text nodes never have a kind. but this type addition makes H a full DU
     | HElement
     | HFunctionComponent
     | HClassComponent
@@ -94,40 +93,25 @@ export interface IUpdateContext {
 }
 
 declare global {
-    // export interface Window {
-    //     jmx?: {
-    //         getnamespace: (tag: string) => string | undefined
-    //     }
-    // }
-    export interface Node {
-        h?: Expr<H> & { p?: Props }
+    interface Node {
+        h?: Expr<H> & { p?: J }
     }
 }
 
 let isclass = (X: Function) => /^class\s|^class\{/.test(X.toString())
 
 export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment {
+    if (tag?.kind) return tag // already an H node, flatten tree
 
-    if (tag == jsxf)
-        return {
-            kind: HKind.Fragment,
-            ...(cn?.length ? { cn } : {})
-        }
-    else if (tag instanceof Function) {
-        return {
-            kind: isclass(tag) ? HKind.ClassComponent : HKind.FunctionComponent,
-            tag,
-            ...(p ? { p } : {}),
-            ...(cn?.length ? { cn } : {})
-        }
-    }
-    else if ((tag as any).kind) return tag // flatten tree
-    else return {
-        kind: HKind.Element,
-        tag,
-        ...(p ? { p } : {}),
-        ...(cn?.length ? { cn } : {})
-    }
+    let kind = tag == jsxf ? HKind.Fragment
+        : tag instanceof Function ? (isclass(tag) ? HKind.ClassComponent : HKind.FunctionComponent)
+        : HKind.Element
+
+    let h: any = { kind }
+    if (kind != HKind.Fragment) h.tag = tag
+    if (p) h.p = p
+    if (cn?.length) h.cn = cn
+    return h
 }
 
 // declare fragment function with similar signature as a function component
