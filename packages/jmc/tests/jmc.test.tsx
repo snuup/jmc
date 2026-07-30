@@ -3,19 +3,8 @@ import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {
-    const window = new Window({
-        url: "http://localhost/"
-    });
-
-    window.document.documentElement.innerHTML = `
-<html>
-<body></body>
-</html>
-`;
-
-    console.log(window.document.body.namespaceURI);
-
-
+    const window = new Window({url: "http://localhost/"})
+    window.document.documentElement.innerHTML = `<html><body></body></html>`
     // @ts-expect-error assigning globals
     globalThis.window = window
     // @ts-expect-error assigning globals

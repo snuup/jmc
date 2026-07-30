@@ -5,8 +5,6 @@ export function rebind<T extends object>(o: T, proto = Object.getPrototypeOf(o))
     return o
 }
 
-// export let isobject = (o: any): o is object => typeof o === 'object'
-
 export function mount(o: Record<string, any>) { Object.assign(globalThis, o) }
 
 export const loggedmethodsex = <T extends Record<string, any>>(o: T, logger: (name: string, args: any[], result: any) => void) => new Proxy(o, {

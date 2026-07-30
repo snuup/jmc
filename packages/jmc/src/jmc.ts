@@ -82,7 +82,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                 let hr = h.tag(h.p, h.cn)
                 let j = sync(uc, parent, i, hr, ns)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
-                if (n) n.h = h
+                if (n) n.h = he
                 return j
             }
 
