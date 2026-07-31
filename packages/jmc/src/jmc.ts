@@ -41,7 +41,7 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
 
 function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns: string): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, he, ns)
+    console.log('%csync2', "background:orange", parent.tagName, i, he, ns)
 
     let h = evaluate(he)
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
@@ -82,7 +82,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                 let hr = h.tag(h.p, h.cn)
                 let j = sync(uc, parent, i, hr, ns)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
-                if (n) n.h = he
+                if (n) n.h = h
                 return j
             }
 
@@ -95,7 +95,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
                 ci.props = h.p // for  the update case we set props
 
                 // if component instance returns truthy for update(), then this update substitutes syncing
-                if (isupdate && ci.update(uc)) return i + 1
+                if (isupdate && ci.update?.(uc)) return i + 1
 
                 let hr = ci.view()
                 let j = sync(uc, parent, i, hr, ns)

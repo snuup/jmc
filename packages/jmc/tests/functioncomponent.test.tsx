@@ -30,9 +30,15 @@ describe('function components', () => {
         patch(document.body, <body><F /></body>)
         expect(document.body.outerHTML).toBe('<body><div><b>buster bunny</b></div></body>')
 
+        console.log("//////////////////////////// update ////////////////////")
+        
+
         name = "babsi"
         updateview("b")
-        expect(document.body.outerHTML).toBe('<body><div><b>babsi bunny</b></div></body>')
+        expect(document.body.outerHTML, "b is below component, therefore does not update").toBe('<body><div><b>buster bunny</b></div></body>')
+
+        updateview("div")
+        expect(document.body.outerHTML, "div is the component, therefore updates").toBe('<body><div><b>babsi bunny</b></div></body>')
     });
 
 })
