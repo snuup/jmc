@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, test, vitest } from 'vitest'
-import { H, HtmlHTMLAttributes, JMXComp, jsx, patch, updateview } from '../src';
+import { H, HtmlHTMLAttributes, IntrinsicElementAttributes, JMXComp, jsx, patch, updateview } from '../src';
 import { Window } from 'happy-dom'
 
 beforeEach(() => {
@@ -81,6 +81,83 @@ describe('class components', () => {
         m.css = "jupiter"
         updateview("bunny")
         expect(document.body.outerHTML).toBe('<body><bunny class="jupiter">solar</bunny></body>')
+    })
+
+    test('class component update with empty update returning true', () => {
+
+        let m = {
+            name: "lunar",
+            css: "mondo"
+        }
+
+        class C extends JMXComp<{ name: string, css: string }> {
+            view(): H {
+                return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
+            }
+            update() {
+                return true // no update
+            }
+        }
+
+        patch(document.body, <body><C {...m} /></body>)
+        expect(document.body.outerHTML).toBe('<body><bunny class="mondo">lunar</bunny></body>')
+
+        m.name = "solar"
+        m.css = "jupiter"
+        updateview("bunny")
+        expect(document.body.outerHTML).toBe('<body><bunny class="mondo">lunar</bunny></body>')
+    })
+
+    test('class component update with empty update returning false', () => {
+
+        let m = {
+            name: "lunar",
+            css: "mondo"
+        }
+
+        class C extends JMXComp<{ name: string, css: string }> {
+            view(): H {
+                return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
+            }
+            update() {
+                return false // no update
+            }
+        }
+
+        patch(document.body, <body><C {...m} /></body>)
+        expect(document.body.outerHTML).toBe('<body><bunny class="mondo">lunar</bunny></body>')
+
+        m.name = "solar"
+        m.css = "jupiter"
+        updateview("bunny")
+        expect(document.body.outerHTML).toBe('<body><bunny class="jupiter">solar</bunny></body>')
+    })
+
+    test('class component update with empty update modifying', () => {
+
+        let m = {
+            name: "lunar",
+            css: "mondo"
+        }
+
+        class C extends JMXComp<{ name: string, css: string }> {
+            view(): H {
+                return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
+            }
+            update() {
+                this.element.replaceChildren()
+                this.element.setAttribute("changed", "now")
+                return true // no default update
+            }
+        }
+
+        patch(document.body, <body><C {...m} /></body>)
+        expect(document.body.outerHTML).toBe('<body><bunny class="mondo">lunar</bunny></body>')
+
+        m.name = "solar"
+        m.css = "jupiter"
+        updateview("bunny")
+        expect(document.body.outerHTML).toBe('<body><bunny class="mondo" changed="now"></bunny></body>')
     })
 })
 
