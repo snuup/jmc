@@ -11,7 +11,7 @@ let removeexcesschildren = (n: Element, i: number) => {
         try { c.remove() } catch (_) { } // due to blur-event-handlers, this can fail
     }
 }
-let evaluate = <T>(expr: Expr<T>): T => (expr instanceof Function ? expr() : expr)
+
 let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
 let isproperty = (e: Element, name: string, value: any) =>
@@ -39,11 +39,10 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
     return i
 }
 
-function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | undefined, ns: string): number {
+function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    console.log('%csync2', "background:orange", parent.tagName, i, he, ns)
+    console.log('%csync2', "background:orange", parent.tagName, i, h, ns)
 
-    let h = evaluate(he)
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
 
@@ -120,7 +119,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, he: Expr<H> | unde
     }
 }
 
-export function patch(e: Node | null, h: Expr<H>, uc = {} as IUpdateContext) {
+export function patch(e: Node | null, h: H, uc = {} as IUpdateContext) {
     if (!e) return
     delete uc.patchElementOnly
     if (uc.replace) (e as HTMLElement).replaceChildren()

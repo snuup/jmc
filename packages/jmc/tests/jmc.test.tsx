@@ -208,18 +208,19 @@ describe('JMX dom tests', () => {
 
     it('Expression', () => {
 
-        var h: Expr<H> = () => <body>hase</body>
+        let F  = () => <div><b>bunny</b></div>
+        let H = () => <body>hase</body>
 
-        patch(document.body, h)
+        patch(document.body, <H />)
         expect(document.body.outerHTML).toBe("<body>hase</body>")
     })
 
     it('Expression is updated', () => {
 
         let m = { name: 'bugs' }
-        var h: Expr<H> = () => <body>{m.name}</body>
+        let F: Expr<H> = () => <body>{m.name}</body>
 
-        patch(document.body, h)
+        patch(document.body, <F />)
         expect(document.body.outerHTML).toBe("<body>bugs</body>")
 
         m.name = 'bunny'
@@ -246,7 +247,7 @@ describe('JMX dom tests', () => {
             <Side />
         </body>
 
-        patch(document.body, App)
+        patch(document.body, <App />)
         expect(document.body.outerHTML).toBe("<body><side><b>1</b><b>2</b><b>3</b></side></body>")
 
         console.log("updating")
@@ -275,7 +276,7 @@ describe('JMX dom tests', () => {
         </body>
 
         console.log("patch initial")
-        patch(document.body, App)
+        patch(document.body, <App />)
         expect(document.body.outerHTML).toBe("<body><side><b>1</b><b>2</b><b>3</b></side></body>")
 
         console.log("updating")
@@ -309,7 +310,7 @@ describe('JMX dom tests', () => {
             <Side />
         </body>
 
-        patch(document.body, App)
+        patch(document.body, <App />)
         expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
 
         console.log("updating")
