@@ -1,12 +1,11 @@
+- property handling is not right or weird: n.h.p is never set - break with test
 - const attribute for islands
-- more tests on component life cycles and element life cycles
-- the update of a thunked class component is presumably wrong: recheck expressions and their attachment
-
-
-- find a place for open source
-- remove some evaluate calls
 - code review
 
++ the update of a thunked class component is presumably wrong: recheck expressions and their attachment
++ more tests on component life cycles and element life cycles
++ find a place for open source -> snuup/jmc wait for vrvis
++ remove some evaluate calls - all removed !
 + configure jsximportmodule -> did not work out
 + function component should be able to update itself (zwd, filterbox case) - typed function components turn into bad classes
 + study: configure that only components update

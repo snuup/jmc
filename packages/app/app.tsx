@@ -164,7 +164,7 @@ let App = () => <body class={cc({ sidepanel: m2.sidepanel })}>
     <Side />
 </body>
 
-patch(document.body, App)
+patch(document.body, <App />)
 
 console.log("updating")
 m2.sidepanel = true

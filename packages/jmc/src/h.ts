@@ -94,7 +94,7 @@ export interface IUpdateContext {
 
 declare global {
     interface Node {
-        h?: Expr<H> & { p?: J }
+        h?: H & { p?: J }
     }
 }
 

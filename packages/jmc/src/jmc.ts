@@ -41,7 +41,7 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    console.log('%csync2', "background:orange", parent.tagName, i, h, ns)
+    // console.log('%csync2', "background:orange", parent.tagName, i, h, ns)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
@@ -60,10 +60,11 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 p?.mounted?.(n)
             } else {
                 n = c as Element
-                setprops(n, n.h?.p, p)
+                setprops(n, n.h?.p, p) // tbd: this is wrong - try to break this with property updates, just patch sequences - create an own patch test file
                 if (p?.update?.(c, uc)) return i + 1
             }
-            n.h = he
+
+            n.h = h
 
             if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
                 // tbd: make "island" attribute
@@ -87,7 +88,6 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
         case HKind.ClassComponent:
             {
-                //let isupdate = c?.h == h
                 let isupdate = (c?.h as any)?.tag == h.tag
 
                 let ci = h.i = isupdate ? h.i! : rebind(new h.tag(h.p))
@@ -99,7 +99,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 let hr = ci.view()
                 let j = sync(uc, parent, i, hr, ns)
                 let n = parent.childNodes[i]!
-                if (n) n.h = he // tbd: this could disallow component updates ?? i guess it is right
+                if (n) n.h = h // tbd: this could disallow component updates ?? i guess it is right
 
                 ci.element = n
                 if (!isupdate) ci?.mounted?.()
