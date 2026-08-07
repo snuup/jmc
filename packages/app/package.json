@@ -1,5 +1,5 @@
 {
-  "name": "jmc-app",
-  "description": "lab application",
-  "packageManager": "pnpm@10.14.0"
+    "name": "jmc-app",
+    "description": "lab application",
+    "packageManager": "pnpm@10.14.0"
 }

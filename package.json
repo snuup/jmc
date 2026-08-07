@@ -1,8 +1,8 @@
-{
-  "packageManager": "pnpm@10.14.0",
-  "dependencies": {
-    "@rollup/plugin-terser": "^1.0.0",
-    "typescript": "^6.0.3",
-    "vite": "^8.1.5"
-  }
+{    
+    "packageManager": "pnpm@10.14.0",
+    "dependencies": {
+        "@rollup/plugin-terser": "^1.0.0",
+        "typescript": "^6.0.3",
+        "vite": "^8.1.5"
+    }
 }
