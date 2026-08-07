@@ -15,9 +15,10 @@ let removeexcesschildren = (n: Element, i: number) => {
 let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
 let isproperty = (e: Element, name: string, value: any) =>
+    name != "viewBox" && (
     name in e ||
     value instanceof Object ||
-    value instanceof Function
+    value instanceof Function)
 
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     old ??= {}

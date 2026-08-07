@@ -1,3 +1,8 @@
++ handle viewBox as non-property, because is not readable
++ updateviewuc - uc is not threaded downwards ?
+- resizer reports twice - can we call mount after all children are done? what is best?
+
+
 - property handling is not right or weird: n.h.p is never set - break with test
 - const attribute for islands
 - code review
