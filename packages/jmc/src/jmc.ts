@@ -18,7 +18,7 @@ const isproperty = (e: Element, name: string, value: any) =>
     name !== "viewBox" &&
     (value instanceof Object ||
      value instanceof Function ||
-     (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e))
+     (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))
 
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     old ??= {}

@@ -148,7 +148,7 @@ let I = ({ x }: { x: number }) => {
 
 declare global {
     namespace JSX {
-        interface IntrinsicElements extends IntrinsicElementAttributes {
+        interface IntrinsicElements {
             side: HtmlHTMLAttributes
         }
     }
@@ -164,10 +164,12 @@ let App = () => <body class={cc({ sidepanel: m2.sidepanel })}>
     <Side />
 </body>
 
-patch(document.body, <App />)
+let i = 17
 
-console.log("updating")
-m2.sidepanel = true
-updateviewuc({ patchElementOnly: true }, "body")
+patch(document.body, <body class="snup" style={`grid-row:${i}`} />)
 
-mount({ updateviewuc })
+// console.log("updating")
+// m2.sidepanel = true
+// updateviewuc({ patchElementOnly: true }, "body")
+
+// mount({ updateviewuc })
