@@ -18,7 +18,7 @@
 //      Dovydas Navickas <https://github.com/DovydasNavickas>
 //      Stéphane Goetz <https://github.com/onigoetz>
 
-import { IUpdateContext } from "./h"
+import type { IUpdateContext } from "./h"
 
 declare global {
     namespace JSX {

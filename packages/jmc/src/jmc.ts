@@ -1,4 +1,4 @@
-import { rebind } from './base'
+import { rebind } from './base.js'
 import { Expr, H, HElement, HKind, IUpdateContext, J, Selector, Selectors, Children } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
@@ -14,11 +14,11 @@ let removeexcesschildren = (n: Element, i: number) => {
 
 let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
-let isproperty = (e: Element, name: string, value: any) =>
-    name != "viewBox" && (
-    name in e ||
-    value instanceof Object ||
-    value instanceof Function)
+const isproperty = (e: Element, name: string, value: any) =>
+    name !== "viewBox" &&
+    (value instanceof Object ||
+     value instanceof Function ||
+     (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e))
 
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     old ??= {}

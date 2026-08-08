@@ -1,5 +1,5 @@
-import { Children, IClassComponent, IUpdateContext, H, J } from './h';
-import { updateview } from './jmc'
+import type { Children, IClassComponent, IUpdateContext, H, J } from './h';
+import { updateview } from './jmc.js'
 
 export type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; }
 
