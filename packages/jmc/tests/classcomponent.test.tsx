@@ -25,6 +25,38 @@ describe('class components', () => {
         expect(document.body.outerHTML).toBe('<body><div class="class component C">hi ho</div></body>')
     })
 
+    test('class component updates', () => {
+
+        class C extends JMXComp {
+            view(): H {
+                return <div class="class component C">hi ho</div>
+            }
+        }
+
+        patch(document.body, <body><C /></body>)
+        expect(document.body.outerHTML).toBe('<body><div class="class component C">hi ho</div></body>')
+
+        updateview(document.body)
+    })
+
+    test('class component updates inside App', () => {
+
+        class C extends JMXComp {
+            view(): H {
+                return <div class="class component C">hi ho</div>
+            }
+        }
+
+        const App = () =>
+            <body>
+                <C />
+            </body>
+
+        patch(document.body, <App />)
+
+        updateview(document.body)
+    })
+
     test('class component underived renders', () => {
 
         class C {

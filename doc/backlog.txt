@@ -2,6 +2,7 @@
 + updateviewuc - uc is not threaded downwards ?
 - resizer reports twice - can we call mount after all children are done? what is best?
 - cleanup jsx.ts from hase and bunnies and alike
+- investigate nested components regarding h attacvhment: n.h = h - the outer must always win
 
 
 - property handling is not right or weird: n.h.p is never set - break with test

@@ -36,6 +36,7 @@ interface EventHandler<E extends Event> {
 export interface AdditionalElementAttributes {
     mounted?: (n:Node) => void
     update?: (n:Node, uc:IUpdateContext) => void
+    const?: boolean
 }
 
 import { SVGAttributes } from 'react'

@@ -1,9 +1,9 @@
-import { jsx, jsxf, patch, HElement, JMXComp, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc, HClassComponent } from '../src/index'
+import { jsx, jsxf, patch, HElement, JMXComp, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc, HClassComponent, TextareaHTMLAttributes } from '../src/index'
 import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {
-    const window = new Window({url: "http://localhost/"})
+    const window = new Window({ url: "http://localhost/" })
     window.document.documentElement.innerHTML = `<html><body></body></html>`
     // @ts-expect-error assigning globals
     globalThis.window = window
@@ -208,7 +208,7 @@ describe('JMX dom tests', () => {
 
     it('Expression', () => {
 
-        let F  = () => <div><b>bunny</b></div>
+        let F = () => <div><b>bunny</b></div>
         let H = () => <body>hase</body>
 
         patch(document.body, <H />)
@@ -318,12 +318,28 @@ describe('JMX dom tests', () => {
         updateviewuc({ patchElementOnly: true }, "body")
         expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
     })
+
+    it('const attribute blocks updates', () => {
+
+        patch(document.body, <body><div const={true} /></body>)
+
+        let div = document.querySelector("div")!
+        let observer = new MutationObserver(() => {
+            console.log("change")
+        })
+        observer.observe(div, { attributes: true, subtree: true })
+
+        patch(document.body, <body><div const={true}>new</div></body>)
+
+        expect(document.body.outerHTML).toBe('<body><div const="true"></div></body>')
+    });
+
 })
 
 declare global {
     namespace JSX {
         interface IntrinsicElements extends IntrinsicElementAttributes {
-            side: HtmlHTMLAttributes
+            side: HtmlHTMLAttributes,
         }
     }
 }

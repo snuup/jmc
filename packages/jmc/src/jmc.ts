@@ -22,17 +22,25 @@ const isproperty = (e: Element, name: string, value: any) =>
         (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))
 
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
+
     old ??= {}
     now ??= {}
+
+    // removals
     for (let p in old)
         if (!(p in now))
             isproperty(e, p, old[p])
                 ? e[p] = typeof old[p] === 'boolean' ? false : '' // not sure about this. safest handling of initial values would be to track them. tbd: unit test
                 : e.removeAttribute(p)
-    for (let p in now)
-        isproperty(e, p, now[p])
-            ? e[p] = now[p]
-            : e.setAttribute(p, now[p])
+    // updates
+    for (let p in now) {
+        let v = now[p]
+        if (v != old[p]) {
+            isproperty(e, p, v)
+                ? e[p] = v
+                : e.setAttribute(p, v)
+        }
+    }
 }
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
@@ -61,7 +69,7 @@ export const lazy = <T>(expr: Func<T>): T => {
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, h)
+    console.log('%csync2', "background:orange", parent.tagName, i, h)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
@@ -89,7 +97,10 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
             n.h = h
 
             if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
-                // tbd: make "island" attribute
+
+                // island attribute
+                if (n.h?.p?.const) return i + 1
+
                 const j = syncchildren(uc, n, cn, 0, ns)
                 removeexcesschildren(n, j)
             }
@@ -114,7 +125,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
                 let pr = evalprops(h.p)
 
-                let ci = h.i = isupdate ? h.i! : rebind(new h.tag(pr))
+                let ci = h.i = isupdate ? (c.h! as any).i! : rebind(new h.tag(pr))
                 ci.props = pr // for  the update case we set props
 
                 // if component instance returns truthy for update(), then this update substitutes syncing
@@ -126,8 +137,9 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
                 ci.element = n
 
-                if (!isupdate) {
-                    n.h = h
+                n.h = h
+
+                if (!isupdate) {                    
                     ci.mounted?.()
                 }
 
