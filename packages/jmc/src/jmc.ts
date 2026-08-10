@@ -56,7 +56,7 @@ export const lazy = <T>(expr: Func<T>): T => {
     let e: any = expr
     e.lazy = true // tbd: symbol
     return e // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
-        
+
 } // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
@@ -123,10 +123,13 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 let hr = ci.view()
                 let j = sync(uc, parent, i, hr, ns)
                 let n = parent.childNodes[i]!
-                if (n) n.h = h // tbd: this could disallow component updates ?? i guess it is right
 
                 ci.element = n
-                if (!isupdate) ci?.mounted?.()
+
+                if (!isupdate) {
+                    n.h = h
+                    ci.mounted?.()
+                }
 
                 return j
             }
