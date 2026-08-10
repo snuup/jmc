@@ -1,5 +1,6 @@
 import { rebind } from './base.js'
-import { Expr, H, HElement, HKind, IUpdateContext, J, Selector, Selectors, Children } from './h'
+import type { H, HElement, IUpdateContext, J, Selector, Selectors, Children, Func } from './h'
+import { HKind } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3
@@ -17,8 +18,8 @@ let iswebcomponent = (h: HElement) => h.tag.includes('-')
 const isproperty = (e: Element, name: string, value: any) =>
     name !== "viewBox" &&
     (value instanceof Object ||
-     value instanceof Function ||
-     (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))
+        value instanceof Function ||
+        (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))
 
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     old ??= {}
@@ -40,9 +41,21 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
     return i
 }
 
+// tbd: is update in place possible? - add tests for lazy update
+function evalprops(p: J | undefined): J | undefined {
+    if (!p) return p
+    const pr = {} as J
+    for (const k in p) {
+        pr[k] = p[k] instanceof Function ? p[k]() : p[k]
+    }
+    return pr
+}
+
+export const lazy = <T>(expr: Func<T>): T => expr as T // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
+
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, h, ns)
+    console.log('%csync2', "background:orange", parent.tagName, i, h)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
@@ -54,15 +67,17 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
             let { tag, cn, p } = h
             cn ??= []
 
+            let pr = evalprops(p)
+
             if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                n = document.createElementNS(ns = p?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
-                c ? c.replaceWith(n) : parent.appendChild(n)                
-                setprops(n, {}, p)
-                p?.mounted?.(n)
+                n = document.createElementNS(ns = pr?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
+                c ? c.replaceWith(n) : parent.appendChild(n)
+                setprops(n, {}, pr)
+                pr?.mounted?.(n)
             } else {
                 n = c as Element
-                setprops(n, n.h?.p, p) // tbd: this is wrong - try to break this with property updates, just patch sequences - create an own patch test file
-                if (p?.update?.(c, uc)) return i + 1
+                setprops(n, n.h?.p, pr) // tbd: this is wrong - try to break this with property updates, just patch sequences - create an own patch test file
+                if (pr?.update?.(c, uc)) return i + 1
             }
 
             n.h = h
@@ -80,7 +95,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
         case HKind.FunctionComponent:
             {
-                let hr = h.tag(h.p, h.cn)
+                let hr = h.tag(evalprops(h.p), h.cn)
                 let j = sync(uc, parent, i, hr, ns)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
                 if (n) n.h = h
@@ -91,8 +106,10 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
             {
                 let isupdate = (c?.h as any)?.tag == h.tag
 
-                let ci = h.i = isupdate ? h.i! : rebind(new h.tag(h.p))
-                ci.props = h.p // for  the update case we set props
+                let pr = evalprops(h.p)
+
+                let ci = h.i = isupdate ? h.i! : rebind(new h.tag(pr))
+                ci.props = pr // for  the update case we set props
 
                 // if component instance returns truthy for update(), then this update substitutes syncing
                 if (isupdate && ci.update?.(uc)) return i + 1

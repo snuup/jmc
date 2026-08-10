@@ -1,9 +1,10 @@
-import type { Children, IClassComponent, IUpdateContext, H, J } from './h';
+import type { Children, IClassComponent, IUpdateContext, H, J, HFragment } from './h';
+import { HKind } from './h.js'
 import { updateview } from './jmc.js'
 
 export type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; }
 
-export const When = ({ cond }: { cond: boolean }, cn: Children) => cond ? { cn } : void 0;
+export const When = ({ cond }: { cond: boolean }, cn: Children): HFragment | undefined => cond ? { kind: HKind.Fragment, cn } : undefined
 
 export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 
@@ -17,7 +18,7 @@ export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 
     // utility: updates the component's view
     updateview() { updateview(this.element) }
-    get ismounted():boolean { return this.element as any }
+    get ismounted(): boolean { return this.element as any }
 }
 
 export function cc(...namesOrObjects: (string | any)[]): string {
