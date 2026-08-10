@@ -46,12 +46,18 @@ function evalprops(p: J | undefined): J | undefined {
     if (!p) return p
     const pr = {} as J
     for (const k in p) {
-        pr[k] = p[k] instanceof Function ? p[k]() : p[k]
+        let v = p[k]
+        pr[k] = v instanceof Function && v.lazy === true ? p[k]() : p[k]
     }
     return pr
 }
 
-export const lazy = <T>(expr: Func<T>): T => expr as T // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
+export const lazy = <T>(expr: Func<T>): T => {
+    let e: any = expr
+    e.lazy = true // tbd: symbol
+    return e // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
+        
+} // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
