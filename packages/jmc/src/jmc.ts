@@ -55,7 +55,7 @@ export const lazy = <T>(expr: Func<T>): T => expr as T // fake alert! in fact we
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    console.log('%csync2', "background:orange", parent.tagName, i, h)
+    // console.log('%csync2', "background:orange", parent.tagName, i, h)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
