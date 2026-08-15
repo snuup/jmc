@@ -20,15 +20,6 @@
 
 import type { IUpdateContext } from "./h"
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements extends IntrinsicElementAttributes {
-            // additional attributes for selected elements
-            // label: HTMLAttributes & { bunny: number }
-        }
-    }
-}
-
 interface EventHandler<E extends Event> {
     (event: E): void
 }
@@ -55,9 +46,6 @@ declare global {
             label: LabelHTMLAttributes & {
                 for?: string
             }
-
-            //svg: any
-            //line: SVGSVGElement
 
             svg: SVGProps<SVGSVGElement> & { class?: string | undefined, xmlns?:"http://www.w3.org/2000/svg" }
             path: SVGProps<SVGPathElement> & { class?: string | undefined }

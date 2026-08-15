@@ -522,26 +522,9 @@ describe('JMX dom tests', () => {
         expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
         updateview("b")
         expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
-    })
-
-    it('description', () => {
-        function islanddom(e: Node) {
-            e = e as HTMLElement
-            e.appendChild(document.createTextNode('bunny text node'))
-        }
-
-        let F = () => <b mounted={islanddom}></b>
-        let App = () => (
-            <body>
-                <F />
-            </body>
-        )
-        patch(document.body, <App />)
-
-        expect(document.body.outerHTML).toBe(
-            '<body><b>bunny text node</b></body>',
-        )
-    })
+        updateview()
+        expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
+    })   
 })
 
 declare global {

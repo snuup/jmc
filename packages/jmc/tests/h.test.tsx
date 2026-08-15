@@ -7,7 +7,7 @@ import {
     HClassComponent,
     HFunctionComponent,
 } from '../src/index'
-import { describe, expect, it, test, vitest } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 describe('jsx hyperscript', () => {
     it('HElement empty', () => {
@@ -112,7 +112,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('HClassComponent ', () => {
+    it('HClassComponent ', () => {
         class C { }
 
         let h: HClassComponent = <C />
@@ -125,7 +125,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('HClassComponent with props and children', () => {
+    it('HClassComponent with props and children', () => {
         class C { }
 
         let h: HClassComponent = <C class='red'>hops</C>
@@ -140,7 +140,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('HFunctionComponent ', () => {
+    it('HFunctionComponent ', () => {
         function F() { }
 
         let h: HFunctionComponent = <F />
@@ -153,7 +153,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('HFunctionComponent with props and children', () => {
+    it('HFunctionComponent with props and children', () => {
         function F() { }
 
         let h: HFunctionComponent = (
@@ -178,7 +178,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('jsx 1', () => {
+    it('jsx 1', () => {
         let F = ({ a }: { a: number[] }) => (
             <>
                 {a.map((x) => (
@@ -210,7 +210,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('adhoc 1', () => {
+    it('adhoc 1', () => {
         let F = <>
             <b>1</b>
             <b>2</b>
@@ -241,7 +241,7 @@ describe('jsx hyperscript', () => {
         expect(h).toEqual(e)
     })
 
-    test('adhoc 2', () => {
+    it('adhoc 2', () => {
 
         let F = <>hasen</>
         let G = (
@@ -284,29 +284,5 @@ describe('jsx hyperscript', () => {
         }
 
         expect(h).toEqual(e)
-    })
-
-    // with functions, that wont work
-    test('adhoc 1 with funs, does not work for testing that simple', () => {
-
-        let F = () => (
-            <>
-                <b>1</b>
-            </>
-        )
-
-        let h = () => (
-            <body>
-                <F />
-            </body>
-        )
-
-        let f_is = () => jsx(jsxf, null, jsx('b', null, '1'))
-        let h_is = () => jsx('body', null, jsx(f_is, null))
-
-        console.log([F, h, f_is, h_is])
-        console.dir(h_is())
-
-        // h_is() returns { kind: 1, tag: 'body', cn: [ { kind: 2, tag: [Function: f_is] } ] }
     })
 })
