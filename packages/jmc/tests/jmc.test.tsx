@@ -525,12 +525,24 @@ describe('JMX dom tests', () => {
         updateview()
         expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
     })   
+
+
+    it('props update', () => {
+
+        patch(document.body, <body a={2}></body>)
+        expect(document.body.outerHTML).toBe('<body a="2"></body>')
+
+        patch(document.body, <body a={3}></body>)
+        expect(document.body.outerHTML).toBe('<body a="3"></body>')
+    });
+
 })
 
 declare global {
     namespace JSX {
         interface IntrinsicElements extends IntrinsicElementAttributes {
             side: HtmlHTMLAttributes
+            body: HtmlHTMLAttributes & { a: number }
         }
     }
 }

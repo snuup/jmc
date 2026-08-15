@@ -30,7 +30,7 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     for (let p in old)
         if (!(p in now))
             isproperty(e, p, old[p])
-                ? e[p] = typeof old[p] === 'boolean' ? false : '' // not sure about this. safest handling of initial values would be to track them. tbd: unit test
+                ? e[p] = typeof old[p] === 'boolean' ? false : ''
                 : e.removeAttribute(p)
     // updates
     for (let p in now) {
@@ -94,7 +94,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 if (pr?.update?.(c, uc)) return i + 1
             }
 
-            n.h = h
+            n.h = h // this also sets the new property values
 
             if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
 
