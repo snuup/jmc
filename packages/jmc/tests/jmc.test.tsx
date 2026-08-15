@@ -1,9 +1,24 @@
-import { jsx, jsxf, patch, HElement, JMXComp, Expr, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc, HClassComponent, TextareaHTMLAttributes } from '../src/index'
+import {
+    jsx,
+    jsxf,
+    patch,
+    HElement,
+    JMXComp,
+    Expr,
+    H,
+    updateview,
+    HtmlHTMLAttributes,
+    IntrinsicElementAttributes,
+    updateviewuc,
+    HClassComponent,
+    TextareaHTMLAttributes,
+    HFunctionComponent,
+} from '../src/index'
 import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {
-    const window = new Window({ url: "http://localhost/" })
+    const window = new Window({ url: 'http://localhost/' })
     window.document.documentElement.innerHTML = `<html><body></body></html>`
     // @ts-expect-error assigning globals
     globalThis.window = window
@@ -12,111 +27,157 @@ beforeEach(() => {
 })
 
 describe('JMX dom tests', () => {
-
     it('HTag 1', () => {
-
         var h: HElement = <body>hase</body>
 
         patch(document.body, h)
-        expect(document.body.outerHTML).toBe("<body>hase</body>")
+        expect(document.body.outerHTML).toBe('<body>hase</body>')
     })
 
     it('HTag 1 thunked', () => {
-
         var h: HElement = <body>hase</body>
 
         patch(document.body, h)
-        expect(document.body.outerHTML).toBe("<body>hase</body>")
+        expect(document.body.outerHTML).toBe('<body>hase</body>')
     })
 
     it('HTag 2', () => {
-
-        let h = <body class="cc">hase{42}{true}{false}</body>
+        let h = (
+            <body class='cc'>
+                hase{42}
+                {true}
+                {false}
+            </body>
+        )
 
         patch(document.body, h)
-        expect(document.body.className).toBe("cc")
-        expect(document.body.innerHTML).toBe("hase42truefalse")
+        expect(document.body.className).toBe('cc')
+        expect(document.body.innerHTML).toBe('hase42truefalse')
     })
 
     it('HFunction', () => {
-
-        let F = ({ x }: { x: number }) => <div class={"classo" + x * 3}>{x * 2}</div>
-        let a = <body><F x={7} /></body>
+        let F = ({ x }: { x: number }) => (
+            <div class={'classo' + x * 3}>{x * 2}</div>
+        )
+        let a = (
+            <body>
+                <F x={7} />
+            </body>
+        )
 
         patch(document.body, a)
-        expect(document.body.outerHTML).toBe('<body><div class="classo21">14</div></body>')
+        expect(document.body.outerHTML).toBe(
+            '<body><div class="classo21">14</div></body>',
+        )
     })
 
     it('clear styles after update', () => {
-
-        patch(document.body, <body><div class="hase">div</div></body>)
+        patch(
+            document.body,
+            <body>
+                <div class='hase'>div</div>
+            </body>,
+        )
         expect(document.body.innerHTML).toBe('<div class="hase">div</div>')
 
-        patch(document.querySelector("div")!, <div>snuff</div>)
+        patch(document.querySelector('div')!, <div>snuff</div>)
         expect(document.body.innerHTML).toBe('<div>snuff</div>')
     })
 
     it('fragments', () => {
+        let F = (
+            <>
+                <b>1</b>
+                <b>2</b>
+                <b>3</b>
+            </>
+        )
 
-        let F = <>
-            <b>1</b>
-            <b>2</b>
-            <b>3</b>
-        </>
-
-        patch(document.body, <body><F /></body>)
+        patch(
+            document.body,
+            <body>
+                <F />
+            </body>,
+        )
         expect(document.body.innerHTML).toBe('<b>1</b><b>2</b><b>3</b>')
     })
 
     it('fragment thunked', () => {
+        let F = () => (
+            <>
+                <b>1</b>
+                <b>2</b>
+                <b>3</b>
+            </>
+        )
 
-        let F = () => <>
-            <b>1</b>
-            <b>2</b>
-            <b>3</b>
-        </>
-
-        patch(document.body, <body><F /></body>)
+        patch(
+            document.body,
+            <body>
+                <F />
+            </body>,
+        )
         expect(document.body.innerHTML).toBe('<b>1</b><b>2</b><b>3</b>')
     })
 
     it('fragments many', () => {
+        let F = (
+            <>
+                <b>1</b>
+                <b>2</b>
+                <b>3</b>
+            </>
+        )
 
-        let F = <>
-            <b>1</b>
-            <b>2</b>
-            <b>3</b>
-        </>
-
-        patch(document.body, <body><F /><F /></body>)
-        expect(document.body.innerHTML).toBe('<b>1</b><b>2</b><b>3</b><b>1</b><b>2</b><b>3</b>')
+        patch(
+            document.body,
+            <body>
+                <F />
+                <F />
+            </body>,
+        )
+        expect(document.body.innerHTML).toBe(
+            '<b>1</b><b>2</b><b>3</b><b>1</b><b>2</b><b>3</b>',
+        )
     })
 
     it('element as object', () => {
-
         let D = <div />
 
-        patch(document.body, <body><D /></body>)
+        patch(
+            document.body,
+            <body>
+                <D />
+            </body>,
+        )
         expect(document.body.innerHTML).toBe('<div></div>')
     })
 
     it('element as thunked object', () => {
-
         let D = () => <div />
 
-        patch(document.body, <body><D /></body>)
+        patch(
+            document.body,
+            <body>
+                <D />
+            </body>,
+        )
         expect(document.body.innerHTML).toBe('<div></div>')
     })
 
     it('class component is constructed', () => {
-
         class C extends JMXComp {
             view() {
                 return 'bunny component'
             }
         }
 
-        patch(document.body, <body><C /></body>)
+        patch(
+            document.body,
+            <body>
+                <C />
+            </body>,
+        )
         expect(document.body.innerHTML).toBe('bunny component')
     })
 
@@ -127,9 +188,14 @@ describe('JMX dom tests', () => {
             }
         }
 
-        patch(document.body, <body><C /></body>)
-        expect(document.querySelector("div")?.h).toBeDefined()
-        expect(document.body.innerHTML).toBe("<div></div>")
+        patch(
+            document.body,
+            <body>
+                <C />
+            </body>,
+        )
+        expect(document.querySelector('div')?.h).toBeDefined()
+        expect(document.body.innerHTML).toBe('<div></div>')
     })
 
     it('class component instance h.i is attached', () => {
@@ -139,41 +205,66 @@ describe('JMX dom tests', () => {
             }
         }
 
-        patch(document.body, <body><C /></body>)
-        let h = document.querySelector("div")?.h as HClassComponent
+        patch(
+            document.body,
+            <body>
+                <C />
+            </body>,
+        )
+        let h = document.querySelector('div')?.h as HClassComponent
         expect(h.i).toBeDefined()
     })
 
     it('fragments in context', () => {
+        let F = (
+            <>
+                <b>1</b>
+            </>
+        )
 
-        let F = <>
-            <b>1</b>
-        </>
+        let A = (
+            <div>
+                <F />
+                <article></article>
+                <aside></aside>
+            </div>
+        )
 
-        let A = <div>
-            <F />
-            <article></article>
-            <aside></aside>
-        </div>
-
-        patch(document.body, <body><A /></body>)
-        expect(document.body.innerHTML).toBe('<div><b>1</b><article></article><aside></aside></div>')
+        patch(
+            document.body,
+            <body>
+                <A />
+            </body>,
+        )
+        expect(document.body.innerHTML).toBe(
+            '<div><b>1</b><article></article><aside></aside></div>',
+        )
     })
 
     it('fragments in context2', () => {
+        let F = () => (
+            <>
+                <b>1</b>
+            </>
+        )
 
-        let F = () => <>
-            <b>1</b>
-        </>
+        let A = (
+            <div>
+                <F />
+                <article></article>
+                <aside></aside>
+            </div>
+        )
 
-        let A = <div>
-            <F />
-            <article></article>
-            <aside></aside>
-        </div>
-
-        patch(document.body, <body><A /></body>)
-        expect(document.body.innerHTML).toBe('<div><b>1</b><article></article><aside></aside></div>')
+        patch(
+            document.body,
+            <body>
+                <A />
+            </body>,
+        )
+        expect(document.body.innerHTML).toBe(
+            '<div><b>1</b><article></article><aside></aside></div>',
+        )
     })
 
     it('patch class component', () => {
@@ -183,163 +274,280 @@ describe('JMX dom tests', () => {
             }
         }
 
-        document.body.innerHTML = "<div />"
-        patch(document.body.querySelector("div"), <C />)
-        expect(document.body.innerHTML).toBe("<aside>hase war da</aside>")
+        document.body.innerHTML = '<div />'
+        patch(document.body.querySelector('div'), <C />)
+        expect(document.body.innerHTML).toBe('<aside>hase war da</aside>')
     })
 
     it('svg autonamespace', () => {
-
-        let h = <div>
-            <circle id="c1" />
-            <svg xmlns="http://www.w3.org/2000/svg">
-                <circle id="c2" />
-            </svg>
-        </div>
+        let h = (
+            <div>
+                <circle id='c1' />
+                <svg xmlns='http://www.w3.org/2000/svg'>
+                    <circle id='c2' />
+                </svg>
+            </div>
+        )
 
         patch(document.body, h)
-        let svg = document.querySelector("svg")
+        let svg = document.querySelector('svg')
         expect(svg).toBeInstanceOf(SVGElement)
-        expect(svg?.namespaceURI).toBe("http://www.w3.org/2000/svg")
+        expect(svg?.namespaceURI).toBe('http://www.w3.org/2000/svg')
 
-        expect(document.getElementById("c1")?.namespaceURI).toBe("http://www.w3.org/1999/xhtml")
-        expect(document.getElementById("c2")?.namespaceURI).toBe("http://www.w3.org/2000/svg")
+        expect(document.getElementById('c1')?.namespaceURI).toBe(
+            'http://www.w3.org/1999/xhtml',
+        )
+        expect(document.getElementById('c2')?.namespaceURI).toBe(
+            'http://www.w3.org/2000/svg',
+        )
     })
 
     it('Expression', () => {
-
-        let F = () => <div><b>bunny</b></div>
+        let F = () => (
+            <div>
+                <b>bunny</b>
+            </div>
+        )
         let H = () => <body>hase</body>
 
         patch(document.body, <H />)
-        expect(document.body.outerHTML).toBe("<body>hase</body>")
+        expect(document.body.outerHTML).toBe('<body>hase</body>')
     })
 
     it('Expression is updated', () => {
-
         let m = { name: 'bugs' }
         let F: Expr<H> = () => <body>{m.name}</body>
 
         patch(document.body, <F />)
-        expect(document.body.outerHTML).toBe("<body>bugs</body>")
+        expect(document.body.outerHTML).toBe('<body>bugs</body>')
 
         m.name = 'bunny'
         updateview()
-        expect(document.body.outerHTML).toBe("<body>bunny</body>")
+        expect(document.body.outerHTML).toBe('<body>bunny</body>')
     })
 
     it('patchelementonly does not expand the whole subtree', () => {
-
         let m = {
             sidepanel: false,
-            longlist: [1, 2, 3]
+            longlist: [1, 2, 3],
         }
 
         let B = ({ x }: { x: number }) => {
             return <b>{x}</b>
         }
 
-        let Side = <side>
-            {m.longlist.map(x => <B x={x} />)}
-        </side>
+        let Side = (
+            <side>
+                {m.longlist.map((x) => (
+                    <B x={x} />
+                ))}
+            </side>
+        )
 
-        let App = () => <body>
-            <Side />
-        </body>
+        let App = () => (
+            <body>
+                <Side />
+            </body>
+        )
 
         patch(document.body, <App />)
-        expect(document.body.outerHTML).toBe("<body><side><b>1</b><b>2</b><b>3</b></side></body>")
+        expect(document.body.outerHTML).toBe(
+            '<body><side><b>1</b><b>2</b><b>3</b></side></body>',
+        )
 
-        console.log("updating")
+        console.log('updating')
         m.sidepanel = true
 
-        updateviewuc({ patchElementOnly: true }, "body")
+        updateviewuc({ patchElementOnly: true }, 'body')
     })
 
     it('patchelementonly does not expand the whole subtree 2', () => {
-
         let m = {
             sidepanel: false,
-            longlist: [1, 2, 3]
+            longlist: [1, 2, 3],
         }
 
         let B = ({ x }: { x: number }) => {
             return <b>{x}</b>
         }
 
-        let Side = () => <side>
-            {m.longlist.map(x => <B x={x} />)}
-        </side>
+        let Side = () => (
+            <side>
+                {m.longlist.map((x) => (
+                    <B x={x} />
+                ))}
+            </side>
+        )
 
-        let App = () => <body>
-            <Side />
-        </body>
+        let App = () => (
+            <body>
+                <Side />
+            </body>
+        )
 
-        console.log("patch initial")
+        console.log('patch initial')
         patch(document.body, <App />)
-        expect(document.body.outerHTML).toBe("<body><side><b>1</b><b>2</b><b>3</b></side></body>")
+        expect(document.body.outerHTML).toBe(
+            '<body><side><b>1</b><b>2</b><b>3</b></side></body>',
+        )
 
-        console.log("updating")
+        console.log('updating')
         m.sidepanel = true
 
-        updateviewuc({ patchElementOnly: true }, "body")
+        updateviewuc({ patchElementOnly: true }, 'body')
     })
 
     it('patchelementonly does not expand the whole subtree 3', () => {
-
         let m = {
             sidepanel: false,
-            longlist: [1, 2, 3]
+            longlist: [1, 2, 3],
         }
 
         let B = ({ x }: { x: number }) => {
-            return <i><b>{x}</b></i>
+            return (
+                <i>
+                    <b>{x}</b>
+                </i>
+            )
         }
 
         let I = ({ x }: { x: number }) => {
-            return <i><B x={x} /></i>
+            return (
+                <i>
+                    <B x={x} />
+                </i>
+            )
         }
 
-        let Side = <side>
-            <B x={1} />
-            <B x={2} />
-            <B x={4} />
-        </side>
+        let Side = (
+            <side>
+                <B x={1} />
+                <B x={2} />
+                <B x={4} />
+            </side>
+        )
 
-        let App = () => <body>
-            <Side />
-        </body>
+        let App = () => (
+            <body>
+                <Side />
+            </body>
+        )
 
         patch(document.body, <App />)
-        expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
+        expect(document.body.outerHTML).toBe(
+            '<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>',
+        )
 
-        console.log("updating")
+        console.log('updating')
         m.sidepanel = true
-        updateviewuc({ patchElementOnly: true }, "body")
-        expect(document.body.outerHTML).toBe("<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>")
+        updateviewuc({ patchElementOnly: true }, 'body')
+        expect(document.body.outerHTML).toBe(
+            '<body><side><i><b>1</b></i><i><b>2</b></i><i><b>4</b></i></side></body>',
+        )
     })
 
     it('const attribute blocks updates', () => {
+        patch(
+            document.body,
+            <body>
+                <div const={true} />
+            </body>,
+        )
 
-        patch(document.body, <body><div const={true} /></body>)
-
-        let div = document.querySelector("div")!
+        let div = document.querySelector('div')!
         let observer = new MutationObserver(() => {
-            console.log("change")
+            console.log('change')
         })
         observer.observe(div, { attributes: true, subtree: true })
 
-        patch(document.body, <body><div const={true}>new</div></body>)
+        patch(
+            document.body,
+            <body>
+                <div const={true}>new</div>
+            </body>,
+        )
 
-        expect(document.body.outerHTML).toBe('<body><div const="true"></div></body>')
-    });
+        expect(document.body.outerHTML).toBe(
+            '<body><div const="true"></div></body>',
+        )
+    })
 
+    // with functions, that wont work
+    it('function component is attached correctly', () => {
+        let F = () => <b>1</b>
+
+        let App = () => (
+            <body>
+                <F />
+            </body>
+        )
+
+        patch(document.body, <App />)
+
+        let b = document.querySelector('b')!
+        expect((b.h as HFunctionComponent).tag).toBe(F)
+    })
+
+    it('nested function components: outer most is attached', () => {
+        let Outer = () => <Inner />
+
+        let Inner = () => <b>1</b>
+
+        let App = () => (
+            <body>
+                <Outer />
+            </body>
+        )
+
+        patch(document.body, <App />)
+
+        let b = document.querySelector('b')!
+        expect((b.h as HFunctionComponent).tag).toBe(Outer)
+    })
+
+    it('mounted is called and const respected', () => {
+        function islanddom(e: Node) {
+            e = e as HTMLElement
+            e.appendChild(document.createTextNode('bunny text node'))
+        }
+        let F = () => <b mounted={islanddom} const></b>
+        let App = () => (
+            <body>
+                <F />
+            </body>
+        )
+
+        patch(document.body, <App />)
+
+        expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
+        updateview("b")
+        expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
+    })
+
+    it('description', () => {
+        function islanddom(e: Node) {
+            e = e as HTMLElement
+            e.appendChild(document.createTextNode('bunny text node'))
+        }
+
+        let F = () => <b mounted={islanddom}></b>
+        let App = () => (
+            <body>
+                <F />
+            </body>
+        )
+        patch(document.body, <App />)
+
+        expect(document.body.outerHTML).toBe(
+            '<body><b>bunny text node</b></body>',
+        )
+    })
 })
 
 declare global {
     namespace JSX {
         interface IntrinsicElements extends IntrinsicElementAttributes {
-            side: HtmlHTMLAttributes,
+            side: HtmlHTMLAttributes
         }
     }
 }
