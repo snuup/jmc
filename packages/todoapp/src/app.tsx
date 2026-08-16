@@ -1,4 +1,4 @@
-import { cc, jsx, patch, When } from '../../jmc/dist/src/index.js'
+import { cc, FComponent, jsx, patch, When } from '../../jmc/dist/index.js'
 
 import { c } from './controller'
 import { m, type Todo } from './model'
@@ -60,4 +60,4 @@ export const App = () => <section class="todoapp">
     <Main />
 </section>
 
-patch(document.querySelector(".todoapp"), App)
+patch(document.querySelector(".todoapp"), <App />)

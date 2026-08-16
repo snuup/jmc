@@ -1,19 +1,4 @@
-import {
-    jsx,
-    jsxf,
-    patch,
-    HElement,
-    JMXComp,
-    Expr,
-    H,
-    updateview,
-    HtmlHTMLAttributes,
-    IntrinsicElementAttributes,
-    updateviewuc,
-    HClassComponent,
-    TextareaHTMLAttributes,
-    HFunctionComponent,
-} from '../src/index'
+import { jsx, jsxf, patch, HElement, JMXComp, H, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, updateviewuc, HClassComponent, HFunctionComponent } from '../src/index'
 import { describe, expect, beforeEach, it } from 'vitest'
 import { Window } from 'happy-dom'
 
@@ -316,7 +301,7 @@ describe('JMX dom tests', () => {
 
     it('Expression is updated', () => {
         let m = { name: 'bugs' }
-        let F: Expr<H> = () => <body>{m.name}</body>
+        let F = () => <body>{m.name}</body>
 
         patch(document.body, <F />)
         expect(document.body.outerHTML).toBe('<body>bugs</body>')

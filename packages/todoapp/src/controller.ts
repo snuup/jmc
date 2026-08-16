@@ -1,4 +1,4 @@
-import { updateview, rebind, loggedmethods, loggedmethodsex, mount } from '../../jmc/dist/src/index.js'
+import { updateview, rebind, loggedmethods, loggedmethodsex, mount } from '../../jmc/dist/index.js'
 import { mraw as m, Todo } from './model'
 
 class Controller {
@@ -51,8 +51,9 @@ class Controller {
     }
 
     setCompleted(ev: Event, item: Todo): void {
-        item.completed = (ev.target as HTMLInputElement).checked
-        const li = (ev.target as HTMLElement).closest("li")
+        let e = (ev.target as HTMLInputElement)
+        item.completed = e.checked
+        const li = e.closest("li")
         updateview(".footer", li)
     }
 

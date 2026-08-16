@@ -59,7 +59,6 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
     switch (h.kind) {
         case HKind.Element:
             {
-
                 let n: Element
                 let { tag, cn, p } = h
                 cn ??= []
@@ -109,8 +108,8 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
             if (isupdate) {
                 let ci = (c!.h as HClassComponent).i!
                 ci.props = h.p
-                
-                // update() substitutes view/sync when it returns truthy
+
+                // update() substitutes view/sync when returning truthy
                 return (ci.update?.(uc)) ? i + 1 : sync(uc, parent, i, ci.view(), ns)
             }
 
@@ -153,4 +152,4 @@ function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
         .forEach(e => { patch(e, e.h!, uc) })
 }
 
-console.log("jmc version 1.0.15");
+console.log("jmc version 1.0.16");

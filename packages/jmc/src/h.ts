@@ -1,10 +1,3 @@
-// jmx internal types
-// the following types describe the js expression we get from tsx after conversion be our jmx plugin
-// they can be useful for users as well, components might return them.
-
-//export type Func<T> = () => T
-//export type Expr<T> = T | Func<T>
-
 export type J = Record<string, any> // a json record
 
 // Overload signatures
@@ -12,7 +5,7 @@ export type Selector = string | Node | undefined | null
 export type Selectors = Selector[]
 
 export type FComponent = (props: J | undefined, children?: Children) => HElement // show an example for usage of children
-//export type FComponentT<P> = (pcn: P, cn?: Children) => H | void
+export type FComponentT<P> = (pcn: P, cn?: Children) => H | void
 
 export interface IClassComponent {
     element: Node
@@ -20,22 +13,11 @@ export interface IClassComponent {
     view(): H
     update(uc: IUpdateContext): boolean | void
     mounted?(): void
-    //new(props: any): IClassComponent
 }
 
 export interface CComponent {
     new(props: any): IClassComponent
 }
-
-// export interface FComponentState<P, S> {
-//     (this: S & {
-//         element: HTMLElement;
-//         update: (...ss: Selectors) => void //Action | Selectors | Selector
-//         uc?: Selector | Selectors
-//     }, p: P): H;
-//     state?: S;
-// }
-
 
 export type Children = (H | undefined)[]
 
