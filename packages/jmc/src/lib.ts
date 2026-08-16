@@ -24,3 +24,5 @@ export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 export function cc(...namesOrObjects: (string | any)[]): string {
     return namesOrObjects.flatMap(n => (n.trim ? n : Object.keys(n).filter(k => n[k]))).join(' ') // n.trim distinguishes strings from objects
 }
+
+export const focuselement = (e: Node) => (e as HTMLElement).focus()

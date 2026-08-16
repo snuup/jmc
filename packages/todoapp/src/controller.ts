@@ -1,5 +1,6 @@
-import { updateview, rebind, loggedmethods, loggedmethodsex, mount } from '../../jmc/dist/index.js'
+import { updateview, rebind, loggedmethodsex } from '../../jmc/src/index.js'
 import { mraw as m, Todo } from './model'
+import chalk from 'chalk'
 
 class Controller {
 
@@ -21,19 +22,10 @@ class Controller {
         updateview('main')
     }
 
-    startEdit(ev: Event, item: Todo) {
-        m.editingItem = item
-        updateview((ev.target as HTMLElement).closest("li"))
-    }
-
-    startEdit2(e: HTMLElement, item: Todo) {
-        m.editingItem = item
-        updateview(e)
-    }
-
-    startEdit3(ev: Event) {
-        m.editingItem = ev.model
-        updateview(ev.component)
+    startEdit(ev: Event) {
+        let { model, component } = from(ev)
+        m.editingItem = model
+        updateview(component)
     }
 
     endEdit(ev: Event) {
@@ -60,19 +52,7 @@ class Controller {
         }
     }
 
-    setCompleted(ev: Event, item: Todo): void {
-        let e = (ev.target as HTMLInputElement)
-        item.completed = e.checked
-        const li = e.closest("li")
-        updateview(".footer", li)
-    }
-
-    setCompleted2(e: HTMLElement, item: Todo, checked: boolean): void {
-        item.completed = checked
-        updateview(e, ".footer")
-    }
-
-    setCompleted3(ev: Event): void {
+    setCompleted(ev: Event): void {
         let { model, component } = from(ev)
         model.completed = (ev.target as HTMLInputElement).checked
         updateview(component, ".footer")
@@ -103,12 +83,7 @@ class Controller {
         updateview("ul")
     }
 
-    delItem(item: Todo) {
-        m.items = m.items.filter(t => t.id != item.id)
-        updateview("ul")
-    }
-
-    delItem3(ev: Event) {
+    delItem(ev: Event) {
         let { model } = from(ev)
         let delid = model.id
         m.items = m.items.filter(t => t.id != delid)
@@ -116,15 +91,8 @@ class Controller {
     }
 }
 
-//export const c = loggedmethodsex(new Controller(), (name, args, result) => { console.log(chalk.whiteBright.bgGrey.bold(name), args, result) })
-export const c = new Controller()
-
-declare global {
-    interface Event {
-        model: Todo
-        component: HTMLElement
-    }
-}
+export const c = loggedmethodsex(new Controller(), (name, args, result) => { console.log(chalk.whiteBright.bgGrey.bold(name), args, result) })
+//export const c = new Controller()
 
 const from = (ev: Event) => {
     let component = (ev.target as HTMLElement).closest("li")!

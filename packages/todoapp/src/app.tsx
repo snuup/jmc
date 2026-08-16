@@ -1,4 +1,4 @@
-import { cc, HElement, jsx, patch, When } from '../../jmc/src/index.js'
+import { cc, focuselement, jsx, mount, patch, updateview, When } from '../../jmc/src/index.js'
 
 import { c } from './controller'
 import { m, type Todo } from './model'
@@ -25,93 +25,23 @@ const Footer = () => <footer class="footer">
 </footer>
 
 const Item = ({ item }: { item: Todo }) => {
-    const editing = m.editingItem == item
-    const completed = item.completed
-    return <li class={cc({ completed, editing })} >
 
-        <div class="view">
-            <input class="toggle" type="checkbox" onchange={ev => c.setCompleted(ev, item)} checked={completed} />
-            <label ondblclick={ev => c.startEdit(ev, item)}>{item.text}</label>
-            <button onclick={() => c.delItem(item)} class="destroy" />
-        </div>
+    console.log("Item", item)
 
-        <When cond={editing}>
-            <div class="input-container">
-                <input id="edit-todo-input" class="edit" value={item.text} onkeyup={c.keyUp} onblur={c.endEdit} mounted={e => (e as HTMLElement).focus()} />
-            </div>
-        </When>
-
-    </li>
-}
-
-// interface FComponentState<P> extends P {
-//     (this: {
-//         element: HTMLElement;
-//         //update: (...ss: Selectors) => void //Action | Selectors | Selector
-//         //uc?: Selector | Selectors
-//     }, p: P): H
-// }
-
-type Component<P> = (this: {
-    element: HTMLElement
-    initialized: boolean
-    h: H
-}, props: P) => H
-
-let z1 = <div></div>
-let z2 = jsx("div", {})
-
-const Item2: Component<{ item: Todo }> = function ({ item }) {
-
-    let onchange = (ev: Event) => c.setCompleted2(this.element, item, (ev.target as HTMLInputElement).checked)
-    let ondblclick = () => c.startEdit2(this.element, item)
-    let onclick = () => c.delItem(item)
-    let inputmounted = (e: Node) => (e as HTMLElement).focus()
-
-    this.initialized = true
-
-    return () => {
-        const editing = m.editingItem == item
-        const completed = item.completed
-        return <li class={cc({ completed, editing })} >
-
-            <div class="view">
-                <input class="toggle" type="checkbox" onchange={onchange} checked={completed} />
-                <label ondblclick={ondblclick}>{item.text}</label>
-                <button onclick={onclick} class="destroy" />
-            </div>
-
-            <When cond={editing}>
-                <div class="input-container">
-                    <input id="edit-todo-input" class="edit" value={item.text} onkeyup={c.keyUp} onblur={c.endEdit} mounted={inputmounted} />
-                </div>
-            </When>
-
-        </li>
-    }
-}
-
-const focuselement = (e: Node) => (e as HTMLElement).focus()
-
-const Item3 = ({ item }: { item: Todo }) => {
-    
     const editing = m.editingItem == item
     const completed = item.completed
 
-    return <li class={cc({ completed, editing })} model={item} >
-
+    return <li class={cc({ completed, editing })} model={item}>
         <div class="view">
-            <input class="toggle" type="checkbox" onchange={c.setCompleted3} checked={completed} />
-            <label ondblclick={c.startEdit3}>{item.text}</label>
-            <button onclick={c.delItem3} class="destroy" />
+            <input class="toggle" type="checkbox" onchange={c.setCompleted} checked={completed} />
+            <label ondblclick={c.startEdit}>{item.text}</label>
+            <button onclick={c.delItem} class="destroy" />
         </div>
-
         <When cond={editing}>
             <div class="input-container">
                 <input id="edit-todo-input" class="edit" value={item.text} onkeyup={c.keyUp} onblur={c.endEdit} mounted={focuselement} />
             </div>
         </When>
-
     </li>
 }
 
@@ -132,3 +62,5 @@ export const App = () => <section class="todoapp">
 </section>
 
 patch(document.querySelector(".todoapp"), <App />)
+
+mount({ updateview })

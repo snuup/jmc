@@ -51,7 +51,7 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, h)
+    console.log('%csync2', "background:orange", parent.tagName, i, h)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
