@@ -18,7 +18,7 @@
 //      Dovydas Navickas <https://github.com/DovydasNavickas>
 //      Stéphane Goetz <https://github.com/onigoetz>
 
-import type { IUpdateContext } from "./h"
+import type { H, IUpdateContext } from "./h"
 
 interface EventHandler<E extends Event> {
     (event: E): void
@@ -28,6 +28,7 @@ export interface AdditionalElementAttributes {
     mounted?: (n:Node) => void
     update?: (n:Node, uc:IUpdateContext) => void
     const?: boolean
+    model?: any
 }
 
 import { SVGAttributes } from 'react'
@@ -36,6 +37,9 @@ type SVGProps<T extends SVGElement> = SVGAttributes<T>
 
 declare global {
     namespace JSX {
+        
+        type Element = H
+
         interface IntrinsicElements extends IntrinsicElementAttributes {
 
             "x-autosuggest": HtmlHTMLAttributes & {

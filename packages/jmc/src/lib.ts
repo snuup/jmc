@@ -4,7 +4,7 @@ import { updateview } from './jmc.js'
 
 export type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; }
 
-export const When = ({ cond }: { cond: boolean }, cn: Children): HFragment | undefined => cond ? { kind: HKind.Fragment, cn } : undefined
+export const When = ({ cond }: { cond: boolean }, cn: Children): HFragment | null => cond ? { kind: HKind.Fragment, cn } : null
 
 export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 

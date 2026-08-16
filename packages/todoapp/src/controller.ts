@@ -26,6 +26,16 @@ class Controller {
         updateview((ev.target as HTMLElement).closest("li"))
     }
 
+    startEdit2(e: HTMLElement, item: Todo) {
+        m.editingItem = item
+        updateview(e)
+    }
+
+    startEdit3(ev: Event) {
+        m.editingItem = ev.model
+        updateview(ev.component)
+    }
+
     endEdit(ev: Event) {
         m.editingItem = null
         updateview((ev.target as HTMLElement).closest("li"))
@@ -57,6 +67,17 @@ class Controller {
         updateview(".footer", li)
     }
 
+    setCompleted2(e: HTMLElement, item: Todo, checked: boolean): void {
+        item.completed = checked
+        updateview(e, ".footer")
+    }
+
+    setCompleted3(ev: Event): void {
+        let { model, component } = from(ev)
+        model.completed = (ev.target as HTMLInputElement).checked
+        updateview(component, ".footer")
+    }
+
     toggleAllItems(ev: Event) {
         const checked = (ev.target as HTMLInputElement).checked
         m.items.forEach(t => t.completed = checked)
@@ -86,7 +107,27 @@ class Controller {
         m.items = m.items.filter(t => t.id != item.id)
         updateview("ul")
     }
+
+    delItem3(ev: Event) {
+        let { model } = from(ev)
+        let delid = model.id
+        m.items = m.items.filter(t => t.id != delid)
+        updateview("ul")
+    }
 }
 
 //export const c = loggedmethodsex(new Controller(), (name, args, result) => { console.log(chalk.whiteBright.bgGrey.bold(name), args, result) })
 export const c = new Controller()
+
+declare global {
+    interface Event {
+        model: Todo
+        component: HTMLElement
+    }
+}
+
+const from = (ev: Event) => {
+    let component = (ev.target as HTMLElement).closest("li")!
+    let model = (component as any).model as Todo
+    return { component, model }
+}
