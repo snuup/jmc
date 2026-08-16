@@ -542,7 +542,7 @@ declare global {
     namespace JSX {
         interface IntrinsicElements extends IntrinsicElementAttributes {
             side: HtmlHTMLAttributes
-            body: HtmlHTMLAttributes & { a: number }
+            body: HtmlHTMLAttributes & { a?: number }
         }
     }
 }

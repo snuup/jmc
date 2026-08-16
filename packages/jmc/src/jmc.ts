@@ -49,16 +49,15 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
     return i
 }
 
-// tbd: is update in place possible? - add tests for lazy update
-function evalprops(p: J | undefined): J | undefined {
-    if (!p) return p
-    const pr = {} as J
-    for (const k in p) {
-        let v = p[k]
-        pr[k] = v instanceof Function && v.lazy === true ? p[k]() : p[k]
-    }
-    return pr
-}
+// function evalprops(p: J | undefined): J | undefined {
+//     return p
+//     // if (!p) return p
+//     // for (const k in p) {
+//     //     let v = p[k]
+//     //     p[k] = v instanceof Function && v.lazy === true ? p[k]() : p[k]
+//     // }
+//     // return p
+// }
 
 export const lazy = <T>(expr: Func<T>): T => {
     let e: any = expr
@@ -76,43 +75,45 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
     switch (h.kind) {
         case HKind.Element:
+            {
 
-            let n: Element
-            let { tag, cn, p } = h
-            cn ??= []
+                let n: Element
+                let { tag, cn, p } = h
+                cn ??= []
 
-            let pr = evalprops(p)
+                if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
+                    n = document.createElementNS(ns = p?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
+                    c ? c.replaceWith(n) : parent.appendChild(n)
+                    setprops(n, {}, p)
+                    p?.mounted?.(n)
+                } else {
+                    n = c as Element
+                    setprops(n, n.h?.p, p) // tbd: this is wrong - try to break this with property updates, just patch sequences - create an own patch test file
+                    if (p?.update?.(c, uc)) return i + 1
+                }
 
-            if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                n = document.createElementNS(ns = pr?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
-                c ? c.replaceWith(n) : parent.appendChild(n)
-                setprops(n, {}, pr)
-                pr?.mounted?.(n)
-            } else {
-                n = c as Element
-                setprops(n, n.h?.p, pr) // tbd: this is wrong - try to break this with property updates, just patch sequences - create an own patch test file
-                if (pr?.update?.(c, uc)) return i + 1
+                n.h = h // this also sets the new property values
+
+                if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
+
+                    // island attribute
+                    if (n.h?.p?.const) return i + 1
+
+                    const j = syncchildren(uc, n, cn, 0, ns)
+                    removeexcesschildren(n, j)
+                }
+
+                return i + 1
             }
-
-            n.h = h // this also sets the new property values
-
-            if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
-
-                // island attribute
-                if (n.h?.p?.const) return i + 1
-
-                const j = syncchildren(uc, n, cn, 0, ns)
-                removeexcesschildren(n, j)
-            }
-
-            return i + 1
 
         case HKind.Fragment:
-            return syncchildren(uc, parent, h.cn ?? [], i, ns)
+            {
+                return syncchildren(uc, parent, h.cn ?? [], i, ns)
+            }
 
         case HKind.FunctionComponent:
             {
-                let hr = h.tag(evalprops(h.p), h.cn)
+                let hr = h.tag(h.p, h.cn)
                 let j = sync(uc, parent, i, hr, ns)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
                 if (n) n.h = h
@@ -123,10 +124,8 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
             {
                 let isupdate = (c?.h as any)?.tag == h.tag
 
-                let pr = evalprops(h.p)
-
-                let ci = h.i = isupdate ? (c.h! as any).i! : rebind(new h.tag(pr))
-                ci.props = pr // for  the update case we set props
+                let ci = h.i = isupdate ? (c.h! as any).i! : rebind(new h.tag(h.p))
+                ci.props = h.p // for  the update case we set props
 
                 // if component instance returns truthy for update(), then this update substitutes syncing
                 if (isupdate && ci.update?.(uc)) return i + 1
@@ -139,7 +138,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
                 n.h = h
 
-                if (!isupdate) {                    
+                if (!isupdate) {
                     ci.mounted?.()
                 }
 
@@ -176,3 +175,5 @@ function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
     sels.flatMap(s => (typeof s == 'string' ? [...document.querySelectorAll(s)] : s ? [s] : []))
         .forEach(e => { patch(e, e.h!, uc) })
 }
+
+console.log("jmc version 1.0.14");
