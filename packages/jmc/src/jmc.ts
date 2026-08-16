@@ -1,5 +1,5 @@
 import { rebind } from './base.js'
-import type { H, HElement, IUpdateContext, J, Selector, Selectors, Children, Func } from './h'
+import type { H, HElement, IUpdateContext, J, Selector, Selectors, Children, HClassComponent } from './h'
 import { HKind } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
@@ -48,23 +48,6 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
     cn.flat().forEach(hc => (i = sync(uc, p, i, hc, ns)))
     return i
 }
-
-// function evalprops(p: J | undefined): J | undefined {
-//     return p
-//     // if (!p) return p
-//     // for (const k in p) {
-//     //     let v = p[k]
-//     //     p[k] = v instanceof Function && v.lazy === true ? p[k]() : p[k]
-//     // }
-//     // return p
-// }
-
-export const lazy = <T>(expr: Func<T>): T => {
-    let e: any = expr
-    e.lazy = true // tbd: symbol
-    return e // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
-
-} // fake alert! in fact we pass the expression through, the framework evaluates the props later lazily
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
@@ -120,30 +103,25 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 return j
             }
 
-        case HKind.ClassComponent:
-            {
-                let isupdate = (c?.h as any)?.tag == h.tag
+        case HKind.ClassComponent: {
+            let isupdate = (c?.h as any)?.tag == h.tag
 
-                let ci = h.i = isupdate ? (c.h! as any).i! : rebind(new h.tag(h.p))
-                ci.props = h.p // for  the update case we set props
-
-                // if component instance returns truthy for update(), then this update substitutes syncing
-                if (isupdate && ci.update?.(uc)) return i + 1
-
-                let hr = ci.view()
-                let j = sync(uc, parent, i, hr, ns)
-                let n = parent.childNodes[i]!
-
-                ci.element = n
-
-                n.h = h
-
-                if (!isupdate) {
-                    ci.mounted?.()
-                }
-
-                return j
+            if (isupdate) {
+                let ci = (c!.h as HClassComponent).i!
+                ci.props = h.p
+                
+                // update() substitutes view/sync when it returns truthy
+                return (ci.update?.(uc)) ? i + 1 : sync(uc, parent, i, ci.view(), ns)
             }
+
+            let ci = h.i = rebind(new h.tag(h.p))
+            let j = sync(uc, parent, i, ci.view(), ns)
+            let n = parent.childNodes[i]!
+            ci.element = n
+            n.h = h
+            ci.mounted?.()
+            return j
+        }
 
         case undefined:
             // textnode
@@ -161,8 +139,8 @@ export function patch(e: Node | null, h: H, uc = {} as IUpdateContext) {
     if (!e) return
     delete uc.patchElementOnly
     if (uc.replace) (e as HTMLElement).replaceChildren()
-    const p = e.parentElement as HTMLElement
-    const i = [].indexOf.call<any, any, any>(p.childNodes, e)
+    let p = e.parentElement as HTMLElement
+    let i = [].indexOf.call<any, any, any>(p.childNodes, e)
     // always called deferred, because removing elements can trigger events and their handlers (like blur)
     sync(uc, p, i, h, p.namespaceURI!) // is this safe? use default html namespace?
 }
@@ -176,4 +154,4 @@ function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
         .forEach(e => { patch(e, e.h!, uc) })
 }
 
-console.log("jmc version 1.0.14");
+console.log("jmc version 1.0.15");

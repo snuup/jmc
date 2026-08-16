@@ -2,8 +2,8 @@
 // the following types describe the js expression we get from tsx after conversion be our jmx plugin
 // they can be useful for users as well, components might return them.
 
-export type Func<T> = () => T
-export type Expr<T> = T | Func<T>
+//export type Func<T> = () => T
+//export type Expr<T> = T | Func<T>
 
 export type J = Record<string, any> // a json record
 
