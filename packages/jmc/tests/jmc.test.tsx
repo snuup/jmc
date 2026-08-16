@@ -524,7 +524,7 @@ describe('JMX dom tests', () => {
         expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
         updateview()
         expect(document.body.outerHTML).toBe('<body><b const="true">bunny text node</b></body>')
-    })   
+    })
 
 
     it('props update', () => {
@@ -536,6 +536,37 @@ describe('JMX dom tests', () => {
         expect(document.body.outerHTML).toBe('<body a="3"></body>')
     });
 
+    it('uc.patchelementonly does not touch children', () => {
+
+        let name = "bugs bunny"
+        let title = "a"
+
+        let App = () => <body title={title}>{name}</body>
+
+        patch(document.body, <App />)
+        expect(document.body.outerHTML).toBe('<body title="a">bugs bunny</body>')
+
+        name = "duffy duck"
+        title = "b"
+        updateviewuc({ patchElementOnly: true })
+        expect(document.body.outerHTML, "children are not updated").toBe('<body title="b">bugs bunny</body>')
+    });
+
+    it('uc.replace creates new children', () => {
+
+        let App = () => <body><div /></body>
+
+        patch(document.body, <App />)
+        let d1 = document.querySelector("div")
+
+        updateview()
+        let d2 = document.querySelector("div")
+        expect(d1).toBe(d2)
+
+        updateviewuc({ replace: true })
+        let d3 = document.querySelector("div")
+        expect(d1).not.toBe(d3)
+    });
 })
 
 declare global {

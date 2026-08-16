@@ -137,7 +137,6 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
 export function patch(e: Node | null, h: H, uc = {} as IUpdateContext) {
     if (!e) return
-    delete uc.patchElementOnly
     if (uc.replace) (e as HTMLElement).replaceChildren()
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
