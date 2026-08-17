@@ -6,7 +6,7 @@
 	},
 	"type": "module",
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json && rollup -c"
+		"build": "tsc -p tsconfig.build.json && rollup -c && chcp 65001 > nul && dir dist > sizes.txt"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^16.0.3",

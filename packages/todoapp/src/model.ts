@@ -1,5 +1,3 @@
-import { DeepReadonly, mount } from '../../jmc/src/index.js'
-
 type Id = string
 
 export type Todo = {
@@ -8,7 +6,7 @@ export type Todo = {
     completed: boolean
 }
 
-export const mraw = {
+export let m = {
 
     items: [
         {
@@ -34,7 +32,3 @@ export const mraw = {
     get allarecompleted() { return this.items.every(t => t.completed) },
     get anycompleted() { return this.items.some(t => t.completed) },
 }
-
-export const m = mraw as DeepReadonly<typeof mraw>
-
-// mount({ m })

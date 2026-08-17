@@ -1,0 +1,16 @@
+ Volume in drive D is Speedy
+ Volume Serial Number is DE7A-C94E
+
+ Directory of D:\dev\jmc\packages\todoapp\dist
+
+17.08.2026  11:15    <DIR>          .
+17.08.2026  11:15    <DIR>          ..
+17.08.2026  11:15             9 096 app.css
+17.08.2026  11:15             2 696 app.css.gz
+17.08.2026  11:15             4 960 index.js
+17.08.2026  11:15             2 304 index.js.gz
+17.08.2026  11:15            21 387 index.js.map
+17.08.2026  11:15    <DIR>          jmc
+17.08.2026  11:15    <DIR>          todoapp
+               5 File(s)         40 443 bytes
+               4 Dir(s)  1 405 458 452 480 bytes free

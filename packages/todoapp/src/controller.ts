@@ -1,5 +1,5 @@
 import { updateview, rebind } from '../../jmc/src/index.js'
-import { mraw as m, Todo } from './model'
+import { m, type Todo } from './model'
 
 class Controller {
 
