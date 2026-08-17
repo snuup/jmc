@@ -38,7 +38,7 @@ type SVGProps<T extends SVGElement> = SVGAttributes<T>
 declare global {
     namespace JSX {
         
-        type Element = H
+//        type Element = H
 
         interface IntrinsicElements extends IntrinsicElementAttributes {
 
@@ -51,7 +51,7 @@ declare global {
                 for?: string
             }
 
-            svg: SVGProps<SVGSVGElement> & { class?: string | undefined, xmlns?:"http://www.w3.org/2000/svg" }
+            svg: SVGProps<SVGSVGElement> & { class?: string | undefined, xmlns:"http://www.w3.org/2000/svg" }
             path: SVGProps<SVGPathElement> & { class?: string | undefined }
             textPath: SVGProps<SVGTextPathElement> & { class?: string | undefined, style?: string|undefined }
             tspan: SVGProps<SVGTSpanElement> & { class?: string | undefined }

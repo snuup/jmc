@@ -73,11 +73,7 @@ export interface IUpdateContext {
     replace?: boolean
 }
 
-declare global {
-    interface Node {
-        h?: H & { p?: J }
-    }
-}
+
 
 let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 

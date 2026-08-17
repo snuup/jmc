@@ -6,6 +6,12 @@ const enum NodeType { // vaporizes (but for that must be in this file, otherwise
     TextNode = 3
 }
 
+declare global {
+    interface Node {
+        h?: H & { p?: J }
+    }
+}
+
 let removeexcesschildren = (n: Element, i: number) => {
     let c: ChildNode
     while ((c = n.childNodes[i])) {
