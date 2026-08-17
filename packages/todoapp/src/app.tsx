@@ -46,7 +46,7 @@ let Todos = () => <ul class="todo-list">
     {m.filtereditems.map(t => <Item item={t} />)}
 </ul>
 
-let Main = () => <main class="main">
+let Main = <main class="main">
     <div class="toggle-all-container">
         <input class="toggle-all" id="toggle-all" type="checkbox" onchange={c.toggleAllItems} checked={m.allarecompleted} />
         <label for="toggle-all">Mark all as complete</label>
@@ -55,7 +55,7 @@ let Main = () => <main class="main">
     <Footer />
 </main>
 
-let App = () => <section class="todoapp">
+let App = <section class="todoapp">
     <Header />
     <Main />
 </section>

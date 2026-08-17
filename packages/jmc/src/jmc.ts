@@ -128,9 +128,9 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
             return j
         }
 
-        case undefined:
+        default:
             // textnode
-            let s = h as string // coerce type as the js runtime does
+            let s = h.toString()
             if (c?.nodeType == NodeType.TextNode) {
                 if (c.textContent != s) c.textContent = s // firefox updates equal text, loosing existing text selection
             } else {
@@ -143,18 +143,9 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 export function patch(e: Node | null, h?: H, uc = {} as IUpdateContext) {
     if (!e) return
     if (uc.replace) (e as HTMLElement).replaceChildren()
-
-    // walk up
-    while (!h && e) h = (e = e.parentNode)?.h
-    if (!h || !e) {
-        console.warn("patch not possible, h is undefined in whole parent chain", e, h)
-        return
-    }
-
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
-    // always called deferred, because removing elements can trigger events and their handlers (like blur)
-    sync(uc, p, i, h, p.namespaceURI!) // is this safe? use default html namespace?
+    sync(uc, p, i, h, p.namespaceURI!)
 }
 
 export function updateviewuc(u: IUpdateContext, ...sels: Selector[]): void { updateviewinternal(u, ...sels) }
@@ -165,5 +156,3 @@ function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
     sels.flatMap(s => (typeof s == 'string' ? [...document.querySelectorAll(s)] : s ? [s] : []))
         .forEach(e => { patch(e, e.h, uc) })
 }
-
-// console.log("jmc version 1.0.16");

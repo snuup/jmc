@@ -1,7 +1,7 @@
 {
     "name": "@snupo/jmc",
     "author": "snupo",
-    "version": "1.0.21",
+    "version": "1.0.24",
     "publishConfig": {
         "access": "public"
     },
