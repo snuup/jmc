@@ -1,32 +1,15 @@
 {
     "compilerOptions": {
-        "target": "ESNEXT",
-        "module": "ESNext",
-        "jsx": "react",
-        "jsxFactory": "jsx",
-        "jsxFragmentFactory": "jsxf",
+        "target": "ESNext",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
         "inlineSources": true,
         "outDir": "dist",
-        "removeComments": false,
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "moduleResolution": "bundler",
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "preserveConstEnums": false,
         "rootDir": "src",
+        "moduleResolution": "bundler" // without this, react types cannot resolve import * as CSS from "csstype";
     },
     "include": [
         "src"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist"
     ]
 }

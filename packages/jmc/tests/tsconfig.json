@@ -1,0 +1,8 @@
+{
+    "extends": "../tssconfig.json",
+    "compilerOptions": {
+        "jsx": "react",
+        "jsxFactory": "jsx",
+        "jsxFragmentFactory": "jsxf"
+    }
+}
