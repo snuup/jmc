@@ -9,12 +9,13 @@ simplicity to a level where everybody can read, fix, expand the code
     no proxificiation of the pojo, just the instance must remain stable
 
 2. controller
-- only controller can modify the model, which is immutable for other code like the view
+- only the controller modifies the model, which shall be treated immutable for other code parts like the view
 - controller actions modify the model and update the relevant parts of the view.
-    while this causes minimal effort to the programmer it has these advantages:
-    no magic as in vue or svelte
+    while this need to consider which parts of the view require an update after the current action,
+    this causes only minimal effort to the programmer - in contrast to the "reactive" frameworks who try to free
+    the programmer from this task not considering the complexity they add during this endeavour:
     no inefficient comparisons between old and new state as in react-redux glue code
-    affected parts of the view are updated once - with automagic, "reactive" frameworks, updates might occur more than once
+    no magic as in vue or svelte, sooner or later one needs to understand the hidden magic operations
 
 3. view
 - is the dom, described as statically typed jsx, namely tsx

@@ -6,6 +6,18 @@ export type Selector = string | Node | undefined | null
 export type FComponent = (props: J | undefined, children?: Children) => HElement // show an example for usage of children
 export type FComponentT<P> = (pcn: P, cn?: Children) => H | void
 
+type HKindElement = 1
+type HKindFunctionComponent = 2
+type HKindClassComponent = 3
+type HKindFragment = 4
+
+export const kindelement : HKindElement = 1
+export const kindfc : HKindFunctionComponent = 2
+export const kindcc : HKindClassComponent = 3
+export const kindfragment : HKindFragment = 4
+
+export type HKind = HKindElement | HKindFunctionComponent | HKindClassComponent | HKindFragment
+
 export interface IClassComponent {
     element: Node
     props?: Record<string, any>
@@ -26,37 +38,30 @@ export type HText =
     | boolean // do not allow boolean, that
 
 export type HFragment = {
-    kind: HKind.Fragment
+    kind: HKindFragment
     cn?: Children
 }
 
 export type HElement = {
-    kind: HKind.Element
+    kind: HKindElement
     tag: string
     p?: J
     cn?: Children
 }
 
 export type HFunctionComponent = {
-    kind: HKind.FunctionComponent
+    kind: HKindFunctionComponent
     tag: FComponent
     p?: J
     cn?: Children
 }
 
 export type HClassComponent = {
-    kind: HKind.ClassComponent
+    kind: HKindClassComponent
     tag: CComponent
     p?: J
     cn?: Children
     i?: IClassComponent
-}
-
-export const enum HKind {
-    Element = 1,
-    FunctionComponent = 2,
-    ClassComponent = 3,
-    Fragment = 4
 }
 
 export type HComp = HFunctionComponent | HClassComponent
@@ -73,19 +78,15 @@ export interface IUpdateContext {
     replace?: boolean
 }
 
-
-
 let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 
 export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment {
     if (tag?.kind) return tag // already an H node, flatten tree
 
-    let kind = tag == jsxf ? HKind.Fragment
-        : tag instanceof Function ? (isclass(tag) ? HKind.ClassComponent : HKind.FunctionComponent)
-        : HKind.Element
+    let kind: HKind = tag == jsxf ? kindfragment : tag instanceof Function ? (isclass(tag) ? kindcc : kindfc) : kindelement
 
     let h: any = { kind }
-    if (kind != HKind.Fragment) h.tag = tag
+    if (kind != kindfragment) h.tag = tag
     if (p) h.p = p
     if (cn?.length) h.cn = cn
     return h

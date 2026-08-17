@@ -1,27 +1,15 @@
 {
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#68596c",
+        "titleBar.inactiveBackground": "#68596c"
+    },
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
         "**/.hg": true,
-        "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "**/package-lock.json": true,
         "**/node_modules": false
     },
-    "workbench.colorCustomizations": {
-        "titleBar.activeBackground": "#434d56ff",
-        "titleBar.inactiveBackground": "#484d51ff",
-        "activityBar.background": "#033339"
-    },
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "debug.javascript.skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/node_modules/**"
-    ],
-    "vitest.debugExclude": [
-        "<node_internals>/**",
-        "**/node_modules/**"
-    ]
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

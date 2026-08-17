@@ -1,6 +1,6 @@
-import { rebind } from './base.js'
 import type { H, HElement, IUpdateContext, J, Selector, Children, HClassComponent } from './h'
-import { HKind } from './h'
+import { rebind } from './base.js'
+import { kindcc, kindelement, kindfc, kindfragment } from './h.js'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3
@@ -63,7 +63,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
     let c = parent.childNodes[i]
 
     switch (h.kind) {
-        case HKind.Element:
+        case kindelement:
             {
                 let n: Element
                 let { tag, cn, p } = h
@@ -76,7 +76,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                     p?.mounted?.(n)
                 } else {
                     n = c as Element
-                    setprops(n, n.h?.p, p) // tbd: this is wrong - try to break this with property updates, just patch sequences - create an own patch test file
+                    setprops(n, n.h?.p, p)
                     if (p?.update?.(c, uc)) return i + 1
                 }
 
@@ -94,12 +94,12 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 return i + 1
             }
 
-        case HKind.Fragment:
+        case kindfragment:
             {
                 return syncchildren(uc, parent, h.cn ?? [], i, ns)
             }
 
-        case HKind.FunctionComponent:
+        case kindfc:
             {
                 let hr = h.tag(h.p, h.cn)
                 let j = sync(uc, parent, i, hr, ns)
@@ -108,7 +108,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 return j
             }
 
-        case HKind.ClassComponent: {
+        case kindcc: {
             let isupdate = (c?.h as any)?.tag == h.tag
 
             if (isupdate) {
