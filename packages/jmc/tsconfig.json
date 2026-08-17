@@ -1,39 +1,32 @@
 {
-  "compilerOptions": {
-    "target": "ESNEXT",
-    "module": "ESNext",
-
-    "jsx": "react",
-    "jsxFactory": "jsx",
-    "jsxFragmentFactory": "jsxf",
-
-    "declaration": true,
-    "declarationMap": true,
-
-    "sourceMap": true,
-    "inlineSources": true,
-
-    "outDir": "dist",
-
-    "removeComments": false,
-
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-
-    "moduleResolution": "bundler",
-
-    "esModuleInterop": true,
-
-    "experimentalDecorators": true,
-
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "preserveConstEnums": false
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "compilerOptions": {
+        "target": "ESNEXT",
+        "module": "ESNext",
+        "jsx": "react",
+        "jsxFactory": "jsx",
+        "jsxFragmentFactory": "jsxf",
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "inlineSources": true,
+        "outDir": "dist",
+        "removeComments": false,
+        "strict": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "moduleResolution": "bundler",
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "preserveConstEnums": false,
+        "rootDir": "src",
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }

@@ -2,7 +2,7 @@
 .idea/
 /.VSCodeCounter/
 /packages/jmc/dist/
-**/dist/
+**/dist*/
 **/build/
 **/dist/
 **/coverage/
