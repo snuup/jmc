@@ -1,5 +1,4 @@
 import { cc, focuselement, jsx, patch, When } from '../../jmc/src/index.js'
-
 import { c } from './controller'
 import { m, type Todo } from './model'
 import 'todomvc-app-css/index.css'
