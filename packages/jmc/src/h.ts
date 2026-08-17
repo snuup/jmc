@@ -96,5 +96,5 @@ export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionCompone
     return h
 }
 
-// declare fragment function with similar signature as a function component
-export function jsxf(props: any, ...cn: any[]): HFragment { throw 2 }
+// fragment is only used above as a sentinel
+export let jsxf = Symbol()
