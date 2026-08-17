@@ -1,5 +1,5 @@
 import { rebind } from './base.js'
-import type { H, HElement, IUpdateContext, J, Selector, Selectors, Children, HClassComponent } from './h'
+import type { H, HElement, IUpdateContext, J, Selector, Children, HClassComponent } from './h'
 import { HKind } from './h'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
@@ -151,8 +151,8 @@ export function patch(e: Node | null, h?: H, uc = {} as IUpdateContext) {
     sync(uc, p, i, h, p.namespaceURI!) // is this safe? use default html namespace?
 }
 
-export function updateviewuc(u: IUpdateContext, ...sels: Selectors): void { updateviewinternal(u, ...sels) }
-export function updateview(...sels: Selectors): void { updateviewinternal({}, ...sels) }
+export function updateviewuc(u: IUpdateContext, ...sels: Selector[]): void { updateviewinternal(u, ...sels) }
+export function updateview(...sels: Selector[]): void { updateviewinternal({}, ...sels) }
 
 function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
     if (!sels.length) sels.push('body')

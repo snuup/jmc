@@ -2,7 +2,6 @@ export type J = Record<string, any> // a json record
 
 // Overload signatures
 export type Selector = string | Node | undefined | null
-export type Selectors = Selector[]
 
 export type FComponent = (props: J | undefined, children?: Children) => HElement // show an example for usage of children
 export type FComponentT<P> = (pcn: P, cn?: Children) => H | void
