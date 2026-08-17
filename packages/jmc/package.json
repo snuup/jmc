@@ -1,7 +1,7 @@
 {
     "name": "@snupo/jmc",
     "author": "snupo",
-    "version": "1.0.16",
+    "version": "1.0.20",
     "publishConfig": {
         "access": "public"
     },
@@ -22,11 +22,12 @@
         "build": "tsc -p tsconfig.build.json"
     },
     "devDependencies": {
-        "@vitest/coverage-v8": "^4.1.10",
+        "typescript": "^6.0.3",
+        "vite": "^8.1.5",
+        "vitest": "4.1.10",
         "happy-dom": "^16.8.1",
-        "rimraf": "^6.1.3",
-        "tsdown": "^0.22.14",
-        "vitest": "4.1.10"
+        "@vitest/coverage-v8": "^4.1.10",
+        "rimraf": "^6.1.3"        
     },
     "dependencies": {
         "@types/react": "^19.2.17"
