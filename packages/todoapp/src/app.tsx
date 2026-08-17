@@ -1,16 +1,16 @@
-import { cc, focuselement, jsx, mount, patch, updateview, When } from '../../jmc/src/index.js'
+import { cc, focuselement, jsx, patch, When } from '../../jmc/src/index.js'
 
 import { c } from './controller'
 import { m, type Todo } from './model'
 import 'todomvc-app-css/index.css'
 import 'todomvc-common/base.css'
 
-const Header = () => <header class="header">
+let Header = () => <header class="header">
     <h1>todos</h1>
     <input class="new-todo" onkeydown={c.keydown} placeholder="What needs to be done?" autofocus />
 </header>
 
-const Footer = () => <footer class="footer">
+let Footer = () => <footer class="footer">
     <span class="todo-count">
         <strong>{m.activecount}</strong> {m.activecount == 1 ? "item" : "items"} left
     </span>
@@ -24,12 +24,10 @@ const Footer = () => <footer class="footer">
     </When>
 </footer>
 
-const Item = ({ item }: { item: Todo }) => {
+let Item = ({ item }: { item: Todo }) => {
 
-    console.log("Item", item)
-
-    const editing = m.editingItem == item
-    const completed = item.completed
+    let editing = m.editingItem == item
+    let completed = item.completed
 
     return <li class={cc({ completed, editing })} model={item}>
         <div class="view">
@@ -45,22 +43,22 @@ const Item = ({ item }: { item: Todo }) => {
     </li>
 }
 
-const Main = () => <main class="main">
+let Todos = () => <ul class="todo-list">
+    {m.filtereditems.map(t => <Item item={t} />)}
+</ul>
+
+let Main = () => <main class="main">
     <div class="toggle-all-container">
         <input class="toggle-all" id="toggle-all" type="checkbox" onchange={c.toggleAllItems} checked={m.allarecompleted} />
         <label for="toggle-all">Mark all as complete</label>
     </div>
-    <ul class="todo-list">
-        {m.filtereditems.map(t => <Item item={t} />)}
-    </ul>
+    <Todos />
     <Footer />
 </main>
 
-export const App = () => <section class="todoapp">
+let App = () => <section class="todoapp">
     <Header />
     <Main />
 </section>
 
 patch(document.querySelector(".todoapp"), <App />)
-
-mount({ updateview })

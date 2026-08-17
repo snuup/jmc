@@ -1,6 +1,5 @@
-import { updateview, rebind, loggedmethodsex } from '../../jmc/src/index.js'
+import { updateview, rebind } from '../../jmc/src/index.js'
 import { mraw as m, Todo } from './model'
-import chalk from 'chalk'
 
 class Controller {
 
@@ -23,39 +22,39 @@ class Controller {
     }
 
     startEdit(ev: Event) {
-        let { model, component } = from(ev)
+        let { model, li } = from(ev)
         m.editingItem = model
-        updateview(component)
+        updateview(li)
     }
 
     endEdit(ev: Event) {
+        let { li } = from(ev)
         m.editingItem = null
-        updateview((ev.target as HTMLElement).closest("li"))
+        updateview(li)
     }
 
     keyUp(ev: KeyboardEvent) {
 
-        const { key, target: { value } } = ev as KeyboardEventInput
-        const i = m.editingItem!
+        switch (ev.key) {
 
-        switch (key) {
-
-            case "Enter":
-                i.text = value
-                if (!value) m.items = m.items.filter(x => x !== i)
+            case "Enter": {
+                let i = m.editingItem!
+                if (!(i.text = (ev.target as HTMLInputElement).value)) m.items = m.items.filter(x => x !== i)
                 this.endEdit(ev)
                 break
+            }
 
-            case "Escape":
+            case "Escape": {
                 this.endEdit(ev)
                 break
+            }
         }
     }
 
     setCompleted(ev: Event): void {
-        let { model, component } = from(ev)
+        let { model, li } = from(ev)
         model.completed = (ev.target as HTMLInputElement).checked
-        updateview(component, ".footer")
+        updateview(li, ".footer")
     }
 
     toggleAllItems(ev: Event) {
@@ -91,11 +90,13 @@ class Controller {
     }
 }
 
-export const c = loggedmethodsex(new Controller(), (name, args, result) => { console.log(chalk.whiteBright.bgGrey.bold(name), args, result) })
-//export const c = new Controller()
-
 const from = (ev: Event) => {
-    let component = (ev.target as HTMLElement).closest("li")!
-    let model = (component as any).model as Todo
-    return { component, model }
+    let li = (ev.target as HTMLElement).closest("li")!
+    let model = (li as any).model as Todo
+    return { li, model }
 }
+
+// import chalk from 'chalk'
+// export const c = loggedmethodsex(new Controller(), (name, args, result) => { console.log(chalk.whiteBright.bgGrey.bold(name), args, result) })
+export const c = new Controller()
+

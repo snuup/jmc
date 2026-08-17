@@ -51,7 +51,7 @@ let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns:
 
 function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    console.log('%csync2', "background:orange", parent.tagName, i, h)
+    // console.log('%csync2', "background:orange", parent.tagName, i, h)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
@@ -74,7 +74,7 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                     if (p?.update?.(c, uc)) return i + 1
                 }
 
-                n.h = h // this also sets the new property values
+                n.h = h // sets the new property values
 
                 if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
 
@@ -134,9 +134,17 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
     }
 }
 
-export function patch(e: Node | null, h: H, uc = {} as IUpdateContext) {
+export function patch(e: Node | null, h?: H, uc = {} as IUpdateContext) {
     if (!e) return
     if (uc.replace) (e as HTMLElement).replaceChildren()
+
+    // walk up
+    while (!h && e) h = (e = e.parentNode)?.h
+    if (!h || !e) {
+        console.warn("patch not possible, h is undefined in whole parent chain", e, h)
+        return
+    }
+
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
     // always called deferred, because removing elements can trigger events and their handlers (like blur)
@@ -149,7 +157,7 @@ export function updateview(...sels: Selectors): void { updateviewinternal({}, ..
 function updateviewinternal(uc: IUpdateContext, ...sels: Selector[]): void {
     if (!sels.length) sels.push('body')
     sels.flatMap(s => (typeof s == 'string' ? [...document.querySelectorAll(s)] : s ? [s] : []))
-        .forEach(e => { patch(e, e.h!, uc) })
+        .forEach(e => { patch(e, e.h, uc) })
 }
 
-console.log("jmc version 1.0.16");
+// console.log("jmc version 1.0.16");

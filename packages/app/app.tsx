@@ -1,20 +1,4 @@
-import {
-    jsx,
-    jsxf,
-    patch,
-    updateview,
-    JMXComp,
-    mount,
-    type HtmlHTMLAttributes,
-    type IntrinsicElementAttributes,
-    Selector,
-    Selectors,
-    updateviewuc,
-    cc,
-    Children,
-    HKind,
-    lazy
-} from '../jmc/src'
+import { jsx, patch, updateview, type HtmlHTMLAttributes } from '../jmc/src'
 import './lab.css'
 
 declare global {
@@ -25,18 +9,7 @@ declare global {
     }
 }
 
-let person = {
-    name: "bugs"
-}
-
-let m = {
-    person,
-    name: "bugs"
-}
-
-mount({ m, updateview, lazy })
-
-export const When = ({ cond }: { cond: boolean }, cn: Children) => cond ? <>{cn}</> : undefined
+let m = { name: "bugs" }
 
 let Comp = ({ name }: { name: String }) => {
     console.log("Comp", name)
@@ -44,10 +17,13 @@ let Comp = ({ name }: { name: String }) => {
 }
 
 let App = () => <body>
-    <Comp name={lazy(() => m.name)} />
+    <Comp name={m.name} />
 </body>
 
 patch(document.body, <App />)
 
+console.log("now updating");
+
+
 m.name = "duffy"
-updateview("b")
+updateview()

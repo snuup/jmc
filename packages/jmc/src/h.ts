@@ -80,7 +80,7 @@ declare global {
     }
 }
 
-let isclass = (X: Function) => /^class\s|^class\{/.test(X.toString())
+let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 
 export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment {
     if (tag?.kind) return tag // already an H node, flatten tree

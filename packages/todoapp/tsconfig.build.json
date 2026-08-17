@@ -1,7 +1,7 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "outDir": "./build",
+        "outDir": "./dist",
         // "rootDir": "./src",
         "declaration": true,
         "declarationMap": true,
@@ -9,7 +9,6 @@
         "preserveConstEnums": false
     },
     "include": [
-        "src",
-        "."
+        "src"
     ]
 }

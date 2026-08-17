@@ -1,7 +1,10 @@
-import terser from "@rollup/plugin-terser";
+import terser from "@rollup/plugin-terser"
+import postcss from 'rollup-plugin-postcss'
+import { nodeResolve } from '@rollup/plugin-node-resolve'
+import gzip from 'rollup-plugin-gzip'
 
 export default {
-    input: "build/todoapp/src/app.js",
+    input: "./dist/todoapp/src/app.js",
 
     output: {
         file: "dist/index.js",
@@ -10,6 +13,15 @@ export default {
     },
 
     plugins: [
-        terser()
+        terser({
+            mangle: {
+                properties: {
+                    regex: /.*/,
+                },
+            },
+        }),
+        nodeResolve(),
+        postcss({ extract: 'app.css' }),
+        gzip({ fileName: '.gz' }),
     ]
 };
