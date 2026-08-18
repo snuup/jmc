@@ -22,7 +22,7 @@ export interface IClassComponent {
     element: Node
     props?: Record<string, any>
     view(): H
-    update(uc: IUpdateContext): boolean | void
+    update(uc: any): boolean | void
     mounted?(): void
 }
 
@@ -72,11 +72,6 @@ export type H =
     | HFunctionComponent
     | HClassComponent
     | HFragment
-
-export interface IUpdateContext {
-    patchElementOnly?: boolean
-    replace?: boolean
-}
 
 let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 

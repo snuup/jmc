@@ -1,4 +1,4 @@
-import type { Children, IClassComponent, IUpdateContext, H, J, HFragment } from './h';
+import type { Children, IClassComponent, H, J, HFragment } from './h';
 import { kindfragment } from './h.js'
 import { updateview } from './jmc.js'
 
@@ -13,7 +13,7 @@ export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 
     // overrides
     mounted() { }
-    update(uc?: IUpdateContext): boolean | void { }
+    update(uc?: any): boolean | void { }
     abstract view(): H
 
     // utility: updates the component's view

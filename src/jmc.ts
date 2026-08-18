@@ -1,4 +1,4 @@
-import type { H, HElement, IUpdateContext, J, Selector, Children, HClassComponent } from './h'
+import type { H, HElement, J, Selector, Children, HClassComponent } from './h'
 import { rebind } from './base.js'
 import { kindcc, kindelement, kindfc, kindfragment } from './h.js'
 
@@ -9,13 +9,6 @@ const enum NodeType { // vaporizes (but for that must be in this file, otherwise
 declare global {
     interface Node {
         h?: H & { p?: J }
-    }
-}
-
-let removeexcesschildren = (n: Element, i: number) => {
-    let c: ChildNode
-    while ((c = n.childNodes[i])) {
-        try { c.remove() } catch (_) { } // due to blur-event-handlers, this can fail
     }
 }
 
@@ -50,12 +43,12 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
 }
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
-let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: number): number => {
-    cn.flat(999).forEach(hc => (i = sync(p, i, hc, ns, depth)))
+let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: number, uc: J): number => {
+    cn.flat(999).forEach(hc => (i = sync(p, i, hc, ns, depth, uc)))
     return i
 }
 
-function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: number): number {
+function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: number, uc: J): number {
 
     console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
     if (!depth) return i + 1
@@ -78,18 +71,14 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
                 } else {
                     n = c as Element
                     setprops(n, n.h?.p, p)
-                    if (p?.update?.(c, globaluc)) return i + 1
+                    if (p?.update?.(c, uc)) return i + 1
                 }
 
                 n.h = h // sets the new property values
 
-                if (!globaluc.patchElementOnly && !iswebcomponent(h as HElement)) {
-
-                    // island attribute
-                    if (n.h?.p?.const) return i + 1
-
-                    const j = syncchildren(n, cn, 0, ns, depth)
-                    removeexcesschildren(n, j)
+                if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
+                    const j = syncchildren(n, cn, 0, ns, depth, uc)
+                    n.replaceChildren(...[...n.childNodes].slice(0, j)) // strip excess children
                 }
 
                 return i + 1
@@ -97,13 +86,13 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
 
         case kindfragment:
             {
-                return syncchildren(parent, h.cn ?? [], i, ns, depth)
+                return syncchildren(parent, h.cn ?? [], i, ns, --depth, uc)
             }
 
         case kindfc:
             {
                 let hr = h.tag(h.p, h.cn)
-                let j = sync(parent, i, hr, ns, depth)
+                let j = sync(parent, i, hr, ns, depth, uc)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
                 if (n) n.h = h
                 return j
@@ -117,11 +106,11 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
                 ci.props = h.p
 
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(globaluc)) ? i + 1 : sync(parent, i, ci.view(), ns, depth)
+                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), ns, depth, uc)
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
-            let j = sync(parent, i, ci.view(), ns, depth)
+            let j = sync(parent, i, ci.view(), ns, depth, uc)
             let n = parent.childNodes[i]!
             ci.element = n
             n.h = h
@@ -141,40 +130,42 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
     }
 }
 
-let globaluc: IUpdateContext
-let updatedepth: number
-
-export function patch(e: Node | null, h?: H) {
-    debugger
+export function patch(e: Node | null, h?: H, depth = 999, uc = {} as J) {
     if (!e) return
-    if (updatedepth == 0) (e as HTMLElement).replaceChildren()
+    if (depth == 0) {
+        (e as HTMLElement).replaceChildren()
+        depth = 999
+    }
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
-    sync(p, i, h, p.namespaceURI!, updatedepth)
+    sync(p, i, h, p.namespaceURI!, depth, uc)
 }
 
-export type Command = Selector | IUpdateContext | number
+export type Command = Selector | J | number
 
 export function updateview(...cmds: Command[]): void {
+
     if (!cmds.length) cmds.push('body')
-    updatedepth = 999
-    globaluc = {}
-    updateviewinternal(cmds)
-}
+    let uc = {}
+    let depth = 999
+    let patchcount = 0
 
-export function updateviewinternal(cmds: Command[]): void {
-
-    for (const c of cmds) {
-        if (typeof c === 'string') {
-            updateviewinternal([...document.querySelectorAll(c)])
-        } else if (c instanceof Node) {
-            patch(c, c.h)
-        } else if (typeof c === 'number') {
-            updatedepth = c
-        } else {
-            globaluc = c
-            if (c.replace) updatedepth = 0
-            if (c.patchElementOnly) updatedepth = 1
+    function f(cmds: Command[]) {
+        for (const c of cmds) {
+            if (typeof c === 'string') {
+                f([...document.querySelectorAll(c)])
+            } else if (c instanceof Node) {
+                patch(c, c.h, depth, uc)
+                patchcount++
+            } else if (typeof c === 'number') {
+                depth = c
+            } else {
+                uc = c
+            }
         }
     }
+
+    f(cmds)
+
+    if (!patchcount) console.warn("updateview did not update anything. most likely this is unwanted. cmds=", ...cmds)
 }

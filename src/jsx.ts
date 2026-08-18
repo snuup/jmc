@@ -18,15 +18,13 @@
 //      Dovydas Navickas <https://github.com/DovydasNavickas>
 //      Stéphane Goetz <https://github.com/onigoetz>
 
-import type { H, IUpdateContext } from "./h"
-
 interface EventHandler<E extends Event> {
     (event: E): void
 }
 
 export interface AdditionalElementAttributes {
     mounted?: (n:Node) => void
-    update?: (n:Node, uc:IUpdateContext) => void
+    update?: (n:Node, uc:any) => void
     const?: boolean
     model?: any
 }
