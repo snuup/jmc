@@ -50,14 +50,14 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
 }
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
-let syncchildren = (uc: IUpdateContext, p: Element, cn: Children, i: number, ns: string): number => {
-    cn.flat().forEach(hc => (i = sync(uc, p, i, hc, ns)))
+let syncchildren = (p: Element, cn: Children, i: number, ns: string): number => {
+    cn.flat(999).forEach(hc => (i = sync(p, i, hc, ns)))
     return i
 }
 
-function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, ns: string): number {
+function sync(parent: Element, i: number, h: H | undefined, ns: string): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, h)
+    console.log('%csync2', "background:orange", parent.tagName, i, h)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
@@ -77,17 +77,17 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 } else {
                     n = c as Element
                     setprops(n, n.h?.p, p)
-                    if (p?.update?.(c, uc)) return i + 1
+                    if (p?.update?.(c, globaluc)) return i + 1
                 }
 
                 n.h = h // sets the new property values
 
-                if (!uc.patchElementOnly && !iswebcomponent(h as HElement)) {
+                if (!globaluc.patchElementOnly && !iswebcomponent(h as HElement)) {
 
                     // island attribute
                     if (n.h?.p?.const) return i + 1
 
-                    const j = syncchildren(uc, n, cn, 0, ns)
+                    const j = syncchildren(n, cn, 0, ns)
                     removeexcesschildren(n, j)
                 }
 
@@ -96,13 +96,13 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
 
         case kindfragment:
             {
-                return syncchildren(uc, parent, h.cn ?? [], i, ns)
+                return syncchildren(parent, h.cn ?? [], i, ns)
             }
 
         case kindfc:
             {
                 let hr = h.tag(h.p, h.cn)
-                let j = sync(uc, parent, i, hr, ns)
+                let j = sync(parent, i, hr, ns)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
                 if (n) n.h = h
                 return j
@@ -116,11 +116,11 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
                 ci.props = h.p
 
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(uc, parent, i, ci.view(), ns)
+                return (ci.update?.(globaluc)) ? i + 1 : sync(parent, i, ci.view(), ns)
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
-            let j = sync(uc, parent, i, ci.view(), ns)
+            let j = sync(parent, i, ci.view(), ns)
             let n = parent.childNodes[i]!
             ci.element = n
             n.h = h
@@ -140,12 +140,15 @@ function sync(uc: IUpdateContext, parent: Element, i: number, h: H | undefined, 
     }
 }
 
-export function patch(e: Node | null, h?: H, uc = {} as IUpdateContext) {
+let globaluc = {} as IUpdateContext
+
+export function patch(e: Node | null, h?: H, uc = {} as IUpdateContext) {    
     if (!e) return
+    globaluc = uc
     if (uc.replace) (e as HTMLElement).replaceChildren()
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
-    sync(uc, p, i, h, p.namespaceURI!)
+    sync(p, i, h, p.namespaceURI!)
 }
 
 export function updateviewuc(u: IUpdateContext, ...sels: Selector[]): void { updateviewinternal(u, ...sels) }
