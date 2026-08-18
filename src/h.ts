@@ -11,10 +11,10 @@ type HKindFunctionComponent = 2
 type HKindClassComponent = 3
 type HKindFragment = 4
 
-export const kindelement : HKindElement = 1
-export const kindfc : HKindFunctionComponent = 2
-export const kindcc : HKindClassComponent = 3
-export const kindfragment : HKindFragment = 4
+// export const kindelement : HKindElement = 1
+// export const kindfc : HKindFunctionComponent = 2
+// export const kindcc : HKindClassComponent = 3
+// export const kindfragment : HKindFragment = 4
 
 export type HKind = HKindElement | HKindFunctionComponent | HKindClassComponent | HKindFragment
 
@@ -78,10 +78,10 @@ let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment {
     if (tag?.kind) return tag // already an H node, flatten tree
 
-    let kind: HKind = tag == jsxf ? kindfragment : tag instanceof Function ? (isclass(tag) ? kindcc : kindfc) : kindelement
+    let kind: HKind = tag == jsxf ? 4 : tag instanceof Function ? (isclass(tag) ? 3 : 2) : 1
 
     let h: any = { kind }
-    if (kind != kindfragment) h.tag = tag
+    if (kind != 4) h.tag = tag
     if (p) h.p = p
     if (cn?.length) h.cn = cn
     return h

@@ -1,6 +1,5 @@
 import type { H, HElement, J, Selector, Children, HClassComponent } from './h'
 import { rebind } from './base.js'
-import { kindcc, kindelement, kindfc, kindfragment } from './h.js'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3
@@ -50,14 +49,15 @@ let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: numb
 
 function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: number, uc: J): number {
 
-    console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
+    // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
+
     if (!depth) return i + 1
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
 
     switch (h.kind) {
-        case kindelement:
+        case 1:
             {
                 let n: Element
                 let { tag, cn, p } = h
@@ -84,12 +84,12 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
                 return i + 1
             }
 
-        case kindfragment:
+        case 4:
             {
                 return syncchildren(parent, h.cn ?? [], i, ns, --depth, uc)
             }
 
-        case kindfc:
+        case 2:
             {
                 let hr = h.tag(h.p, h.cn)
                 let j = sync(parent, i, hr, ns, depth, uc)
@@ -98,7 +98,7 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
                 return j
             }
 
-        case kindcc: {
+        case 3: {
             let isupdate = (c?.h as any)?.tag == h.tag
 
             if (isupdate) {
@@ -167,5 +167,5 @@ export function updateview(...cmds: Command[]): void {
 
     f(cmds)
 
-    if (!patchcount) console.warn("updateview did not update anything. most likely this is unwanted. cmds=", ...cmds)
+    if (!patchcount) console.warn("updateview did not update anything. cmds=", ...cmds)
 }
