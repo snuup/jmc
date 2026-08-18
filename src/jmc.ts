@@ -43,17 +43,16 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
 let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: number, uc: J): number => {
-    cn.flat(999).forEach(hc => (i = sync(p, i, hc, ns, depth, uc)))
+    cn.flat(999)
+        .filter(hc => hc !== null && hc !== undefined) // skip. keep 0 and false renderable, per comment below)
+        .forEach(hc => (i = sync(p, i, hc, ns, depth, uc)))
     return i
 }
 
-function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: number, uc: J): number {
+function sync(parent: Element, i: number, h: H, ns: string, depth: number, uc: J): number {
 
     // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
 
-    if (!depth) return i + 1
-
-    if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
     let c = parent.childNodes[i]
 
     switch (h.kind) {
@@ -130,7 +129,7 @@ function sync(parent: Element, i: number, h: H | undefined, ns: string, depth: n
     }
 }
 
-export function patch(e: Node | null, h?: H, depth = 999, uc = {} as J) {
+export function patch(e: Node | null, h: H, depth = 999, uc = {} as J) {
     if (!e) return
     if (depth == 0) {
         (e as HTMLElement).replaceChildren()
@@ -155,8 +154,10 @@ export function updateview(...cmds: Command[]): void {
             if (typeof c === 'string') {
                 f([...document.querySelectorAll(c)])
             } else if (c instanceof Node) {
-                patch(c, c.h, depth, uc)
-                patchcount++
+                if (c.h) {
+                    patch(c, c.h, depth, uc)
+                    patchcount++
+                }
             } else if (typeof c === 'number') {
                 depth = c
             } else {
