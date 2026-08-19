@@ -3,8 +3,8 @@ export type J = Record<string, any> // a json record
 // Overload signatures
 export type Selector = string | Node
 
-export type FComponent = (props: J | undefined, children?: Children) => HElement // show an example for usage of children
-export type FComponentT<P> = (pcn: P, cn?: Children) => H | void
+export type FComponent = (props: J | undefined, children?: Children) => HU
+export type FComponentT<P> = (pcn: P, cn?: Children) => HU
 
 type HKindElement = 1
 type HKindFunctionComponent = 2
@@ -21,7 +21,7 @@ export type HKind = HKindElement | HKindFunctionComponent | HKindClassComponent 
 export interface IClassComponent {
     element: Node
     props?: Record<string, any>
-    view(): H
+    view(): HU
     update(uc: any): boolean | void
     mounted?(): void
 }
@@ -30,7 +30,7 @@ export interface CComponent {
     new(props: any): IClassComponent
 }
 
-export type Children = (H | undefined)[]
+export type Children = HU[]
 
 export type HText =
     | string // text node
@@ -71,7 +71,9 @@ export type H =
     | HElement
     | HFunctionComponent
     | HClassComponent
-    | HFragment
+    | HFragment  
+
+export type HU = H | undefined | null
 
 let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 

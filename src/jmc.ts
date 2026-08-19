@@ -1,4 +1,4 @@
-import type { H, HElement, J, Selector, Children, HClassComponent } from './h'
+import type { H, HElement, J, Selector, Children, HClassComponent, HU } from './h'
 import { rebind } from './base.js'
 
 const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
@@ -49,9 +49,11 @@ let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: numb
     return i
 }
 
-function sync(parent: Element, i: number, h: H, ns: string, depth: number, uc: J): number {
+function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: J): number {
 
     // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
+
+    if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
 
     let c = parent.childNodes[i]
 
