@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "strict": true, // although true shall be the default, without this weird type errors occur
+        "target": "ESNext",
+        "declaration": true,
+        // "declarationMap": true,
+        // "sourceMap": true,
+        // "inlineSources": true,
+        //"outDir": "dist",
+        "moduleResolution": "bundler", // without this, react types cannot resolve import * as CSS from "csstype";
+        "jsx": "react",
+        "jsxFactory": "jsx",
+        "jsxFragmentFactory": "jsxf"
+    }
+}

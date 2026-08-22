@@ -41,6 +41,13 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     }
 }
 
+let removeexcesschildren = (n: Element, i: number) => {
+    let c: ChildNode
+    while ((c = n.childNodes[i])) {
+        try { c.remove() } catch (_) { } // due to blur-event-handlers, this can fail
+    }
+}
+
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
 let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: number, uc: J): number => {
     cn.flat(999)
@@ -80,6 +87,7 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
                 if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
                     const j = syncchildren(n, cn, 0, ns, depth, uc)
                     n.replaceChildren(...[...n.childNodes].slice(0, j)) // strip excess children
+                    // removeexcesschildren(n, j)
                 }
 
                 return i + 1
