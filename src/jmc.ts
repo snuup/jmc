@@ -86,8 +86,8 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
 
                 if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
                     const j = syncchildren(n, cn, 0, ns, depth, uc)
-                    n.replaceChildren(...[...n.childNodes].slice(0, j)) // strip excess children
-                    // removeexcesschildren(n, j)
+                    // n.replaceChildren(...[...n.childNodes].slice(0, j)) // strip excess children
+                    removeexcesschildren(n, j)
                 }
 
                 return i + 1

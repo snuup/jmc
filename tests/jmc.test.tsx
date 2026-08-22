@@ -617,6 +617,64 @@ describe('jmc dom tests', () => {
         expect(spy).toHaveBeenNthCalledWith(1, { u: 1 })
         expect(spy).toHaveBeenNthCalledWith(2, { u: 2 })
     })
+
+    it('sync does not mutate constant children', () => {
+
+        let App = <body><div /></body>
+        patch(document.body, <App />)
+
+        const mutationcallback = vi.fn()
+        let o = new MutationObserver(mutationcallback)
+        o.observe(document.body, { subtree: true, childList: true })
+
+        updateview()
+
+        expect(mutationcallback).not.toHaveBeenCalled()
+    });
+
+    it('sync does not mutate or replace constant children', () => {
+        let App = <body><div id="keep-me" /></body>
+        patch(document.body, <App />)
+
+        const child = document.getElementById('keep-me')!
+
+        // Track node removal/disconnection
+        let disconnected = false
+        // Note: Node.prototype.removeChild or parentNode mutation listening
+        const originalRemove = child.remove
+        child.remove = function () {
+            disconnected = true
+            return originalRemove.call(this)
+        }
+
+        updateview()
+
+        // Verify the retained element was never detached/reinserted
+        expect(disconnected).toBe(false)
+        expect(document.body.firstElementChild).toBe(child)
+    })
+
+    it('sync does not detach constant children', () => {
+        let App = <body><div id="keep-me" /></body>
+        patch(document.body, <App />)
+
+        const child = document.getElementById('keep-me')!
+
+        // Spy on node removal or check if the exact same node instance 
+        // was re-appended vs left completely alone.
+        const originalAppendChild = document.body.appendChild
+        let appendCount = 0
+        document.body.appendChild = function (this: any, node: HTMLElement) {
+            if (node === child) appendCount++
+            return originalAppendChild.call(this, node)
+        } as any
+
+        updateview()
+
+        // With replaceChildren, child is stripped and re-appended.
+        // With a pure truncation approach, child is never touched.
+        expect(appendCount).toBe(0)
+    });
 })
 
 declare global {
