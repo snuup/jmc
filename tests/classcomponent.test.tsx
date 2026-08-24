@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { H, HtmlHTMLAttributes, IntrinsicElementAttributes, JMXComp, jsx, patch, updateview } from './jmc'
+import { H, HtmlHTMLAttributes, IntrinsicElementAttributes, JMXComp, jsx, patch, updateview } from '../src'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {

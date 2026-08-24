@@ -4,8 +4,8 @@ import {
     HElement,
     HFragment,
     HClassComponent,
-    HFunctionComponent
-} from './jmc'
+    HFunctionComponent    
+} from "../src"
 import { describe, expect, it } from 'vitest'
 
 describe('jsx hyperscript', () => {

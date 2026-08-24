@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { jsx, patch, updateview } from './jmc'
+import { jsx, patch, updateview } from '../src'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {

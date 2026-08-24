@@ -1,4 +1,4 @@
-import { jsx, patch, When } from "@snupo/jmc"
+import { jsx, patch, When } from "../src"
 import { describe, it } from "vitest"
 
 describe('jmc library tests', () => {
