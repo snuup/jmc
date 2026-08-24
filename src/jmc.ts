@@ -71,25 +71,28 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
                 let { tag, cn, p } = h
                 cn ??= []
 
+                let processchildren = () => {
+                    if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
+                        const j = syncchildren(n, cn, 0, ns, depth, uc)
+                        removeexcesschildren(n, j)
+                    }
+                }
+
                 if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
                     n = document.createElementNS(ns = p?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
                     c ? c.replaceWith(n) : parent.appendChild(n)
                     setprops(n, {}, p)
+                    n.h = h // sets the new property values
+                    processchildren()
                     p?.mounted?.(n)
                 } else {
                     n = c as Element
                     setprops(n, n.h?.p, p)
+                    n.h = h // sets the new property values
+                    processchildren()
                     if (p?.update?.(c, uc)) return i + 1
                 }
-
-                n.h = h // sets the new property values
-
-                if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
-                    const j = syncchildren(n, cn, 0, ns, depth, uc)
-                    // n.replaceChildren(...[...n.childNodes].slice(0, j)) // strip excess children
-                    removeexcesschildren(n, j)
-                }
-
+                
                 return i + 1
             }
 

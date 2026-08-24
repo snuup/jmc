@@ -1,0 +1,24 @@
+- remove event - prefix builtin events with "on"
+- code review
+
+% resizer reports twice - can we call mount after all children are done? what is best?
+
++ property handling is not right or weird: n.h.p is never set - break with test
++ const attribute for islands
++ investigate nested components regarding h attacvhment: n.h = h - the outer must always win
++ handle viewBox as non-property, because is not readable
++ updateviewuc - uc is not threaded downwards ?
++ cleanup jsx.ts from hase and bunnies and alike
++ the update of a thunked class component is presumably wrong: recheck expressions and their attachment
++ more tests on component life cycles and element life cycles
++ find a place for open source -> snuup/jmc wait for vrvis
++ remove some evaluate calls - all removed !
++ configure jsximportmodule -> did not work out
++ function component should be able to update itself (zwd, filterbox case) - typed function components turn into bad classes
++ study: configure that only components update
++ make mounted optional for components ???
++ todoapp
++ rename into jmc
++ unit tests
++ currently patch does not accept a class component
++ svg auto namespace, remove need to configure
