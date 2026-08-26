@@ -684,6 +684,7 @@ describe('jmc dom tests', () => {
                     <foreignObject>
                         <canvas />
                     </foreignObject>
+                    <g />
                 </g>
             </svg>
         </body>
@@ -692,8 +693,9 @@ describe('jmc dom tests', () => {
 
         expect(document.getElementsByTagName("body")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')
         expect(document.getElementsByTagName("svg")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
-        expect(document.getElementsByTagName("g")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
+        expect(document.getElementsByTagName("g")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')        
         expect(document.getElementsByTagName("foreignObject")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
+        expect(document.getElementsByTagName("g")[1].namespaceURI).toBe('http://www.w3.org/2000/svg')
         expect(document.getElementsByTagName("canvas")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')        
     })
     

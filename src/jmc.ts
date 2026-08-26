@@ -49,22 +49,20 @@ let removeexcesschildren = (n: Element, i: number) => {
 }
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
-let syncchildren = (p: Element, cn: Children, i: number, ns: string, depth: number, uc: J): number => {
+let syncchildren = (p: Element, cn: Children, i: number, depth: number, uc: J): number => {
     cn.flat(999)
         .filter(hc => hc !== null && hc !== undefined) // skip. keep 0 and false renderable, per comment below)
-        .forEach(hc => (i = sync(p, i, hc, ns, depth, uc)))
+        .forEach(hc => (i = sync(p, i, hc, depth, uc)))
     return i
 }
 
-function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: J): number {
+function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
 
     // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
 
     let c = parent.childNodes[i]
-
-    if (parent.tagName == "foreignObject") ns = document.body.namespaceURI!
 
     switch (h.kind) {
         case 1:
@@ -76,14 +74,16 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
                 let process = () => {
                     setprops(n, n.h?.p, p)
                     n.h = h // sets the new property values
+
                     if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
-                        const j = syncchildren(n, cn, 0, ns, depth, uc)
+                        const j = syncchildren(n, cn, 0, depth, uc)
                         removeexcesschildren(n, j)
                     }
                 }
 
                 if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                    n = document.createElementNS(ns = p?.xmlns ?? ns, tag) // replace namespace with propertyvalue if set. otherwise pass forward to children
+                    let ns = p?.xmlns ?? (parent.tagName == "foreignObject" ? 'http://www.w3.org/1999/xhtml' : parent.namespaceURI)
+                    n = document.createElementNS(ns, tag)
                     c ? c.replaceWith(n) : parent.appendChild(n)
                     process()
                     p?.mounted?.(n)
@@ -98,13 +98,13 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
 
         case 4:
             {
-                return syncchildren(parent, h.cn ?? [], i, ns, --depth, uc)
+                return syncchildren(parent, h.cn ?? [], i, --depth, uc)
             }
 
         case 2:
             {
                 let hr = h.tag(h.p, h.cn)
-                let j = sync(parent, i, hr, ns, depth, uc)
+                let j = sync(parent, i, hr, depth, uc)
                 let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
                 if (n) n.h = h
                 return j
@@ -118,11 +118,11 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
                 ci.props = h.p
 
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), ns, depth, uc)
+                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), depth, uc)
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
-            let j = sync(parent, i, ci.view(), ns, depth, uc)
+            let j = sync(parent, i, ci.view(), depth, uc)
             let n = parent.childNodes[i]!
             ci.element = n
             n.h = h
@@ -150,7 +150,7 @@ export function patch(e: Node | null, h: H, depth = 999, uc = {} as J) {
     }
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
-    sync(p, i, h, p.namespaceURI!, depth, uc)
+    sync(p, i, h, depth, uc)
 }
 
 export type Command = Selector | J | number
