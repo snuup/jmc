@@ -64,6 +64,8 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
 
     let c = parent.childNodes[i]
 
+    if (parent.tagName == "foreignObject") ns = document.body.namespaceURI!
+
     switch (h.kind) {
         case 1:
             {
@@ -90,7 +92,7 @@ function sync(parent: Element, i: number, h: HU, ns: string, depth: number, uc: 
                     process()
                     if (p?.update?.(c, uc)) return i + 1
                 }
-                
+
                 return i + 1
             }
 

@@ -674,7 +674,29 @@ describe('jmc dom tests', () => {
         // With replaceChildren, child is stripped and re-appended.
         // With a pure truncation approach, child is never touched.
         expect(appendCount).toBe(0)
-    });
+    })
+
+    it('namespace is correct inside foreignObject', () => {
+        
+        let App = <body>
+            <svg xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <foreignObject>
+                        <canvas />
+                    </foreignObject>
+                </g>
+            </svg>
+        </body>
+        
+        patch(document.body, App)
+
+        expect(document.getElementsByTagName("body")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')
+        expect(document.getElementsByTagName("svg")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
+        expect(document.getElementsByTagName("g")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
+        expect(document.getElementsByTagName("foreignObject")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
+        expect(document.getElementsByTagName("canvas")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')        
+    })
+    
 })
 
 declare global {
