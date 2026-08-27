@@ -122,11 +122,14 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
-            let j = sync(parent, i, ci.view(), depth, uc)
+            let hv = ci.view()
+            let j = sync(parent, i, hv, depth, uc)
             let n = parent.childNodes[i]!
             ci.element = n
-            n.h = h
-            ci.mounted?.()
+            if (hv) {
+                n.h = h
+                ci.mounted?.()
+            }
             return j
         }
 

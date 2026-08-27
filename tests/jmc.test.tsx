@@ -677,7 +677,7 @@ describe('jmc dom tests', () => {
     })
 
     it('namespace is correct inside foreignObject', () => {
-        
+
         let App = <body>
             <svg xmlns="http://www.w3.org/2000/svg">
                 <g>
@@ -688,17 +688,32 @@ describe('jmc dom tests', () => {
                 </g>
             </svg>
         </body>
-        
+
         patch(document.body, App)
 
         expect(document.getElementsByTagName("body")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')
         expect(document.getElementsByTagName("svg")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
-        expect(document.getElementsByTagName("g")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')        
+        expect(document.getElementsByTagName("g")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
         expect(document.getElementsByTagName("foreignObject")[0].namespaceURI).toBe('http://www.w3.org/2000/svg')
         expect(document.getElementsByTagName("g")[1].namespaceURI).toBe('http://www.w3.org/2000/svg')
-        expect(document.getElementsByTagName("canvas")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')        
+        expect(document.getElementsByTagName("canvas")[0].namespaceURI).toBe('http://www.w3.org/1999/xhtml')
     })
-    
+
+    it('class view returns undefined', () => {
+
+        class C extends JMXComp {
+            view(): H {
+                return undefined
+            }
+        }
+
+        let App = <body>
+            <C />
+        </body>
+
+        patch(document.body, App)
+    });
+
 })
 
 declare global {
