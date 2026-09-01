@@ -114,11 +114,19 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
             let isupdate = (c?.h as any)?.tag == h.tag
 
             if (isupdate) {
-                let ci = (c!.h as HClassComponent).i!
+                let ch = c.h as HClassComponent
+                let ci = ch.i!
                 ci.props = h.p
 
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), depth, uc)
+                if (ci.update?.(uc)) return i + 1
+                
+                let j = sync(parent, i, ci.view(), depth, uc)
+
+                ch.p = c.h!.p
+                c.h = ch // put back class component
+
+                return j                
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
