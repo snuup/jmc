@@ -58,7 +58,7 @@ let syncchildren = (p: Element, cn: Children, i: number, depth: number, uc: J): 
 
 function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: number, uc: J): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
+    console.log('%csync', "background:orange", parent.tagName, i, h, hfun, depth)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
 
@@ -73,6 +73,7 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
 
                 let process = () => {
                     setprops(n, n.h?.p, p)
+                    // console.log("kind-1", n.h?.tag, hfun?.tag, h?.tag)
                     n.h = hfun ?? h // sets the new property values
 
                     if (--depth && !n.hasAttribute('const') && !iswebcomponent(h as HElement)) {
@@ -117,8 +118,16 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
                 let ci = (c!.h as HClassComponent).i!
                 ci.props = h.p
 
+                // if (!((c!.h as HClassComponent).i!)) { throw "ci 1" }
+
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), hfun ?? h, depth, uc) // hfun because outermost function shall be attached
+                let j = (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
+
+                // if (!((c!.h as HClassComponent).i!)) {
+                //     throw "ci 2"
+                // }
+
+                return j
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
@@ -127,6 +136,7 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
             let n = parent.childNodes[i]!
             ci.element = n
             if (hv) {
+                // console.log("mount cc", n.h?.tag, h?.tag)
                 n.h = h
                 ci.mounted?.()
             }

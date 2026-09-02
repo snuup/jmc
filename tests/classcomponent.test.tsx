@@ -57,6 +57,26 @@ describe('class components', () => {
         updateview(document.body)
     })
 
+    it('class component updates inside App 2', () => {
+
+        class C extends JMXComp {
+            view(): H {
+                return <div />
+            }
+        }
+
+        const App = () =>
+            <body>
+                <C />
+            </body>
+
+        patch(document.body, <App />)
+
+        //updateview("div")
+        console.log("-----------------------------------------------------------")        
+        updateview(document.body)
+    })
+
     it('class component underived renders', () => {
 
         class C {
@@ -202,7 +222,7 @@ describe('class components', () => {
             view(): H {
                 return <div class={m.css}>bunny</div>
             }
-            update() {}
+            update() { }
         }
 
         patch(document.body, <body><C /></body>)
