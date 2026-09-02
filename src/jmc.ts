@@ -52,11 +52,11 @@ let removeexcesschildren = (n: Element, i: number) => {
 let syncchildren = (p: Element, cn: Children, i: number, depth: number, uc: J): number => {
     cn.flat(999)
         .filter(hc => hc !== null && hc !== undefined) // skip. keep 0 and false renderable, per comment below)
-        .forEach(hc => (i = sync(p, i, hc, depth, uc)))
+        .forEach(hc => (i = sync(p, i, hc, undefined, depth, uc)))
     return i
 }
 
-function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
+function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: number, uc: J): number {
 
     // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
 
@@ -73,9 +73,9 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
 
                 let process = () => {
                     setprops(n, n.h?.p, p)
-                    n.h = h // sets the new property values
+                    n.h = hfun ?? h // sets the new property values
 
-                    if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
+                    if (--depth && !n.hasAttribute('const') && !iswebcomponent(h as HElement)) {
                         const j = syncchildren(n, cn, 0, depth, uc)
                         removeexcesschildren(n, j)
                     }
@@ -104,10 +104,7 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
         case 2:
             {
                 let hr = h.tag(h.p, h.cn)
-                let j = sync(parent, i, hr, depth, uc)
-                let n = parent.childNodes[i]! // now the dom element exists, unless the function returned undefined or null
-                if (n) n.h = h
-                return j
+                return sync(parent, i, hr, hfun ?? h, depth, uc)
             }
 
         case 3: {
@@ -118,12 +115,12 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
                 ci.props = h.p
 
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), depth, uc)
+                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), hfun ?? h, depth, uc) // hfun because outermost function shall be attached
             }
 
             let ci = h.i = rebind(new h.tag(h.p))
             let hv = ci.view()
-            let j = sync(parent, i, hv, depth, uc)
+            let j = sync(parent, i, hv, h, depth, uc)
             let n = parent.childNodes[i]!
             ci.element = n
             if (hv) {
@@ -153,7 +150,7 @@ export function patch(e: Node | null, h: H, depth = 999, uc = {} as J) {
     }
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
-    sync(p, i, h, depth, uc)
+    sync(p, i, h, undefined, depth, uc)
 }
 
 export type Command = Selector | J | number

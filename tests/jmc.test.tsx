@@ -604,7 +604,7 @@ describe('jmc dom tests', () => {
             view(): H { return <aside>C</aside> }
             update(uc: any) { }
         }
-        const spy = vi.spyOn(C.prototype, 'update')
+        const cupdate = vi.spyOn(C.prototype, 'update')
 
         let App = () => <body>
             <b><C /></b>
@@ -614,8 +614,8 @@ describe('jmc dom tests', () => {
         patch(document.body, <App />)
         updateview({ u: 1 }, "b", { u: 2 }, "i")
 
-        expect(spy).toHaveBeenNthCalledWith(1, { u: 1 })
-        expect(spy).toHaveBeenNthCalledWith(2, { u: 2 })
+        expect(cupdate).toHaveBeenNthCalledWith(1, { u: 1 })
+        expect(cupdate).toHaveBeenNthCalledWith(2, { u: 2 })
     })
 
     it('sync does not mutate constant children', () => {
