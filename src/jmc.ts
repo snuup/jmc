@@ -58,7 +58,7 @@ let syncchildren = (p: Element, cn: Children, i: number, depth: number, uc: J): 
 
 function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: number, uc: J): number {
 
-    // console.log('%csync2', "background:orange", parent.tagName, i, h, depth)
+    // console.log('%csync', "background:orange", parent.tagName, i, h, hfun, depth)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
 
@@ -74,7 +74,6 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
                 let process = () => {
                     setprops(n, n.h?.p, p)
                     n.h = hfun ?? h // sets the new property values
-
                     if (--depth && !n.hasAttribute('const') && !iswebcomponent(h as HElement)) {
                         const j = syncchildren(n, cn, 0, depth, uc)
                         removeexcesschildren(n, j)
@@ -113,21 +112,19 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
             if (isupdate) {
                 let ci = (c!.h as HClassComponent).i!
                 ci.props = h.p
-
+                let hv = ci.view()
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), hfun ?? h, depth, uc) // hfun because outermost function shall be attached
+                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, hv, c.h, depth, uc) // hfun because outermost function shall be attached
             }
-
-            let ci = h.i = rebind(new h.tag(h.p))
-            let hv = ci.view()
-            let j = sync(parent, i, hv, h, depth, uc)
-            let n = parent.childNodes[i]!
-            ci.element = n
-            if (hv) {
-                n.h = h
+            else {
+                let ci = h.i = rebind(new h.tag(h.p))
+                let hv = ci.view()
+                let j = sync(parent, i, hv, h, depth, uc)
+                let n = parent.childNodes[i]!
+                ci.element = n
                 ci.mounted?.()
+                return j
             }
-            return j
         }
 
         default:
