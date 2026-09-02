@@ -191,6 +191,27 @@ describe('class components', () => {
         updateview("bunny")
         expect(document.body.outerHTML).toBe('<body><bunny class="mondo" changed="now"></bunny></body>')
     })
+
+    it('class component updates', () => {
+
+        let m = {
+            css: "value-1"
+        }
+
+        class C extends JMXComp {
+            view(): H {
+                return <div class={m.css}>bunny</div>
+            }
+            update() {}
+        }
+
+        patch(document.body, <body><C {...m} /></body>)
+        expect(document.body.outerHTML).toBe('<body><div class="value-1">bunny</div></body>')
+
+        m.css = "value-2"
+        updateview(1, "div")
+        expect(document.body.outerHTML).toBe('<body><div class="value-2">bunny</div></body>')
+    })
 })
 
 declare global {
