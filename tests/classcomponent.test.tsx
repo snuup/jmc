@@ -205,12 +205,16 @@ describe('class components', () => {
             update() {}
         }
 
-        patch(document.body, <body><C {...m} /></body>)
+        patch(document.body, <body><C /></body>)
         expect(document.body.outerHTML).toBe('<body><div class="value-1">bunny</div></body>')
 
         m.css = "value-2"
         updateview(1, "div")
         expect(document.body.outerHTML).toBe('<body><div class="value-2">bunny</div></body>')
+
+        m.css = "value-3"
+        updateview(1, "div")
+        expect(document.body.outerHTML).toBe('<body><div class="value-3">bunny</div></body>')
     })
 })
 
