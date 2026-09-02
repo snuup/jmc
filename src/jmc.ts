@@ -7,7 +7,8 @@ const enum NodeType { // vaporizes (but for that must be in this file, otherwise
 
 declare global {
     interface Node {
-        h?: H & { p?: J }
+        h?: H
+        p?: J
     }
 }
 
@@ -19,9 +20,9 @@ const isproperty = (e: Element, name: string, value: any) =>
         value instanceof Function ||
         (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))
 
-let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
+let setprops = (e: Element & J, now: J | undefined) => {
 
-    old ??= {}
+    let old = e.p ?? {}
     now ??= {}
 
     // removals
@@ -39,6 +40,8 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
                 : e.setAttribute(p, v)
         }
     }
+
+    e.p = now
 }
 
 let removeexcesschildren = (n: Element, i: number) => {
@@ -72,10 +75,10 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
                 cn ??= []
 
                 let process = () => {
-                    setprops(n, n.h?.p, p)
-                    n.h = h // sets the new property values
+                    setprops(n, p)
+                    //n.h = h // sets the new property values
 
-                    if (--depth && !n.h?.p?.const && !iswebcomponent(h as HElement)) {
+                    if (--depth && !p?.const && !iswebcomponent(h as HElement)) {
                         const j = syncchildren(n, cn, 0, depth, uc)
                         removeexcesschildren(n, j)
                     }
@@ -118,7 +121,9 @@ function sync(parent: Element, i: number, h: HU, depth: number, uc: J): number {
                 ci.props = h.p
 
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), depth, uc)
+                let j = (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), depth, uc)
+                if (!c.h.i) throw "ci lost"
+                return j
             }
 
             let ci = h.i = rebind(new h.tag(h.p))

@@ -215,6 +215,9 @@ describe('class components', () => {
         m.css = "value-3"
         updateview(1, "div")
         expect(document.body.outerHTML).toBe('<body><div class="value-3">bunny</div></body>')
+
+        updateview()
+        expect(document.body.outerHTML).toBe('<body><div class="value-3">bunny</div></body>')
     })
 })
 
