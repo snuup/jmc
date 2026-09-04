@@ -702,8 +702,8 @@ describe('jmc dom tests', () => {
     it('class view returns undefined', () => {
 
         class C extends JMXComp {
-            view(): H {
-                return undefined
+            view(): H { // tbd: return value must be HU
+                return undefined as any
             }
         }
 

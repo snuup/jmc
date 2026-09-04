@@ -88,8 +88,8 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
                     p?.mounted?.(n)
                 } else {
                     n = c as Element
-                    process()
                     if (p?.update?.(c, uc)) return i + 1
+                    process()
                 }
 
                 return i + 1
