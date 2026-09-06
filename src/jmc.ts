@@ -112,9 +112,8 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
             if (isupdate) {
                 let ci = (c!.h as HClassComponent).i!
                 ci.props = h.p
-                let hv = ci.view()
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, hv, c.h, depth, uc) // hfun because outermost function shall be attached
+                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
             }
             else {
                 let ci = h.i = rebind(new h.tag(h.p))
