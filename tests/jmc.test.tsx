@@ -712,7 +712,49 @@ describe('jmc dom tests', () => {
         </body>
 
         patch(document.body, App)
-    });
+    })
+
+    it('deferred property update', () => {
+        
+        let C_ = () => <div></div>
+        const C = vi.fn(C_)
+
+        let App = <body><C /></body>
+
+        patch(document.body, App)
+        expect(C).toHaveBeenCalledOnce()
+
+        updateview(1, document.body)
+        expect(C).toHaveBeenCalledOnce()
+    })
+
+     it('deferred property update 2', () => {
+        
+        let C_ = () => {
+            console.log("call C")            
+            return <div></div>
+        }
+        const C = vi.fn(C_)
+
+        let css = "a"
+
+        let App = () => {
+            console.log("call App")            
+            return <body class={css}><C /></body>
+        }
+
+        console.log("patch")
+        patch(document.body, <App />)
+        expect(C).toHaveBeenCalledOnce()
+        expect(document.body.outerHTML).toBe('<body class="a"><div></div></body>')
+        
+        console.log("update")
+        css = "b"
+        updateview(1, document.body)
+        expect(C).toHaveBeenCalledOnce()
+        expect(document.body.outerHTML).toBe('<body class="b"><div></div></body>')
+    })
+    
 
 })
 
