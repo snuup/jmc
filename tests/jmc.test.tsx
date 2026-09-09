@@ -1,6 +1,7 @@
 import { jsx, jsxf, patch, HElement, JMXComp, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H } from "../src"
 import { describe, expect, beforeEach, it, vi } from 'vitest'
 import { Window } from 'happy-dom'
+import { textTracks } from "happy-dom/lib/PropertySymbol.js"
 
 beforeEach(() => {
     const window = new Window({ url: 'http://localhost/' })
@@ -519,7 +520,7 @@ describe('jmc dom tests', () => {
 
         patch(document.body, <body a={3}></body>)
         expect(document.body.outerHTML).toBe('<body a="3"></body>')
-    });
+    })
 
     it('uc.patchelementonly does not touch children', () => {
 
@@ -535,7 +536,7 @@ describe('jmc dom tests', () => {
         title = "b"
         updateview(1, "body")
         expect(document.body.outerHTML, "children are not updated").toBe('<body title="b">bugs bunny</body>')
-    });
+    })
 
     it('uc.replace creates new children', () => {
 
@@ -554,7 +555,7 @@ describe('jmc dom tests', () => {
         let d3 = document.querySelector("div")
         expect(d1).not.toBe(d3)
         expect(document.body.outerHTML).toBe("<body><div>bbb</div></body>")
-    });
+    })
 
     it('element update-callback receives updatecontext', () => {
 
@@ -630,7 +631,7 @@ describe('jmc dom tests', () => {
         updateview()
 
         expect(mutationcallback).not.toHaveBeenCalled()
-    });
+    })
 
     it('sync does not mutate or replace constant children', () => {
         let App = <body><div id="keep-me" /></body>
@@ -712,8 +713,28 @@ describe('jmc dom tests', () => {
         </body>
 
         patch(document.body, App)
-    });
+    })
 
+    it('patch returns patched element also when it is exchanged', () => {
+
+        let n = 10
+
+        class C extends JMXComp {
+            view(): H {
+                return n
+            }
+        }
+
+        let App = <b>
+            <C />
+        </b>
+
+        patch(document.body, <body><aside></aside></body>) // prepare an aside
+
+        let result = patch(document.body.querySelector("aside"), App) as HTMLElement
+        expect(document.body.outerHTML).toBe("<body><b>10</b></body>")
+        expect(result.tagName).toBe("B")
+    })
 })
 
 declare global {

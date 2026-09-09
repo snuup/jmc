@@ -138,7 +138,7 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
     }
 }
 
-export function patch(e: Node | null, h: H, depth = 999, uc = {} as J) {
+export function patch(e: Node | null, h: H, depth = 999, uc = {} as J): HTMLElement | undefined {
     if (!e) return
     if (depth == 0) {
         (e as HTMLElement).replaceChildren()
@@ -147,6 +147,7 @@ export function patch(e: Node | null, h: H, depth = 999, uc = {} as J) {
     let p = e.parentElement as HTMLElement
     let i = [].indexOf.call<any, any, any>(p.childNodes, e)
     sync(p, i, h, undefined, depth, uc)
+    return p.childNodes[i] as HTMLElement
 }
 
 export type Command = Selector | J | number
