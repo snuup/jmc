@@ -1,4 +1,4 @@
-import { jsx, jsxf, patch, HElement, JMXComp, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H } from "../src"
+import { jsx, jsxf, patch, HElement, JMXComp, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H, lazy } from "../src"
 import { describe, expect, beforeEach, it, vi } from 'vitest'
 import { Window } from 'happy-dom'
 import { textTracks } from "happy-dom/lib/PropertySymbol.js"
@@ -777,6 +777,21 @@ describe('jmc dom tests', () => {
         expect(document.body.outerHTML).toBe("<body><b>10</b></body>")
         expect(result.tagName).toBe("B")
     })
+
+    it('thunked properties', () => {
+
+        let css = "a"
+        let App = <body class={lazy(() => css)}></body>
+
+        patch(document.body, <App />)
+        expect(document.body.outerHTML).toBe('<body class="a"></body>')
+
+        css = "b"
+        updateview(document.body)
+
+        expect(document.body.outerHTML).toBe('<body class="b"></body>')
+    });
+    
 })
 
 declare global {

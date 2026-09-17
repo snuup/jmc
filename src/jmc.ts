@@ -33,6 +33,7 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     // updates
     for (let p in now) {
         let v = now[p]
+        v = v?.thunk ? v() : v
         if (v != old[p]) {
             isproperty(e, p, v)
                 ? e[p] = v
