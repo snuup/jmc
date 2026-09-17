@@ -1,4 +1,5 @@
 export type J = Record<string, any> // a json record
+export type UC = J // update context
 
 // Overload signatures
 export type Selector = string | Node
