@@ -20,8 +20,11 @@ export abstract class JMXComp<P extends J = {}> implements IClassComponent {
     get ismounted(): boolean { return this.element as any }
 }
 
-export function cc(...namesOrObjects: (string | any)[]): string {
-    return namesOrObjects.flatMap(n => (n.trim ? n : Object.keys(n).filter(k => n[k]))).join(' ') // n.trim distinguishes strings from objects
+export function cc(...namesOrObjects: (string | J | undefined)[]): string {
+    return namesOrObjects
+        .filter(x => x !== undefined)
+        .flatMap(n => (n.trim ? n : Object.keys(n).filter(k => (n as J)[k]))) // n.trim distinguishes string from J
+        .join(' ') 
 }
 
 export const focuselement = (e: Node) => (e as HTMLElement).focus()
