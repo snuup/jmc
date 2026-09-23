@@ -178,5 +178,5 @@ export function updateview(...cmds: Command[]): void {
 
     f(cmds)
 
-    if (!patchcount) console.warn("updateview did not update anything. cmds=", ...cmds)
+    // if (!patchcount) console.warn("updateview did not update anything. cmds=", ...cmds)
 }
