@@ -1,8 +1,10 @@
-- remove event - prefix builtin events with "on"
 - code review
 
++ raf
++ class-only evaluate or wrapped
++ evaluate thunks > that does not work, because event callbacks or other properties are functions as well
+% remove event - prefix builtin events with "on" ? what was this ?
 % resizer reports twice - can we call mount after all children are done? what is best?
-
 + property handling is not right or weird: n.h.p is never set - break with test
 + const attribute for islands
 + investigate nested components regarding h attacvhment: n.h = h - the outer must always win

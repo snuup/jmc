@@ -33,6 +33,7 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     // updates
     for (let p in now) {
         let v = now[p]
+        v = v?.thunk ? v() : v
         if (v != old[p]) {
             isproperty(e, p, v)
                 ? e[p] = v
@@ -107,11 +108,10 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
             }
 
         case 3: {
-            let isupdate = (c?.h as any)?.tag == h.tag
-
-            if (isupdate) {
+            if ((c?.h as any)?.tag == h.tag) {
                 let ci = (c.h as HClassComponent).i!
                 ci.props = c.h!.p = h.p
+                c.h!.p = h.p // for repatable update, set attached h.p. alternatively, we could use ci.props in case where h.p is undefined
                 // update() substitutes view/sync when returning truthy
                 return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
             }
@@ -178,5 +178,5 @@ export function updateview(...cmds: Command[]): void {
 
     f(cmds)
 
-    if (!patchcount) console.warn("updateview did not update anything. cmds=", ...cmds)
+    // if (!patchcount) console.warn("updateview did not update anything. cmds=", ...cmds)
 }

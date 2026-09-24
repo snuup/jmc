@@ -25,3 +25,8 @@ export const loggedmethods = <T extends Record<string, any>>(o: T): T => loggedm
 export const loggedmethodscolored = <T extends Record<string, any>>(bgcolor: string, o: T): T => loggedmethodsex(o, (name, args, result) => console.log("%c" + name, `background:${bgcolor};color:white;padding:2px;font-weight:bold`, args))
 
 export function closestby(e: Node | null, pred: (e: Node) => boolean): Node | null { return (e == null || pred(e)) ? e : closestby(e.parentNode, pred) }
+
+// export type Expr<T> = T | (() => T)
+// export let evaluate = <T>(expr: Expr<T>): T => (expr instanceof Function ? expr() : expr)
+
+export function lazy<T>(f: () => T) { (f as any).thunk = 1; return f }
