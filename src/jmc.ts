@@ -1,8 +1,17 @@
-import type { H, HElement, J, Selector, Children, HClassComponent, HU } from './h'
+import type {
+    H,
+    HElement,
+    J,
+    Selector,
+    Children,
+    HClassComponent,
+    HU,
+} from './h'
 import { rebind } from './base.js'
 
-const enum NodeType { // vaporizes (but for that must be in this file, otherwise not)
-    TextNode = 3
+const enum NodeType {
+    // vaporizes (but for that must be in this file, otherwise not)
+    TextNode = 3,
 }
 
 declare global {
@@ -14,19 +23,20 @@ declare global {
 let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
 let attributeNames = new Set([
-    "selected",
-    "viewBox"
+    'selected',
+    'viewBox',
     // other HTML attributes where your framework wants attribute semantics
-]);
+])
 
 const isproperty = (e: Element, name: string, value: any) =>
     !attributeNames.has(name) &&
     (value instanceof Object ||
-        value instanceof Function ||
-        (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))
+     value instanceof Function || (
+     e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
+            name in e &&
+            name !== 'style'))
 
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
-
     old ??= {}
     now ??= {}
 
@@ -34,16 +44,18 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     for (let p in old)
         if (!(p in now))
             isproperty(e, p, old[p])
-                ? e[p] = typeof old[p] === 'boolean' ? false : ''
+                ? (e[p] = typeof old[p] === 'boolean' ? false : '')
                 : e.removeAttribute(p)
+
     // updates
     for (let p in now) {
         let v = now[p]
         v = v?.thunk ? v() : v
+
         if (v != old[p]) {
-            isproperty(e, p, v)
-                ? e[p] = v
-                : e.setAttribute(p, v)
+            if (isproperty(e, p, v)) e[p] = v
+            else if ((v === false || v == null) && !p.startsWith('aria-')) e.removeAttribute(p)
+            else e.setAttribute(p, v)
         }
     }
 }
@@ -51,20 +63,34 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
 let removeexcesschildren = (n: Element, i: number) => {
     let c: ChildNode
     while ((c = n.childNodes[i])) {
-        try { c.remove() } catch (_) { } // due to blur-event-handlers, this can fail
+        try {
+            c.remove()
+        } catch (_) {} // due to blur-event-handlers, this can fail
     }
 }
 
 /** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
-let syncchildren = (p: Element, cn: Children, i: number, depth: number, uc: J): number => {
+let syncchildren = (
+    p: Element,
+    cn: Children,
+    i: number,
+    depth: number,
+    uc: J,
+): number => {
     cn.flat(999)
-        .filter(hc => hc !== null && hc !== undefined) // skip. keep 0 and false renderable, per comment below)
-        .forEach(hc => (i = sync(p, i, hc, undefined, depth, uc)))
+        .filter((hc) => hc !== null && hc !== undefined) // skip. keep 0 and false renderable, per comment below)
+        .forEach((hc) => (i = sync(p, i, hc, undefined, depth, uc)))
     return i
 }
 
-function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: number, uc: J): number {
-
+function sync(
+    parent: Element,
+    i: number,
+    h: HU,
+    hfun: H | undefined,
+    depth: number,
+    uc: J,
+): number {
     // console.log('%csync', "background:orange", parent.tagName, i, h, hfun, depth)
 
     if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
@@ -72,46 +98,51 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
     let c = parent.childNodes[i]
 
     switch (h.kind) {
-        case 1:
-            {
-                let n: Element
-                let { tag, cn, p } = h
-                cn ??= []
+        case 1: {
+            let n: Element
+            let { tag, cn, p } = h
+            cn ??= []
 
-                let process = () => {
-                    setprops(n, n.h?.p, p)
-                    n.h = hfun ?? h // sets the new property values
-                    if (--depth && !n.hasAttribute('const') && !iswebcomponent(h as HElement)) {
-                        const j = syncchildren(n, cn, 0, depth, uc)
-                        removeexcesschildren(n, j)
-                    }
+            let process = () => {
+                setprops(n, n.h?.p, p)
+                n.h = hfun ?? h // sets the new property values
+                if (
+                    --depth &&
+                    !n.hasAttribute('const') &&
+                    !iswebcomponent(h as HElement)
+                ) {
+                    const j = syncchildren(n, cn, 0, depth, uc)
+                    removeexcesschildren(n, j)
                 }
-
-                if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
-                    let ns = p?.xmlns ?? (parent.tagName == "foreignObject" ? 'http://www.w3.org/1999/xhtml' : parent.namespaceURI)
-                    n = document.createElementNS(ns, tag)
-                    c ? c.replaceWith(n) : parent.appendChild(n)
-                    process()
-                    p?.mounted?.(n)
-                } else {
-                    n = c as Element
-                    if (p?.update?.(c, uc)) return i + 1
-                    process()
-                }
-
-                return i + 1
             }
 
-        case 4:
-            {
-                return syncchildren(parent, h.cn ?? [], i, --depth, uc)
+            if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
+                let ns =
+                    p?.xmlns ??
+                    (parent.tagName == 'foreignObject'
+                        ? 'http://www.w3.org/1999/xhtml'
+                        : parent.namespaceURI)
+                n = document.createElementNS(ns, tag)
+                c ? c.replaceWith(n) : parent.appendChild(n)
+                process()
+                p?.mounted?.(n)
+            } else {
+                n = c as Element
+                if (p?.update?.(c, uc)) return i + 1
+                process()
             }
 
-        case 2:
-            {
-                let hr = h.tag(h.p, h.cn)
-                return sync(parent, i, hr, hfun ?? h, depth, uc)
-            }
+            return i + 1
+        }
+
+        case 4: {
+            return syncchildren(parent, h.cn ?? [], i, --depth, uc)
+        }
+
+        case 2: {
+            let hr = h.tag(h.p, h.cn)
+            return sync(parent, i, hr, hfun ?? h, depth, uc)
+        }
 
         case 3: {
             if ((c?.h as any)?.tag == h.tag) {
@@ -119,10 +150,11 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
                 ci.props = c.h!.p = h.p
                 c.h!.p = h.p // for repatable update, set attached h.p. alternatively, we could use ci.props in case where h.p is undefined
                 // update() substitutes view/sync when returning truthy
-                return (ci.update?.(uc)) ? i + 1 : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
-            }
-            else {
-                let ci = h.i = rebind(new h.tag(h.p))
+                return ci.update?.(uc)
+                    ? i + 1
+                    : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
+            } else {
+                let ci = (h.i = rebind(new h.tag(h.p)))
                 let hv = ci.view()
                 let j = sync(parent, i, hv, h, depth, uc)
                 let n = parent.childNodes[i]!
@@ -144,10 +176,15 @@ function sync(parent: Element, i: number, h: HU, hfun: H | undefined, depth: num
     }
 }
 
-export function patch(e: Node | null, h: H, depth = 999, uc = {} as J): HTMLElement | undefined {
+export function patch(
+    e: Node | null,
+    h: H,
+    depth = 999,
+    uc = {} as J,
+): HTMLElement | undefined {
     if (!e) return
     if (depth == 0) {
-        (e as HTMLElement).replaceChildren()
+        ;(e as HTMLElement).replaceChildren()
         depth = 999
     }
     let p = e.parentElement as HTMLElement
@@ -159,7 +196,6 @@ export function patch(e: Node | null, h: H, depth = 999, uc = {} as J): HTMLElem
 export type Command = Selector | J | number
 
 export function updateview(...cmds: Command[]): void {
-
     if (!cmds.length) cmds.push('body')
     let uc = {}
     let depth = 999
