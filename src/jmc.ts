@@ -11,10 +11,16 @@ declare global {
     }
 }
 
+let attributeNames = new Set([
+    "selected",
+    "viewBox"
+    // other HTML attributes where your framework wants attribute semantics
+]);
+
 let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
 const isproperty = (e: Element, name: string, value: any) =>
-    name !== "viewBox" &&
+    !attributeNames.has(name) &&
     (value instanceof Object ||
         value instanceof Function ||
         (e.namespaceURI !== "http://www.w3.org/2000/svg" && name in e && name != 'style'))

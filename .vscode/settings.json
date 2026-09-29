@@ -1,7 +1,8 @@
 {
     "workbench.colorCustomizations": {
         "titleBar.activeBackground": "#68596c",
-        "titleBar.inactiveBackground": "#68596c"
+        "titleBar.inactiveBackground": "#68596c",
+        "activityBar.background": "#033339"
     },
     "files.exclude": {
         "**/.git": true,
