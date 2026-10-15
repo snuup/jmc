@@ -31,8 +31,8 @@ let attributeNames = new Set([
 const isproperty = (e: Element, name: string, value: any) =>
     !attributeNames.has(name) &&
     (value instanceof Object ||
-     value instanceof Function || (
-     e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
+        value instanceof Function || (
+            e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
             name in e &&
             name !== 'style'))
 
@@ -65,7 +65,7 @@ let removeexcesschildren = (n: Element, i: number) => {
     while ((c = n.childNodes[i])) {
         try {
             c.remove()
-        } catch (_) {} // due to blur-event-handlers, this can fail
+        } catch (_) { } // due to blur-event-handlers, this can fail
     }
 }
 
@@ -99,6 +99,7 @@ function sync(
 
     switch (h.kind) {
         case 1: {
+            // element
             let n: Element
             let { tag, cn, p } = h
             cn ??= []
@@ -135,24 +136,25 @@ function sync(
             return i + 1
         }
 
-        case 4: {
-            return syncchildren(parent, h.cn ?? [], i, --depth, uc)
-        }
-
         case 2: {
+            // function component
             let hr = h.tag(h.p, h.cn)
             return sync(parent, i, hr, hfun ?? h, depth, uc)
         }
 
         case 3: {
+            // class component
             if ((c?.h as any)?.tag == h.tag) {
                 let ci = (c.h as HClassComponent).i!
                 ci.props = c.h!.p = h.p
                 c.h!.p = h.p // for repatable update, set attached h.p. alternatively, we could use ci.props in case where h.p is undefined
                 // update() substitutes view/sync when returning truthy
-                return ci.update?.(uc)
+                const handled = ci.update?.(uc)
+                const j = handled
                     ? i + 1
                     : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
+                ci.element = parent.childNodes[i]!
+                return j
             } else {
                 let ci = (h.i = rebind(new h.tag(h.p)))
                 let hv = ci.view()
@@ -162,6 +164,11 @@ function sync(
                 ci.mounted?.()
                 return j
             }
+        }
+
+        case 4: {
+            // fragment
+            return syncchildren(parent, h.cn ?? [], i, --depth, uc)
         }
 
         default:
@@ -184,7 +191,7 @@ export function patch(
 ): HTMLElement | undefined {
     if (!e) return
     if (depth == 0) {
-        ;(e as HTMLElement).replaceChildren()
+        ; (e as HTMLElement).replaceChildren()
         depth = 999
     }
     let p = e.parentElement as HTMLElement

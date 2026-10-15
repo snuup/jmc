@@ -1,4 +1,5 @@
-import { Command, updateview } from "./jmc"
+import { updateview } from "./jmc.js"
+import type { Command } from "./jmc"
 
 let pendings: Command[] = []
 let isScheduled = false
