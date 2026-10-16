@@ -18,6 +18,8 @@ const enum NodeType {
 declare global {
     interface Node {
         h?: H & { p?: J }
+        /** props last applied to this element. kept apart from h, which may be the owning component's H */
+        ep?: J
     }
 }
 
@@ -37,16 +39,18 @@ const isproperty = (e: Element, name: string, value: any) =>
             name in e &&
             name !== 'style'))
 
+let removeprop = (e: Element & J, p: string, old: any) => {
+    if (isproperty(e, p, old)) e[p] = typeof old === 'boolean' ? false : ''
+    if (!(old instanceof Object)) e.removeAttribute(p) // reflected properties (title, id, ...) leave an empty attribute otherwise
+}
+
 let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     old ??= {}
     now ??= {}
 
     // removals
     for (let p in old)
-        if (!(p in now))
-            isproperty(e, p, old[p])
-                ? (e[p] = typeof old[p] === 'boolean' ? false : '')
-                : e.removeAttribute(p)
+        if (!(p in now)) removeprop(e, p, old[p])
 
     // updates
     for (let p in now) {
@@ -54,8 +58,9 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
         v = v?.thunk ? v() : v
 
         if (v != old[p]) {
-            if (isproperty(e, p, v)) e[p] = v
-            else if ((v === false || v == null) && !p.startsWith('aria-')) e.removeAttribute(p)
+            if (v == null) removeprop(e, p, old[p])
+            else if (isproperty(e, p, v)) e[p] = v
+            else if (v === false && !p.startsWith('aria-')) e.removeAttribute(p) // aria-*="false" is meaningful
             else e.setAttribute(p, v)
         }
     }
@@ -121,8 +126,9 @@ function sync(
             cn ??= []
 
             let process = () => {
-                setprops(n, n.h?.p, p)
-                n.h = hfun ?? h // sets the new property values
+                setprops(n, n.ep, p)
+                n.ep = p
+                n.h = hfun ?? h
                 if (
                     --depth &&
                     !n.hasAttribute('const') &&

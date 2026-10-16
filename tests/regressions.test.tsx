@@ -105,11 +105,11 @@ describe('jmc regressions', () => {
     test('a property dropped from the root element of a function component is removed', () => {
         let showTitle = true
 
-        const Component = () => showTitle
+        let C = () => showTitle
             ? <div title="present" />
             : <div />
 
-        patch(document.body, <body><Component /></body>)
+        patch(document.body, <body><C /></body>)
 
         const root = document.querySelector('div')!
         expect(root.title).toBe('present')
