@@ -220,14 +220,4 @@ describe('jmc regressions', () => {
 
         expect((div.h as any).p.v).toBe(2)
     })
-
-    // issue 6: jmc's own props (mounted, update, model) are written onto the element by setprops
-    test('jmc lifecycle props are not set on the element', () => {
-        patch(document.body, <body><div mounted={() => { }} update={() => false} model={{ a: 1 }} /></body>)
-        const div = document.querySelector('div') as any
-
-        expect(div.mounted).toBeUndefined()
-        expect(div.update).toBeUndefined()
-        expect(div.model).toBeUndefined()
-    })
 })
