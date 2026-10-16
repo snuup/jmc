@@ -125,20 +125,8 @@ function sync(
             let { tag, cn, p } = h
             cn ??= []
 
-            let process = () => {
-                n.ep = setprops(n, n.ep, p)
-                n.h = hfun ?? h
-                if (
-                    --depth &&
-                    !n.hasAttribute('const') &&
-                    !iswebcomponent(h as HElement)
-                ) {
-                    const j = syncchildren(n, cn, 0, depth, uc)
-                    removeexcesschildren(n, j)
-                }
-            }
-
-            if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
+            let fresh = (<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()
+            if (fresh) {
                 let ns =
                     p.xmlns ??
                     (parent.tagName == 'foreignObject'
@@ -146,13 +134,21 @@ function sync(
                         : parent.namespaceURI)
                 n = document.createElementNS(ns, tag)
                 c ? c.replaceWith(n) : parent.appendChild(n)
-                process()
-                p.mounted?.(n)
-            } else {
-                n = c as Element
-                if (p.update?.(c, uc)) return i + 1
-                process()
+            } else n = c as Element
+
+            n.h = hfun ?? h // attach before update(), which may handle the update itself
+            if (!fresh && p.update?.(n, uc)) return i + 1
+
+            n.ep = setprops(n, n.ep, p)
+            if (
+                --depth &&
+                !n.hasAttribute('const') &&
+                !iswebcomponent(h as HElement)
+            ) {
+                const j = syncchildren(n, cn, 0, depth, uc)
+                removeexcesschildren(n, j)
             }
+            if (fresh) p.mounted?.(n)
 
             return i + 1
         }
