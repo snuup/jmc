@@ -159,4 +159,73 @@ describe('jmc regressions', () => {
 
         expect(document.querySelector('div')!.hasAttribute('class')).toBe(false)
     })
+
+    // issue 1: setprops compares with != so loosely equal values are taken as unchanged
+    test('a change between loosely equal values is applied', () => {
+        let title: any = 0
+        let data: any = 1
+        const App = () => <body><div title={title} data-x={data} /></body>
+
+        patch(document.body, <App />)
+        const div = document.querySelector('div')!
+        expect(div.title).toBe('0')
+        expect(div.getAttribute('data-x')).toBe('1')
+
+        title = '' // 0 == ''
+        data = true // 1 == true
+        updateview(document.body)
+
+        expect(div.title).toBe('')
+        expect(div.getAttribute('data-x')).toBe('true')
+    })
+
+    // issue 2: patch reads e.parentElement, which is null once an earlier patch replaced e
+    test('updateview skips a node that an earlier patch in the same call replaced', () => {
+        let span = false
+        const App = () => <body>{span ? <span /> : <div />}</body>
+
+        patch(document.body, <App />)
+        const div = document.querySelector('div')!
+
+        span = true
+        expect(() => updateview(document.body, div)).not.toThrow()
+        expect(document.body.innerHTML).toBe('<span></span>')
+    })
+
+    // issue 3: jsx leaves h.p undefined when no props are given
+    test('a component rendered without props receives an empty props object', () => {
+        const F = ({ x }: { x?: string }) => <i>{x ?? 'none'}</i>
+        class C extends JMXComp<{ x?: string }> {
+            view(): H { return <b>{this.props.x ?? 'none'}</b> }
+        }
+
+        patch(document.body, <body><F /><C /></body>)
+
+        expect(document.body.innerHTML).toBe('<i>none</i><b>none</b>')
+    })
+
+    // issue 4: an element whose update() returns true skips process(), so n.h keeps the previous H
+    test('an element whose update() handles the update still gets the new H attached', () => {
+        let v = 1
+        const F = (p: { v: number }) => <div update={() => true} title={String(p.v)} />
+        const App = () => <body><F v={v} /></body>
+
+        patch(document.body, <App />)
+        const div = document.querySelector('div')!
+
+        v = 2
+        updateview(document.body)
+
+        expect((div.h as any).p.v).toBe(2)
+    })
+
+    // issue 6: jmc's own props (mounted, update, model) are written onto the element by setprops
+    test('jmc lifecycle props are not set on the element', () => {
+        patch(document.body, <body><div mounted={() => { }} update={() => false} model={{ a: 1 }} /></body>)
+        const div = document.querySelector('div') as any
+
+        expect(div.mounted).toBeUndefined()
+        expect(div.update).toBeUndefined()
+        expect(div.model).toBeUndefined()
+    })
 })

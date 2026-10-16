@@ -57,7 +57,7 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined): J => {
     // updates
     for (let p in now) {
         let v = now[p]
-        if (v != old[p]) {
+        if (v !== old[p] && !(v == null && old[p] == null)) { // strict: 0 vs '' or 1 vs true are changes. null vs undefined is not
             if (v == null) removeprop(e, p, old[p])
             else if (isproperty(e, p, v)) e[p] = v
             else if (v === false && !p.startsWith('aria-')) e.removeAttribute(p) // aria-*="false" is meaningful
