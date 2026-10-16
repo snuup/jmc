@@ -83,6 +83,11 @@ let syncchildren = (
     return i
 }
 
+/** class components must render exactly one root node, they are attached to it and update through it */
+let assertnonfragment = (h: HClassComponent, hv: HU, i: number, j: number) => {
+    if (j - i != 1 || hv?.kind == 4) throw new Error(`${h.tag.name}.view() must render exactly one root element`)
+}
+
 function sync(
     parent: Element,
     i: number,
@@ -145,20 +150,25 @@ function sync(
         case 3: {
             // class component
             if ((c?.h as any)?.tag == h.tag) {
+                // update
                 let ci = (c.h as HClassComponent).i!
                 ci.props = c.h!.p = h.p
                 c.h!.p = h.p // for repatable update, set attached h.p. alternatively, we could use ci.props in case where h.p is undefined
                 // update() substitutes view/sync when returning truthy
                 const handled = ci.update?.(uc)
+                let hv: HU
                 const j = handled
                     ? i + 1
-                    : sync(parent, i, ci.view(), c.h, depth, uc) // hfun because outermost function shall be attached
+                    : sync(parent, i, (hv = ci.view()), c.h, depth, uc) // hfun because outermost function shall be attached
+                if (!handled) assertnonfragment(h, hv, i, j)
                 ci.element = parent.childNodes[i]!
                 return j
             } else {
+                // create
                 let ci = (h.i = rebind(new h.tag(h.p)))
                 let hv = ci.view()
                 let j = sync(parent, i, hv, h, depth, uc)
+                assertnonfragment(h, hv, i, j)
                 let n = parent.childNodes[i]!
                 ci.element = n
                 ci.mounted?.()
@@ -167,7 +177,8 @@ function sync(
         }
 
         case 4: {
-            // fragment
+            // fragment. hfun is deliberately not passed on: a component returning a fragment is not attached
+            // to any node, so it cannot update itself, only its parent can update it
             return syncchildren(parent, h.cn ?? [], i, --depth, uc)
         }
 
