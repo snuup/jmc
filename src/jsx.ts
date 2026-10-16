@@ -683,12 +683,12 @@ declare global {
 // 1. Define the Thunk transformer for a single type
 type WithThunk<T> = T extends undefined
     ? undefined
-    : T | (() => T);
+    : T | (() => T | undefined)
 
 // 2. Map across all keys of the existing interface
 export type HTMLAttributes = {
-    [K in keyof HTMLAttributesBase]?: WithThunk<NonNullable<HTMLAttributesBase[K]>>;
-};
+    [K in keyof HTMLAttributesBase]?: WithThunk<NonNullable<HTMLAttributesBase[K]>>
+}
 
 export interface HTMLAttributesBase extends AdditionalElementAttributes {
     class?: string

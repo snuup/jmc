@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { H, HClassComponent, JMXComp, jsx, jsxf, patch, updateview } from '../src'
+import { H, HClassComponent, JMXComp, jsx, jsxf, patch, updateview, lazy } from '../src'
 
 beforeEach(() => {
     document.documentElement.innerHTML = '<html><body></body></html>'
@@ -132,5 +132,31 @@ describe('jmc regressions', () => {
         updateview(document.body)
 
         expect(document.querySelector('div')!.hasAttribute('aria-label')).toBe(false)
+    })
+
+    test('a dropped thunked attribute is removed', () => {
+        let showClass = true
+        const App = () => <body>{showClass ? <div class={lazy(() => 'a')} /> : <div />}</body>
+
+        patch(document.body, <App />)
+        expect(document.querySelector('div')!.getAttribute('class')).toBe('a')
+
+        showClass = false
+        updateview(document.body)
+
+        expect(document.querySelector('div')!.hasAttribute('class')).toBe(false)
+    })
+
+    test('a thunked attribute evaluating to undefined is removed', () => {
+        let css: string | undefined = 'a'
+        const App = () => <body><div class={lazy(() => css)} /></body>
+
+        patch(document.body, <App />)
+        expect(document.querySelector('div')!.getAttribute('class')).toBe('a')
+
+        css = undefined
+        updateview(document.body)
+
+        expect(document.querySelector('div')!.hasAttribute('class')).toBe(false)
     })
 })

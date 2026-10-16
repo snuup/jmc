@@ -44,9 +44,11 @@ let removeprop = (e: Element & J, p: string, old: any) => {
     if (!(old instanceof Object)) e.removeAttribute(p) // reflected properties (title, id, ...) leave an empty attribute otherwise
 }
 
-let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
+/** applies now over old and returns the applied values, with thunks evaluated, to serve as old on the next call */
+let setprops = (e: Element & J, old: J | undefined, now: J | undefined): J => {
     old ??= {}
-    now ??= {}
+    // evaluate thunks into a copy: now is h.p, which gets rendered again and must keep its thunks
+    now = Object.fromEntries(Object.entries(now ?? {}).map(([k, v]) => [k, v?.thunk ? v() : v]))
 
     // removals
     for (let p in old)
@@ -55,8 +57,6 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
     // updates
     for (let p in now) {
         let v = now[p]
-        v = v?.thunk ? v() : v
-
         if (v != old[p]) {
             if (v == null) removeprop(e, p, old[p])
             else if (isproperty(e, p, v)) e[p] = v
@@ -64,6 +64,7 @@ let setprops = (e: Element & J, old: J | undefined, now: J | undefined) => {
             else e.setAttribute(p, v)
         }
     }
+    return now
 }
 
 let removeexcesschildren = (n: Element, i: number) => {
@@ -126,8 +127,7 @@ function sync(
             cn ??= []
 
             let process = () => {
-                setprops(n, n.ep, p)
-                n.ep = p
+                n.ep = setprops(n, n.ep, p)
                 n.h = hfun ?? h
                 if (
                     --depth &&
