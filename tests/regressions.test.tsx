@@ -179,17 +179,15 @@ describe('jmc regressions', () => {
         expect(div.getAttribute('data-x')).toBe('true')
     })
 
-    // issue 2: patch reads e.parentElement, which is null once an earlier patch replaced e
-    test('updateview skips a node that an earlier patch in the same call replaced', () => {
-        let span = false
-        const App = () => <body>{span ? <span /> : <div />}</body>
+    // issue 2: querySelectorAll collects all matches before patching, so patching an outer match can replace an inner one
+    test('updateview by selector skips a match that patching an earlier match replaced', () => {
+        let asdiv = false
+        const Card = () => <section class="card">{asdiv ? <div class="card" /> : <section class="card" />}</section>
+        patch(document.body, <body><Card /></body>)
 
-        patch(document.body, <App />)
-        const div = document.querySelector('div')!
-
-        span = true
-        expect(() => updateview(document.body, div)).not.toThrow()
-        expect(document.body.innerHTML).toBe('<span></span>')
+        asdiv = true
+        expect(() => updateview('.card')).not.toThrow()
+        expect(document.body.innerHTML).toBe('<section class="card"><div class="card"></div></section>')
     })
 
     // issue 3: jsx leaves h.p undefined when no props are given

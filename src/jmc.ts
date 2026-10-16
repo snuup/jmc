@@ -241,7 +241,8 @@ export function updateview(...cmds: Command[]): void {
             if (typeof c === 'string') {
                 f([...document.querySelectorAll(c)])
             } else if (c instanceof Node) {
-                if (c.h) {
+                // isConnected: a selector's matches are collected upfront, patching one can replace a later one
+                if (c.h && c.isConnected) {
                     patch(c, c.h, depth, uc)
                     patchcount++
                 }
