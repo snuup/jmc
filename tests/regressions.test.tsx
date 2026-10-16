@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { H, HClassComponent, JMXComp, jsx, jsxf, patch, updateview } from '../src'
 
 beforeEach(() => {
@@ -6,7 +6,7 @@ beforeEach(() => {
 })
 
 describe('jmc regressions', () => {
-    it('keeps a class component element current when its root tag changes', () => {
+    test('a class component element follows its root when the root tag changes', () => {
         let renderSpan = false
 
         class RootSwitcher extends JMXComp {
@@ -49,7 +49,7 @@ describe('jmc regressions', () => {
         )
     })
 
-    it('grows and shrinks a fragment returned by a function component through its parent', () => {
+    test('a fragment returned by a function component grows and shrinks when its parent is updated', () => {
         let n = 1
         const Items = () => <>{Array.from({ length: n }, (_, k) => <b>{k}</b>)}</>
 
@@ -64,7 +64,7 @@ describe('jmc regressions', () => {
         expect(document.body.innerHTML).toBe('<b>0</b><hr>')
     })
 
-    it('rejects a class component whose view returns a fragment', () => {
+    test('a class component whose view returns a fragment throws', () => {
         class FragmentClass extends JMXComp {
             view(): H {
                 return <><b>a</b><i>b</i></>
@@ -75,7 +75,7 @@ describe('jmc regressions', () => {
         )
     })
 
-    it('rejects a class component whose view returns a single-child fragment', () => {
+    test('a class component whose view returns a single-child fragment throws', () => {
         class SingleFragmentClass extends JMXComp {
             view(): H {
                 return <><b>a</b></>
@@ -86,7 +86,7 @@ describe('jmc regressions', () => {
         )
     })
 
-    it('rejects a class component whose view returns nothing', () => {
+    test('a class component whose view returns nothing throws', () => {
         class EmptyClass extends JMXComp {
             view(): H {
                 return null as any
@@ -97,7 +97,7 @@ describe('jmc regressions', () => {
         )
     })
 
-    it('rejects a class component that switches to a fragment on update', () => {
+    test('a class component whose view switches to a fragment throws on update', () => {
         let fragment = false
         class Switcher extends JMXComp {
             view(): H {
@@ -113,7 +113,7 @@ describe('jmc regressions', () => {
         )
     })
 
-    it('removes an old rendered-root property from a function component', () => {
+    test('a property dropped from the root element of a function component is removed', () => {
         let showTitle = true
 
         const Component = () => showTitle
@@ -132,7 +132,7 @@ describe('jmc regressions', () => {
         expect(root.title).toBe('')
     })
 
-    it('removes an attribute when its new JSX value is undefined', () => {
+    test('an attribute whose new value is undefined is removed', () => {
         let label: string | undefined = 'present'
         const App = () => <body><div aria-label={label} /></body>
 
