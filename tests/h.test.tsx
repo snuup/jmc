@@ -14,6 +14,7 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 1,
+            p: {},
             tag: 'div',
         }
 
@@ -52,6 +53,7 @@ describe('jsx hyperscript', () => {
             cn: [
                 {
                     kind: 1,
+                    p: {},
                     tag: 'b',
                     cn: ['boldy'],
                 },
@@ -66,6 +68,7 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 4,
+            p: {},
         }
 
         expect(h).toEqual(e)
@@ -80,9 +83,11 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 4,
+            p: {},
             cn: [
                 {
                     kind: 1,
+                    p: {},
                     tag: 'b',
                     cn: ['boldy'],
                 },
@@ -101,9 +106,11 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 4,
+            p: {},
             cn: [
                 {
                     kind: 4,
+                    p: {},
                 },
             ],
         }
@@ -119,6 +126,7 @@ describe('jsx hyperscript', () => {
         let e = {
             kind: 3,
             tag: C,
+            p: {},
         }
 
         expect(h).toEqual(e)
@@ -147,6 +155,7 @@ describe('jsx hyperscript', () => {
         let e = {
             kind: 2,
             tag: F,
+            p: {},
         }
 
         expect(h).toEqual(e)
@@ -168,6 +177,7 @@ describe('jsx hyperscript', () => {
             cn: [
                 {
                     kind: 1,
+                    p: {},
                     tag: 'i',
                     cn: ['italy'],
                 },
@@ -194,6 +204,7 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 1,
+            p: {},
             tag: 'body',
             cn: [
                 {
@@ -224,13 +235,15 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 1,
+            p: {},
             tag: 'body',
             cn: [
                 {
                     kind: 4,
+                    p: {},
                     cn: [
-                        { kind: 1, tag: 'b', cn: ['1'] },
-                        { kind: 1, tag: 'b', cn: ['2'] },
+                        { kind: 1, p: {}, tag: 'b', cn: ['1'] },
+                        { kind: 1, p: {}, tag: 'b', cn: ['2'] },
                     ],
                 },
             ],
@@ -257,11 +270,13 @@ describe('jsx hyperscript', () => {
 
         let e = {
             kind: 1,
+            p: {},
             tag: 'body',
             cn: [
                 {
                     kind: 4,
-                    cn: [{ kind: 4, cn: ['hasen'] }]
+                    p: {},
+                    cn: [{ kind: 4, p: {}, cn: ['hasen'] }]
                 },
                 'hopp'
             ]

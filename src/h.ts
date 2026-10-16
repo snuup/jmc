@@ -46,21 +46,21 @@ export type HFragment = {
 export type HElement = {
     kind: HKindElement
     tag: string
-    p?: J
+    p: J
     cn?: Children
 }
 
 export type HFunctionComponent = {
     kind: HKindFunctionComponent
     tag: FComponent
-    p?: J
+    p: J
     cn?: Children
 }
 
 export type HClassComponent = {
     kind: HKindClassComponent
     tag: CComponent
-    p?: J
+    p: J
     cn?: Children
     i?: IClassComponent
 }
@@ -85,7 +85,7 @@ export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionCompone
 
     let h: any = { kind }
     if (kind != 4) h.tag = tag
-    if (p) h.p = p
+    h.p = p ?? {}
     if (cn?.length) h.cn = cn
     return h
 }

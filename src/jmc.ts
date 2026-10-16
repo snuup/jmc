@@ -45,10 +45,9 @@ let removeprop = (e: Element & J, p: string, old: any) => {
 }
 
 /** applies now over old and returns the applied values, with thunks evaluated, to serve as old on the next call */
-let setprops = (e: Element & J, old: J | undefined, now: J | undefined): J => {
-    old ??= {}
+let setprops = (e: Element & J, old: J = {}, now: J): J => {
     // evaluate thunks into a copy: now is h.p, which gets rendered again and must keep its thunks
-    now = Object.fromEntries(Object.entries(now ?? {}).map(([k, v]) => [k, v?.thunk ? v() : v]))
+    now = Object.fromEntries(Object.entries(now).map(([k, v]) => [k, v?.thunk ? v() : v]))
 
     // removals
     for (let p in old)
@@ -141,17 +140,17 @@ function sync(
 
             if ((<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()) {
                 let ns =
-                    p?.xmlns ??
+                    p.xmlns ??
                     (parent.tagName == 'foreignObject'
                         ? 'http://www.w3.org/1999/xhtml'
                         : parent.namespaceURI)
                 n = document.createElementNS(ns, tag)
                 c ? c.replaceWith(n) : parent.appendChild(n)
                 process()
-                p?.mounted?.(n)
+                p.mounted?.(n)
             } else {
                 n = c as Element
-                if (p?.update?.(c, uc)) return i + 1
+                if (p.update?.(c, uc)) return i + 1
                 process()
             }
 
@@ -169,8 +168,7 @@ function sync(
             if ((c?.h as any)?.tag == h.tag) {
                 // update
                 let ci = (c.h as HClassComponent).i!
-                ci.props = c.h!.p = h.p
-                c.h!.p = h.p // for repatable update, set attached h.p. alternatively, we could use ci.props in case where h.p is undefined
+                ci.props = c.h!.p = h.p // set attached h.p too, for a repeatable update through c.h
                 // update() substitutes view/sync when returning truthy
                 const handled = ci.update?.(uc)
                 let hv: HU

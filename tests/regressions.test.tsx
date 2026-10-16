@@ -197,8 +197,12 @@ describe('jmc regressions', () => {
             view(): H { return <b>{this.props.x ?? 'none'}</b> }
         }
 
-        patch(document.body, <body><F /><C /></body>)
+        const App = () => <body><F /><C /></body>
 
+        patch(document.body, <App />) // create
+        expect(document.body.innerHTML).toBe('<i>none</i><b>none</b>')
+
+        updateview(document.body) // update: C's instance is reused and gets new props
         expect(document.body.innerHTML).toBe('<i>none</i><b>none</b>')
     })
 
