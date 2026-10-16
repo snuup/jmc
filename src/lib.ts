@@ -1,4 +1,4 @@
-import type { Children, IClassComponent, H, J, HFragment } from './h';
+import type { Children, IClassComponent, HU, J, HFragment } from './h';
 import { updateview } from './jmc.js'
 
 export type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; }
@@ -7,13 +7,13 @@ export const When = ({ cond }: { cond: boolean }, cn: Children): HFragment | nul
 
 export abstract class JMXComp<P extends J = {}> implements IClassComponent {
 
-    element!: HTMLElement // assigned by jmx framework
+    element!: HTMLElement // assigned by jmx framework. a placeholder Comment while view() renders nothing
     constructor(public props: P) { }
 
     // overrides
     mounted() { }
     update(uc?: any): boolean | void { }
-    abstract view(): H
+    abstract view(): HU
 
     // utility: updates the component's view
     updateview() { updateview(this.element) }

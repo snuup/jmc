@@ -702,17 +702,36 @@ describe('jmc dom tests', () => {
 
     it('class view returns undefined', () => {
 
+        let instances: C[] = []
         class C extends JMXComp {
-            view(): H { // tbd: return value must be HU
-                return undefined as any
+            visible = false
+            constructor(p: {}) { super(p); instances.push(this) }
+            view() {
+                return this.visible ? <b /> : undefined
             }
         }
 
-        let App = <body>
-            <C />
-        </body>
+        let App = () => <body><C /><i /></body>
 
-        patch(document.body, App)
+        // renders a placeholder, attached to the instance
+        patch(document.body, <App />)
+        expect(document.body.innerHTML).toBe('<!----><i></i>')
+        let [c] = instances
+        expect(c.element.nodeType).toBe(Node.COMMENT_NODE)
+
+        // parent update keeps the instance
+        updateview(document.body)
+        expect(instances).toHaveLength(1)
+        expect(document.body.innerHTML).toBe('<!----><i></i>')
+
+        // the component can bring itself back and hide itself again
+        c.visible = true
+        c.updateview()
+        expect(document.body.innerHTML).toBe('<b></b><i></i>')
+        c.visible = false
+        c.updateview()
+        expect(document.body.innerHTML).toBe('<!----><i></i>')
+        expect(instances).toHaveLength(1)
     })
 
     it('deferred property update', () => {

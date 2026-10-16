@@ -12,6 +12,7 @@ import { rebind } from './base.js'
 const enum NodeType {
     // vaporizes (but for that must be in this file, otherwise not)
     TextNode = 3,
+    Comment = 8,
 }
 
 declare global {
@@ -98,9 +99,19 @@ function sync(
 ): number {
     // console.log('%csync', "background:orange", parent.tagName, i, h, hfun, depth)
 
-    if (h === null || h === undefined) return i // skip. keep 0 and false renderable, per comment below
-
     let c = parent.childNodes[i]
+
+    if (h === null || h === undefined) {
+        if (hfun?.kind != 3) return i // skip. keep 0 and false renderable, per comment below
+        // a class component rendering nothing is attached to a placeholder, so it keeps its state and can show itself again
+        if (c?.nodeType != NodeType.Comment) {
+            let n = new Comment()
+            c ? c.replaceWith(n) : parent.append(n)
+            c = n
+        }
+        c.h = hfun
+        return i + 1
+    }
 
     switch (h.kind) {
         case 1: {

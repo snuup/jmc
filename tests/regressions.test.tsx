@@ -86,17 +86,6 @@ describe('jmc regressions', () => {
         )
     })
 
-    test('a class component whose view returns nothing throws', () => {
-        class EmptyClass extends JMXComp {
-            view(): H {
-                return null as any
-            }
-        }
-        expect(() => patch(document.body, <body><EmptyClass /></body>)).toThrow(
-            'EmptyClass.view() must render exactly one root element',
-        )
-    })
-
     test('a class component whose view switches to a fragment throws on update', () => {
         let fragment = false
         class Switcher extends JMXComp {
