@@ -1,4 +1,4 @@
-import { jsx, jsxf, patch, HElement, JMXComp, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H, lazy } from "../src"
+import { jsx, jsxf, patch, HElement, Component, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H, lazy } from "../src"
 import { describe, expect, beforeEach, it, vi } from 'vitest'
 import { Window } from 'happy-dom'
 import { textTracks } from "happy-dom/lib/PropertySymbol.js"
@@ -152,7 +152,7 @@ describe('jmc dom tests', () => {
     })
 
     it('class component is constructed', () => {
-        class C extends JMXComp {
+        class C extends Component {
             view() {
                 return 'bunny component'
             }
@@ -168,7 +168,7 @@ describe('jmc dom tests', () => {
     })
 
     it('class component h is attached', () => {
-        class C extends JMXComp {
+        class C extends Component {
             view() {
                 return <div />
             }
@@ -185,7 +185,7 @@ describe('jmc dom tests', () => {
     })
 
     it('class component instance h.i is attached', () => {
-        class C extends JMXComp {
+        class C extends Component {
             view() {
                 return <div />
             }
@@ -254,7 +254,7 @@ describe('jmc dom tests', () => {
     })
 
     it('patch class component', () => {
-        class C extends JMXComp {
+        class C extends Component {
             view() {
                 return <aside>hase war da</aside>
             }
@@ -578,7 +578,7 @@ describe('jmc dom tests', () => {
 
     it('class update receives updatecontext', () => {
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return <aside>C</aside>
             }
@@ -601,7 +601,7 @@ describe('jmc dom tests', () => {
 
     it('update contexts are sent correctly', () => {
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H { return <aside>C</aside> }
             update(uc: any) { }
         }
@@ -703,7 +703,7 @@ describe('jmc dom tests', () => {
     it('class view returns undefined', () => {
 
         let instances: C[] = []
-        class C extends JMXComp {
+        class C extends Component {
             visible = false
             constructor(p: {}) { super(p); instances.push(this) }
             view() {
@@ -780,7 +780,7 @@ describe('jmc dom tests', () => {
 
         let n = 10
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return n
             }

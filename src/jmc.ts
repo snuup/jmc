@@ -1,6 +1,7 @@
 import type {
     H,
     HElement,
+    HComp,
     J,
     Selector,
     Children,
@@ -17,13 +18,12 @@ const enum NodeType {
 
 declare global {
     interface Node {
-        h?: H & { p?: J }
+        /** the H this node updates from: the element's own H, or the outermost component rendering it */
+        h?: HElement | HComp
         /** props last applied to this element. kept apart from h, which may be the owning component's H */
         ep?: J
     }
 }
-
-let iswebcomponent = (h: HElement) => h.tag.includes('-')
 
 let attributeNames = new Set([
     'selected',
@@ -33,11 +33,10 @@ let attributeNames = new Set([
 
 const isproperty = (e: Element, name: string, value: any) =>
     !attributeNames.has(name) &&
-    (value instanceof Object ||
-        value instanceof Function || (
-            e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
-            name in e &&
-            name !== 'style'))
+    (value instanceof Object || ( // objects and functions
+        e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
+        name in e &&
+        name !== 'style'))
 
 let removeprop = (e: Element & J, p: string, old: any) => {
     if (isproperty(e, p, old)) e[p] = typeof old === 'boolean' ? false : ''
@@ -71,11 +70,11 @@ let removeexcesschildren = (n: Element, i: number) => {
     while ((c = n.childNodes[i])) {
         try {
             c.remove()
-        } catch (_) { } // due to blur-event-handlers, this can fail
+        } catch { } // due to blur-event-handlers, this can fail
     }
 }
 
-/** synchronizes children starting at the i-th element. returns the index of the last child synchronized */
+/** synchronizes children starting at the i-th node. returns the index after the last child synchronized */
 let syncchildren = (
     p: Element,
     cn: Children,
@@ -84,7 +83,7 @@ let syncchildren = (
     uc: J,
 ): number => {
     cn.flat(999)
-        .filter((hc) => hc !== null && hc !== undefined) // skip. keep 0 and false renderable, per comment below)
+        .filter((hc) => hc != null) // skip null and undefined. 0 and false are rendered as text
         .forEach((hc) => (i = sync(p, i, hc, undefined, depth, uc)))
     return i
 }
@@ -98,16 +97,14 @@ function sync(
     parent: Element,
     i: number,
     h: HU,
-    hfun: H | undefined,
+    hfun: HComp | undefined,
     depth: number,
     uc: J,
 ): number {
-    // console.log('%csync', "background:orange", parent.tagName, i, h, hfun, depth)
-
     let c = parent.childNodes[i]
 
-    if (h === null || h === undefined) {
-        if (hfun?.kind != 3) return i // skip. keep 0 and false renderable, per comment below
+    if (h == null) {
+        if (hfun?.kind != 3) return i // renders nothing
         // a class component rendering nothing is attached to a placeholder, so it keeps its state and can show itself again
         if (c?.nodeType != NodeType.Comment) {
             let n = new Comment()
@@ -122,8 +119,7 @@ function sync(
         case 1: {
             // element
             let n: Element
-            let { tag, cn, p } = h
-            cn ??= []
+            let { tag, cn = [], p } = h
 
             let fresh = (<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()
             if (fresh) {
@@ -140,11 +136,7 @@ function sync(
             if (!fresh && p.update?.(n, uc)) return i + 1
 
             n.ep = setprops(n, n.ep, p)
-            if (
-                --depth &&
-                !n.hasAttribute('const') &&
-                !iswebcomponent(h as HElement)
-            ) {
+            if (--depth && !n.hasAttribute('const') && !tag.includes('-')) { // web components render their own children
                 const j = syncchildren(n, cn, 0, depth, uc)
                 removeexcesschildren(n, j)
             }
@@ -160,31 +152,19 @@ function sync(
         }
 
         case 3: {
-            // class component
-            if ((c?.h as any)?.tag == h.tag) {
-                // update
-                let ci = (c.h as HClassComponent).i!
-                ci.props = c.h!.p = h.p // set attached h.p too, for a repeatable update through c.h
-                // update() substitutes view/sync when returning truthy
-                const handled = ci.update?.(uc)
-                let hv: HU
-                const j = handled
-                    ? i + 1
-                    : sync(parent, i, (hv = ci.view()), c.h, depth, uc) // hfun because outermost function shall be attached
-                if (!handled) assertnonfragment(h, hv, i, j)
-                ci.element = parent.childNodes[i]!
-                return j
-            } else {
-                // create
-                let ci = (h.i = rebind(new h.tag(h.p)))
-                let hv = ci.view()
-                let j = sync(parent, i, hv, h, depth, uc)
-                assertnonfragment(h, hv, i, j)
-                let n = parent.childNodes[i]!
-                ci.element = n
-                ci.mounted?.()
-                return j
+            // class component. reuses the instance attached to c, if c renders the same class
+            let old = c?.h?.tag == h.tag ? c.h as HClassComponent : undefined
+            let ci = old ? old.i! : (h.i = rebind(new h.tag(h.p)))
+            if (old) {
+                ci.props = old.p = h.p // set attached p too, for a repeatable update through c.h
+                if (ci.update?.(uc)) return i + 1 // update() substitutes view/sync when returning truthy
             }
+            let hv = ci.view()
+            let j = sync(parent, i, hv, old ?? h, depth, uc) // the attached H, so updates find the instance
+            assertnonfragment(h, hv, i, j)
+            ci.element = parent.childNodes[i]
+            if (!old) ci.mounted?.()
+            return j
         }
 
         case 4: {
@@ -209,15 +189,15 @@ export function patch(
     e: Node | null,
     h: H,
     depth = 999,
-    uc = {} as J,
+    uc: J = {},
 ): HTMLElement | undefined {
     if (!e) return
     if (depth == 0) {
-        ; (e as HTMLElement).replaceChildren()
+        (e as Element).replaceChildren()
         depth = 999
     }
-    let p = e.parentElement as HTMLElement
-    let i = [].indexOf.call<any, any, any>(p.childNodes, e)
+    let p = e.parentElement!
+    let i = [...p.childNodes].indexOf(e as ChildNode)
     sync(p, i, h, undefined, depth, uc)
     return p.childNodes[i] as HTMLElement
 }
@@ -226,29 +206,15 @@ export type Command = Selector | J | number
 
 export function updateview(...cmds: Command[]): void {
     if (!cmds.length) cmds.push('body')
-    let uc = {}
+    let uc: J = {}
     let depth = 999
-    let patchcount = 0
 
-    function f(cmds: Command[]) {
-        for (const c of cmds) {
-            if (typeof c === 'string') {
-                f([...document.querySelectorAll(c)])
-            } else if (c instanceof Node) {
-                // isConnected: a selector's matches are collected upfront, patching one can replace a later one
-                if (c.h && c.isConnected) {
-                    patch(c, c.h, depth, uc)
-                    patchcount++
-                }
-            } else if (typeof c === 'number') {
-                depth = c
-            } else {
-                uc = c
-            }
-        }
-    }
+    // isConnected: a selector's matches are collected upfront, patching one can replace a later one
+    let up = (n: Node) => { if (n.h && n.isConnected) patch(n, n.h, depth, uc) }
 
-    f(cmds)
-
-    // if (!patchcount) console.warn("updateview did not update anything. cmds=", ...cmds)
+    for (const c of cmds)
+        if (typeof c == 'string') document.querySelectorAll(c).forEach(up)
+        else if (c instanceof Node) up(c)
+        else if (typeof c == 'number') depth = c
+        else uc = c
 }

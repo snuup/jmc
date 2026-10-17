@@ -23,12 +23,12 @@ simplicity to a level where everybody can read, fix, expand the code
     writing the view is to a good part similar as in react, having invented jsx from hyperscript is the good part of react
 - updates of the the view can be as fine granular as desired, their scope is specified by a dom element
 - while jsx expression are traditionally transformed into virtual dom representations that are then syncd with the real dome,
-    jmx avoids the cost of a virtual dom. instead, jsx expressions are transformed into update functions that take the real dom
+    jmc avoids the cost of a virtual dom. instead, jsx expressions are transformed into update functions that take the real dom
     element as argument and sync that element when called.
 
 since the model is just a pojo and the controller a plane class with methods for the applications operations, the only missing piece is the specific jsx view.
-the jmx library therefore provides:
+the jmc library therefore provides:
     a vite plugin that transforms the js code for jsx fragments a little bit
     a real dom update system that has similarities with v-dom libraries, and equals their rather low complexity
 
-in addition to that library, jmx provides a style guide on how to write js applications (a strict layer pattern), how to debug them and finally a simple router.
+in addition to that library, jmc provides a style guide on how to write js applications (a strict layer pattern), how to debug them and finally a simple router.

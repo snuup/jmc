@@ -1,21 +1,13 @@
 export type J = Record<string, any> // a json record
-export type UC = J // update context
 
-// Overload signatures
 export type Selector = string | Node
 
-export type FComponent = (props: J | undefined, children?: Children) => HU
-export type FComponentT<P> = (pcn: P, cn?: Children) => HU
+export type FComponent = (props: J, children?: Children) => HU
 
 type HKindElement = 1
 type HKindFunctionComponent = 2
 type HKindClassComponent = 3
 type HKindFragment = 4
-
-// export const kindelement : HKindElement = 1
-// export const kindfc : HKindFunctionComponent = 2
-// export const kindcc : HKindClassComponent = 3
-// export const kindfragment : HKindFragment = 4
 
 export type HKind = HKindElement | HKindFunctionComponent | HKindClassComponent | HKindFragment
 
@@ -36,7 +28,7 @@ export type Children = HU[]
 export type HText =
     | string // text node
     | number // text node
-    | boolean // do not allow boolean, that
+    | boolean // rendered as text, like 0. null and undefined render nothing
 
 export type HFragment = {
     kind: HKindFragment
@@ -72,20 +64,19 @@ export type H =
     | HElement
     | HFunctionComponent
     | HClassComponent
-    | HFragment  
+    | HFragment
 
 export type HU = H | undefined | null
 
 let isclass = (f: Function) => /^class\s|^class\{/.test(f.toString())
 
-export function jsx(tag: any, p: any, ...cn: any[]): HElement | HFunctionComponent | HClassComponent | HFragment {
+export function jsx(tag: any, p: any, ...cn: any[]): HElement | HComp | HFragment {
     if (tag?.kind) return tag // already an H node, flatten tree
 
     let kind: HKind = tag == jsxf ? 4 : tag instanceof Function ? (isclass(tag) ? 3 : 2) : 1
 
-    let h: any = { kind }
+    let h: any = { kind, p: p ?? {} }
     if (kind != 4) h.tag = tag
-    h.p = p ?? {}
     if (cn?.length) h.cn = cn
     return h
 }

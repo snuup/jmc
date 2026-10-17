@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { H, HClassComponent, JMXComp, jsx, jsxf, patch, updateview, lazy } from '../src'
+import { H, HClassComponent, Component, jsx, jsxf, patch, updateview, lazy } from '../src'
 
 beforeEach(() => {
     document.documentElement.innerHTML = '<html><body></body></html>'
@@ -9,7 +9,7 @@ describe('jmc regressions', () => {
     test('a class component element follows its root when the root tag changes', () => {
         let renderSpan = false
 
-        class RootSwitcher extends JMXComp {
+        class RootSwitcher extends Component {
             view(): H {
                 return renderSpan ? <span>component</span> : <div>component</div>
             }
@@ -65,7 +65,7 @@ describe('jmc regressions', () => {
     })
 
     test('a class component whose view returns a fragment throws', () => {
-        class FragmentClass extends JMXComp {
+        class FragmentClass extends Component {
             view(): H {
                 return <><b>a</b><i>b</i></>
             }
@@ -76,7 +76,7 @@ describe('jmc regressions', () => {
     })
 
     test('a class component whose view returns a single-child fragment throws', () => {
-        class SingleFragmentClass extends JMXComp {
+        class SingleFragmentClass extends Component {
             view(): H {
                 return <><b>a</b></>
             }
@@ -88,7 +88,7 @@ describe('jmc regressions', () => {
 
     test('a class component whose view switches to a fragment throws on update', () => {
         let fragment = false
-        class Switcher extends JMXComp {
+        class Switcher extends Component {
             view(): H {
                 return fragment ? <><b>a</b><i>b</i></> : <div>a</div>
             }
@@ -193,7 +193,7 @@ describe('jmc regressions', () => {
     // issue 3: jsx leaves h.p undefined when no props are given
     test('a component rendered without props receives an empty props object', () => {
         const F = ({ x }: { x?: string }) => <i>{x ?? 'none'}</i>
-        class C extends JMXComp<{ x?: string }> {
+        class C extends Component<{ x?: string }> {
             view(): H { return <b>{this.props.x ?? 'none'}</b> }
         }
 

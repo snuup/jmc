@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { H, HtmlHTMLAttributes, IntrinsicElementAttributes, JMXComp, jsx, patch, updateview } from '../src'
+import { H, HtmlHTMLAttributes, IntrinsicElementAttributes, Component, jsx, patch, updateview } from '../src'
 import { Window } from 'happy-dom'
 
 beforeEach(() => {
@@ -15,7 +15,7 @@ describe('class components', () => {
 
     it('class component renders', () => {
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return <div class="class component C">hi ho</div>
             }
@@ -27,7 +27,7 @@ describe('class components', () => {
 
     it('class component updates', () => {
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return <div class="class component C">hi ho</div>
             }
@@ -41,7 +41,7 @@ describe('class components', () => {
 
     it('class component updates inside App', () => {
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return <div class="class component C">hi ho</div>
             }
@@ -59,7 +59,7 @@ describe('class components', () => {
 
     it('class component updates inside App 2', () => {
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return <div />
             }
@@ -95,7 +95,7 @@ describe('class components', () => {
             css: "mondo"
         }
 
-        class C extends JMXComp<{ name: string, css: string }> {
+        class C extends Component<{ name: string, css: string }> {
             view(): H {
                 return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
             }
@@ -118,7 +118,7 @@ describe('class components', () => {
             css: "mondo"
         }
 
-        class C extends JMXComp<{ name: string, css: string }> {
+        class C extends Component<{ name: string, css: string }> {
             view(): H {
                 return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
             }
@@ -141,7 +141,7 @@ describe('class components', () => {
             css: "mondo"
         }
 
-        class C extends JMXComp<{ name: string, css: string }> {
+        class C extends Component<{ name: string, css: string }> {
             view(): H {
                 return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
             }
@@ -166,7 +166,7 @@ describe('class components', () => {
             css: "mondo"
         }
 
-        class C extends JMXComp<{ name: string, css: string }> {
+        class C extends Component<{ name: string, css: string }> {
             view(): H {
                 return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
             }
@@ -191,7 +191,7 @@ describe('class components', () => {
             css: "mondo"
         }
 
-        class C extends JMXComp<{ name: string, css: string }> {
+        class C extends Component<{ name: string, css: string }> {
             view(): H {
                 return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
             }
@@ -217,7 +217,7 @@ describe('class components', () => {
             css: "value-1"
         }
 
-        class C extends JMXComp {
+        class C extends Component {
             view(): H {
                 return <div class={m.css}>bunny</div>
             }
