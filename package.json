@@ -1,7 +1,14 @@
 {
     "name": "@snupo/jmc",
     "description": "Minimal JSX/TSX view library that syncs directly with the real DOM",
-    "keywords": ["jsx", "tsx", "dom", "view", "ui", "typescript"],
+    "keywords": [
+        "jsx",
+        "tsx",
+        "dom",
+        "view",
+        "ui",
+        "typescript"
+    ],
     "author": "snupo",
     "license": "MIT",
     "repository": {
@@ -10,7 +17,7 @@
     },
     "homepage": "https://github.com/snuup/jmc#readme",
     "bugs": "https://github.com/snuup/jmc/issues",
-    "version": "1.0.61",
+    "version": "1.1.0",
     "publishConfig": {
         "access": "public"
     },
