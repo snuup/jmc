@@ -101,16 +101,20 @@ function sync(
 ): number {
     let c = parent.childNodes[i]
 
-    if (h == null || h === false) { // like React, so {cond && <b />} works. 0 is still rendered
-        if (hfun?.kind != 3) return i // renders nothing
-        // a class component rendering nothing is attached to a placeholder, so it keeps its state and can show itself again
-        if (c?.nodeType != NodeType.Comment) {
-            let n = new Comment()
-            c ? c.replaceWith(n) : parent.append(n)
-            c = n
+    // null, undefined and booleans render nothing, like in React, so {cond && <b />} works. 0 is still rendered.
+    // nothing still takes its slot, as a placeholder: so the siblings after it keep their position, and with it their state
+    if (h == null || typeof h == 'boolean') {
+        if (hfun?.kind != 3) h = '' // an empty text node, invisible
+        else {
+            // a class component rendering nothing is attached to a comment, so it keeps its state and can show itself again
+            if (c?.nodeType != NodeType.Comment) {
+                let n = new Comment()
+                c ? c.replaceWith(n) : parent.append(n)
+                c = n
+            }
+            c.h = hfun
+            return i + 1
         }
-        c.h = hfun
-        return i + 1
     }
 
     switch (h.kind) {
@@ -133,10 +137,13 @@ function sync(
             n.h = hfun ?? h // attach before update(), which may handle the update itself
             if (!fresh && p.update?.(n, uc)) return i + 1
 
-            n.ep = setprops(n, n.ep, p)
-            if (--depth && !n.hasAttribute('const') && !tag.includes('-')) { // web components render their own children
-                const j = syncchildren(n, cn, 0, depth, uc)
-                removeexcesschildren(n, j)
+            // a const element is an island: jmc renders it once, then foreign code owns it. update() still runs
+            if (fresh || !p.const) {
+                n.ep = setprops(n, n.ep, p)
+                if (--depth && !tag.includes('-')) { // web components render their own children
+                    const j = syncchildren(n, cn, 0, depth, uc)
+                    removeexcesschildren(n, j)
+                }
             }
             if (fresh) p.mounted?.(n)
 

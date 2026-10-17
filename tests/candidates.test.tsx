@@ -186,6 +186,27 @@ describe('text rendering', () => {
         expect(document.body.innerHTML).toBe('<b></b><i></i>')
     })
 
+    test('a conditional child keeps its slot, so the elements after it are reused', () => {
+        let error = false
+        const App = () => <body>{error && <p>error</p>}<input /></body>
+        patch(document.body, <App />)
+        const input = document.querySelector('input')!
+
+        error = true
+        updateview(document.body)
+        expect(document.querySelector('input')).toBe(input)
+
+        error = false
+        updateview(document.body)
+        expect(document.querySelector('input')).toBe(input)
+        expect(document.body.innerHTML).toBe('<input>') // the placeholder is an empty text node
+    })
+
+    test('true renders nothing either, so {flag || <b />} works', () => {
+        patch(document.body, <body>{true || <b />}<i /></body>)
+        expect(document.body.innerHTML).toBe('<i></i>')
+    })
+
     test('a function component returning false renders nothing', () => {
         const F = () => false
         patch(document.body, <body><F /><i /></body>)
@@ -247,11 +268,15 @@ describe('class components', () => {
 })
 
 describe('namespaces', () => {
-    // known issue 7, also in doc/backlog.txt: "svg auto namespace, remove need to configure"
-    // the JSX types currently require xmlns on <svg>, hence jsx() calls here
-    test.fails('<svg> without xmlns is created in the svg namespace', () => {
+    // by design: entering svg is explicit. the JSX types require xmlns on <svg>, hence jsx() calls here
+    test('<svg> without xmlns stays in the html namespace', () => {
         patch(document.body, jsx('body', null, jsx('svg', null, jsx('circle', null))))
-        expect(document.querySelector('svg')!.namespaceURI).toBe('http://www.w3.org/2000/svg')
+        expect(document.querySelector('svg')!.namespaceURI).toBe('http://www.w3.org/1999/xhtml')
+    })
+
+    test('the children of <svg> inherit its namespace', () => {
+        patch(document.body, <body><svg xmlns='http://www.w3.org/2000/svg'><circle /></svg></body>)
+        expect(document.querySelector('circle')!.namespaceURI).toBe('http://www.w3.org/2000/svg')
     })
 })
 

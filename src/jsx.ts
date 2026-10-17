@@ -657,11 +657,6 @@ declare global {
 
         interface IntrinsicElements extends IntrinsicElementAttributes {
 
-            "x-autosuggest": HtmlHTMLAttributes & {
-                suggestions: string[]
-                value: string
-            }
-
             label: LabelHTMLAttributes & {
                 for?: string
             }

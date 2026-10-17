@@ -31,7 +31,7 @@ describe('jmc dom tests', () => {
 
         patch(document.body, h)
         expect(document.body.className).toBe('cc')
-        expect(document.body.innerHTML).toBe('hase42true') // false renders nothing
+        expect(document.body.innerHTML).toBe('hase42') // booleans render nothing
     })
 
     it('HFunction', () => {

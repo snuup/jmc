@@ -167,13 +167,15 @@ A prop whose value is wrapped in `lazy` is evaluated at each render:
 
 ### Children
 
-Strings and numbers render as text. `null`, `undefined` and `false` render nothing, so conditions read naturally:
+Strings and numbers render as text. `null`, `undefined`, `false` and `true` render nothing, so conditions read naturally:
 
 ```tsx
 <div>{model.error && <p class='error'>{model.error}</p>}</div>
 ```
 
-Arrays are flattened, so `items.map(…)` works anywhere.
+A child that renders nothing still keeps its place, as an invisible empty text node. So when `model.error` appears or disappears, the elements after it stay the same elements, with their focus, scroll position and state.
+
+Arrays are flattened, so `items.map(…)` works anywhere. jmc matches children by position, so elements inside a list that grows or shrinks can be reused for different items.
 
 ### Hooks
 
@@ -188,11 +190,22 @@ Elements accept two hooks:
 
 ### Islands
 
-jmc leaves the children of an element with the `const` attribute alone. That's useful for content managed by other code, such as a map or an editor. jmc also leaves the children of web components (tags containing `-`) to the component itself.
+Some content is managed by other code, such as a map or an editor. Mark its element with `const`: jmc renders the element and its children once, then never touches it again, neither its props nor its children. The library can take over in `mounted`, and the `update` hook passes later model changes on to it:
+
+```tsx
+<div class='map' const
+    mounted={(n) => map = new maplibregl.Map({ container: n })}
+    update={() => { map.setStyle(model.style) }}
+/>
+```
+
+The `const` attribute stays visible in the DOM, which helps to spot islands in the dev tools.
+
+jmc also leaves the children of web components (tags containing `-`) to the component itself.
 
 ### SVG
 
-Give `<svg>` its namespace. Its children inherit it, and the children of `<foreignObject>` are HTML again:
+SVG is a different world from HTML, so entering it is explicit: `<svg>` needs its namespace, and the types require it. Its children inherit the namespace, and the children of `<foreignObject>` are HTML again:
 
 ```tsx
 <svg xmlns='http://www.w3.org/2000/svg'><circle r={5} /></svg>
