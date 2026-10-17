@@ -120,7 +120,7 @@ jmc compares the new render with the existing DOM and changes only what differs.
 Two more kinds of commands change how the targets after them are updated:
 
 - **a number** limits the depth. `updateview(1, el)` updates only the props of `el`, not its children. `updateview(0, el)` discards the children of `el` and renders them from scratch.
-- **an object** is passed as update context to all `update` hooks (see below): `updateview({ resized: true })`.
+- **an object** is passed as update context to all `update` callbacks (see below): `updateview({ resized: true })`.
 
 Without a target, `updateview` updates `body`.
 
@@ -218,9 +218,9 @@ A child that renders nothing still keeps its place, as an invisible empty text n
 
 Arrays are flattened, so `items.map(…)` works anywhere. jmc matches children by position, so elements inside a list that grows or shrinks can be reused for different items.
 
-### Hooks
+### Lifecycle callbacks
 
-Elements accept two hooks:
+Elements accept two lifecycle callbacks:
 
 ```tsx
 <canvas
@@ -231,7 +231,7 @@ Elements accept two hooks:
 
 ### Islands
 
-Some content is managed by other code, such as a map or an editor. Mark its element with `const`: jmc renders the element and its children once, then never touches it again, neither its props nor its children. The library can take over in `mounted`, and the `update` hook passes later model changes on to it:
+Some content is managed by other code, such as a map or an editor. Mark its element with `const`: jmc renders the element and its children once, then never touches it again, neither its props nor its children. The library can take over in `mounted`, and the `update` callback passes later model changes on to it:
 
 ```tsx
 <div class='map' const

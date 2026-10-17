@@ -105,7 +105,7 @@ describe('const: props of the island element', () => {
         expect(div.className).toBe('light lib-ready')
     })
 
-    test('the update hook still runs, to pass changes on to the library', () => {
+    test('the update callback still runs, to pass changes on to the library', () => {
         let theme = 'light'
         let applied: string[] = []
         const App = () => <body><div const={true} update={() => { applied.push(theme) }} /></body>

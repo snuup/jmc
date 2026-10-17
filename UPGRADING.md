@@ -98,7 +98,7 @@ An element with `const` is an island for code outside jmc, such as a map or an e
 - **Children:** 1.0 never rendered them, not even the first time. 1.1 renders them once, on creation, so `mounted` sees the finished element.
 - **Props:** 1.0 kept updating them, so a changed `class` removed the classes a library had added. 1.1 leaves them alone after creation.
 
-The `update` hook still runs on every update. Use it to pass model changes on to the library:
+The `update` callback still runs on every update. Use it to pass model changes on to the library:
 
 ```tsx
 <div class='map' const
@@ -119,9 +119,9 @@ With `updateviewmicro`, `updateviewaf` and `updateviewsync`, all queued calls us
 
 When a selector matches nested elements, updating the outer one can replace an inner one. 1.0 then crashed with `Cannot read properties of null`. 1.1 skips such nodes.
 
-### Element `update` hook: `n.h` is the new render
+### Element `update` callback: `n.h` is the new render
 
-When an element's `update(n, uc)` hook runs, `n.h` now already holds the H of the current render. In 1.0 it was the previous one. Through `n.h.p` the hook sees the new props.
+When an element's `update(n, uc)` callback runs, `n.h` now already holds the H of the current render. In 1.0 it was the previous one. Through `n.h.p` the callback sees the new props.
 
 ### `loggedmethods`: logs after the call, including the result
 
@@ -149,5 +149,5 @@ When an element's `update(n, uc)` hook runs, `n.h` now already holds the H of th
   - `aria-label={undefined}` wrote the text "undefined"; it now removes the attribute.
 - **Prop changes between loosely equal values are applied:** `0` to `''`, `1` to `true`.
 - **`lazy` props:** a dropped or `undefined`-valued `lazy` prop is removed, and `lazy` props are only written to the DOM when their value changes.
-- **An element whose `update()` hook handles the update** still gets its new props attached, so a later `updateview` of that element doesn't render stale props.
+- **An element whose `update()` callback handles the update** still gets its new props attached, so a later `updateview` of that element doesn't render stale props.
 - **TypeScript projects using `moduleResolution: node16` or `nodenext`** failed to resolve some of jmc's types, or silently got `any`. The published types now resolve in every setup.

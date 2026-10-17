@@ -63,7 +63,7 @@ describe('element reuse and H attachment', () => {
     })
 })
 
-describe('element lifecycle hooks', () => {
+describe('element lifecycle callbacks', () => {
     test('mounted() runs once, on creation only', () => {
         let mounted = 0
         const App = () => <body><div mounted={() => mounted++} /></body>
