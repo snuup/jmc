@@ -1,6 +1,11 @@
+import type { JmcIntrinsicElements } from './jsx.js'
+
 export type J = Record<string, any> // a json record
 
 export type Selector = string | Node
+
+/** an updateview command: a target (selector or node), a depth (number) or an update context (object) */
+export type Command = Selector | J | number
 
 export type FComponent = (props: J, children?: Children) => HU
 
@@ -79,6 +84,14 @@ export function jsx(tag: any, p: any, ...cn: any[]): HElement | HComp | HFragmen
     if (kind != 4) h.tag = tag
     if (cn?.length) h.cn = cn
     return h
+}
+
+// typescript looks up the JSX types on the factory function first: jsx.JSX instead of a global JSX namespace.
+// so jmc's element types cannot clash with other libraries. add your own elements by augmenting jsx.JSX.IntrinsicElements
+export namespace jsx {
+    export namespace JSX {
+        export interface IntrinsicElements extends JmcIntrinsicElements { }
+    }
 }
 
 // fragment is only used above as a sentinel

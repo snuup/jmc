@@ -3,12 +3,13 @@ import type {
     HElement,
     HComp,
     J,
-    Selector,
+    Command,
     Children,
     HClassComponent,
     HU,
 } from './h.js'
 import { rebind } from './base.js'
+import { jmcconfig, setprops } from './props.js'
 
 const enum NodeType {
     // vaporizes (but for that must be in this file, otherwise not)
@@ -16,55 +17,12 @@ const enum NodeType {
     Comment = 8,
 }
 
-declare global {
-    interface Node {
-        /** the H this node updates from: the element's own H, or the outermost component rendering it */
-        h?: HElement | HComp
-        /** props last applied to this element. kept apart from h, which may be the owning component's H */
-        ep?: J
-    }
-}
-
-/** settings to tweak jmc */
-export const jmcconfig = {
-    /** marks component roots with a comp="Name" attribute */
-    debug: false,
-    /** prop names always set as attributes, never as properties */
-    attributes: new Set(['selected', 'viewBox']),
-}
-
-const isproperty = (e: Element, name: string, value: any) =>
-    !jmcconfig.attributes.has(name) &&
-    (value instanceof Object || ( // objects and functions
-        e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
-        name in e &&
-        name !== 'style'))
-
-let removeprop = (e: Element & J, p: string, old: any) => {
-    if (isproperty(e, p, old)) e[p] = typeof old === 'boolean' ? false : ''
-    if (!(old instanceof Object)) e.removeAttribute(p) // reflected properties (title, id, ...) leave an empty attribute otherwise
-}
-
-/** applies now over old and returns the applied values, with thunks evaluated, to serve as old on the next call */
-let setprops = (e: Element & J, old: J = {}, now: J): J => {
-    // evaluate thunks into a copy: now is h.p, which gets rendered again and must keep its thunks
-    now = Object.fromEntries(Object.entries(now).map(([k, v]) => [k, v?.thunk ? v() : v]))
-
-    // removals
-    for (let p in old)
-        if (!(p in now)) removeprop(e, p, old[p])
-
-    // updates
-    for (let p in now) {
-        let v = now[p]
-        if (v !== old[p] && !(v == null && old[p] == null)) { // strict: 0 vs '' or 1 vs true are changes. null vs undefined is not
-            if (v == null) removeprop(e, p, old[p])
-            else if (isproperty(e, p, v)) e[p] = v
-            else if (v === false && !p.startsWith('aria-')) e.removeAttribute(p) // aria-*="false" is meaningful
-            else e.setAttribute(p, v)
-        }
-    }
-    return now
+/** a node as jmc sees it. kept module-local, so consumers' Node type stays untouched */
+type JNode<N extends Node = ChildNode> = N & {
+    /** the H this node updates from: the element's own H, or the outermost component rendering it */
+    h?: HElement | HComp
+    /** props last applied to this element. kept apart from h, which may be the owning component's H */
+    ep?: J
 }
 
 let removeexcesschildren = (n: Element, i: number) => {
@@ -101,7 +59,7 @@ function sync(
     depth: number,
     uc: J,
 ): number {
-    let c = parent.childNodes[i]
+    let c: JNode | undefined = parent.childNodes[i]
 
     // null, undefined and booleans render nothing, like in React, so {cond && <b />} works. 0 is still rendered.
     // nothing still takes its slot, as a placeholder: so the siblings after it keep their position, and with it their state
@@ -122,7 +80,7 @@ function sync(
     switch (h.kind) {
         case 1: {
             // element
-            let n: Element
+            let n: Element & JNode
             let { tag, cn = [], p } = h
 
             let fresh = (<Element>c)?.tagName?.toLowerCase() != tag.toLowerCase()
@@ -134,7 +92,7 @@ function sync(
                         : parent.namespaceURI)
                 n = document.createElementNS(ns, tag)
                 c ? c.replaceWith(n) : parent.appendChild(n)
-            } else n = c as Element
+            } else n = c as Element & JNode
 
             n.h = hfun ?? h // attach before update(), which may handle the update itself
             if (jmcconfig.debug && hfun) n.setAttribute('comp', hfun.tag.name)
@@ -210,15 +168,13 @@ export function patch(
     return p.childNodes[i] as HTMLElement
 }
 
-export type Command = Selector | J | number
-
 export function updateview(...cmds: Command[]): void {
     if (!cmds.some(c => typeof c == 'string' || c instanceof Node)) cmds.push('body') // no target given: body
     let uc: J = {}
     let depth = 999
 
     // isConnected: a selector's matches are collected upfront, patching one can replace a later one
-    let up = (n: Node) => { if (n.h && n.isConnected) patch(n, n.h, depth, uc) }
+    let up = (n: JNode<Node>) => { if (n.h && n.isConnected) patch(n, n.h, depth, uc) }
 
     for (const c of cmds)
         if (typeof c == 'string') document.querySelectorAll(c).forEach(up)

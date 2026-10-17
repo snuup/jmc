@@ -650,29 +650,22 @@ interface SVGAttributes<T> extends AriaAttributes, HTMLAttributes {
 
 type SVGProps<T extends SVGElement> = SVGAttributes<T>
 
-declare global {
-    namespace JSX {
-
-        //        type Element = H
-
-        interface IntrinsicElements extends IntrinsicElementAttributes {
-
-            label: LabelHTMLAttributes & {
-                for?: string
-            }
-
-            svg: SVGProps<SVGSVGElement> & { class?: string | undefined, xmlns: "http://www.w3.org/2000/svg" }
-            path: SVGProps<SVGPathElement> & { class?: string | undefined }
-            textPath: SVGProps<SVGTextPathElement> & { class?: string | undefined, style?: string | undefined }
-            tspan: SVGProps<SVGTSpanElement> & { class?: string | undefined }
-            circle: SVGProps<SVGCircleElement> & { class?: string | undefined }
-            rect: SVGProps<SVGRectElement> & { class?: string | undefined }
-            line: SVGProps<SVGLineElement> & { class?: string | undefined }
-            text: SVGProps<SVGTextElement> & { class?: string | undefined, style?: string | undefined }
-            g: SVGProps<SVGGElement> & { class?: string | undefined }
-            foreignObject: SVGProps<SVGForeignObjectElement> & { class?: string | undefined }
-        }
+/** the elements jmc knows. JSX reads them through jsx.JSX.IntrinsicElements, see h.ts */
+export interface JmcIntrinsicElements extends IntrinsicElementAttributes {
+    label: LabelHTMLAttributes & {
+        for?: string
     }
+
+    svg: SVGProps<SVGSVGElement> & { class?: string | undefined, xmlns: "http://www.w3.org/2000/svg" }
+    path: SVGProps<SVGPathElement> & { class?: string | undefined }
+    textPath: SVGProps<SVGTextPathElement> & { class?: string | undefined, style?: string | undefined }
+    tspan: SVGProps<SVGTSpanElement> & { class?: string | undefined }
+    circle: SVGProps<SVGCircleElement> & { class?: string | undefined }
+    rect: SVGProps<SVGRectElement> & { class?: string | undefined }
+    line: SVGProps<SVGLineElement> & { class?: string | undefined }
+    text: SVGProps<SVGTextElement> & { class?: string | undefined, style?: string | undefined }
+    g: SVGProps<SVGGElement> & { class?: string | undefined }
+    foreignObject: SVGProps<SVGForeignObjectElement> & { class?: string | undefined }
 }
 
 // 1. Define the Thunk transformer for a single type

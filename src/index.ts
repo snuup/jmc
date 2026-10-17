@@ -1,4 +1,5 @@
 export * from './jmc.js'
+export { jmcconfig } from './props.js'
 export * from './lib.js'
 export * from './base.js'
 export * from './jsx.js'

@@ -1,6 +1,5 @@
 import { updateview } from './jmc.js'
-import type { Command } from './jmc.js'
-import type { J, Selector } from './h.js'
+import type { Command, J, Selector } from './h.js'
 
 // one queued update: a target with the depth and update context of the call that queued it
 type Pending = [target: Selector, depth: number, uc: J | undefined]

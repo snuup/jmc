@@ -806,11 +806,13 @@ describe('jmc dom tests', () => {
     
 })
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements extends IntrinsicElementAttributes {
-            side: HtmlHTMLAttributes
-            body: HtmlHTMLAttributes & { a?: number }
+declare module '../src' {
+    namespace jsx {
+        namespace JSX {
+            interface IntrinsicElements {
+                side: HtmlHTMLAttributes
+                body: HtmlHTMLAttributes & { a?: number }
+            }
         }
     }
 }

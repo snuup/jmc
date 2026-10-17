@@ -21,6 +21,8 @@ const App = () =>
 patch(document.body, <App />)
 ```
 
+Upgrading from 1.0? See [UPGRADING.md](UPGRADING.md).
+
 ## Install
 
 ```sh
@@ -213,13 +215,17 @@ SVG is a different world from HTML, so entering it is explicit: `<svg>` needs it
 
 ### Custom elements
 
-Declare your own tags and their props for TypeScript:
+jmc's element types live on the `jsx` function, not in a global `JSX` namespace. So they never clash with the JSX types of other libraries in the same project. Declare your own tags and their props by extending them:
 
 ```ts
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            'my-chart': HtmlHTMLAttributes & { data: number[] }
+import type { HtmlHTMLAttributes } from '@snupo/jmc'
+
+declare module '@snupo/jmc' {
+    namespace jsx {
+        namespace JSX {
+            interface IntrinsicElements {
+                'my-chart': HtmlHTMLAttributes & { data: number[] }
+            }
         }
     }
 }

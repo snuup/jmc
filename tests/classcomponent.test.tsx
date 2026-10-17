@@ -211,10 +211,12 @@ describe('class components', () => {
     })
 })
 
-declare global {
-    namespace JSX {
-        interface IntrinsicElements extends IntrinsicElementAttributes {
-            bunny: HtmlHTMLAttributes & { carrot: { grade: number, breed?: string } }
+declare module '../src' {
+    namespace jsx {
+        namespace JSX {
+            interface IntrinsicElements {
+                bunny: HtmlHTMLAttributes & { carrot: { grade: number, breed?: string } }
+            }
         }
     }
 }
