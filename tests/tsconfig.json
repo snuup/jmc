@@ -8,5 +8,6 @@
         "jsxFactory": "jsx",
         "jsxFragmentFactory": "jsxf"
     },
-    "include": ["."]
+    "include": ["."],
+    "exclude": ["automatic"] // has its own tsconfig, for the automatic JSX runtime
 }

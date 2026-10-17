@@ -133,6 +133,8 @@ When an element's `update(n, uc)` hook runs, `n.h` now already holds the H of th
 
 ## New
 
+- **The automatic JSX runtime.** With `"jsx": "react-jsx"` and `"jsxImportSource": "@snupo/jmc"` in `tsconfig.json`, and the same in your bundler, the compiler imports what JSX needs by itself, so `.tsx` files no longer need `import { jsx, jsxf }`. The classic setup keeps working. See the readme's Install section for both setups.
+- **Components get their children in `props.children`**, in both setups, like in React. Class components see them as `this.props.children`. Declare them in the props type: `(p: { title: string, children?: Children })`. With the automatic runtime this is required for type checking, because there TypeScript checks children as a prop. Function components still receive their children as the second argument too, but that may be removed in a later version, so prefer `props.children`.
 - **`jmcconfig`** holds the settings that adjust jmc:
   - `jmcconfig.debug = true` marks component roots with `comp="Name"`, to see in the dev tools which component rendered what.
   - `jmcconfig.attributes` is the set of prop names always set as attributes, never as properties. It defaults to `selected` and `viewBox`, and you can add your own: `jmcconfig.attributes.add('list')`.

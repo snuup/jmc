@@ -140,7 +140,7 @@ describe('jsx hyperscript', () => {
         let e = {
             kind: 3,
             tag: C,
-            p: { class: 'red' },
+            p: { class: 'red', children: ['hops'] },
             cn: ['hops'],
         }
 
@@ -173,7 +173,7 @@ describe('jsx hyperscript', () => {
         let e = {
             kind: 2,
             tag: F,
-            p: { class: 'red' },
+            p: { class: 'red', children: [{ kind: 1, p: {}, tag: 'i', cn: ['italy'] }] },
             cn: [
                 {
                     kind: 1,

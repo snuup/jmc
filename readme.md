@@ -8,7 +8,7 @@ A minimal JSX/TSX view library that syncs your views directly with the real DOM.
 - plain objects as model, plain classes as controller, nothing hidden in between
 
 ```tsx
-import { jsx, patch, updateview } from '@snupo/jmc'
+import { patch, updateview } from '@snupo/jmc'
 
 const model = { count: 0 }
 
@@ -29,7 +29,37 @@ Upgrading from 1.0? See [UPGRADING.md](UPGRADING.md).
 npm install @snupo/jmc
 ```
 
-jmc uses the classic JSX transform with its own factory functions `jsx` and `jsxf` (for fragments). In `tsconfig.json`:
+Tell TypeScript and your bundler to take JSX from jmc. jmc supports both JSX setups that TypeScript offers.
+
+### Automatic runtime (recommended)
+
+The compiler imports what JSX needs by itself, so your `.tsx` files need no JSX import. In `tsconfig.json`:
+
+```jsonc
+{
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "@snupo/jmc"
+    }
+}
+```
+
+Your bundler needs the same. With Vite's oxc transformer:
+
+```ts
+// vite.config.ts
+export default defineConfig({
+    oxc: {
+        jsx: { runtime: 'automatic', importSource: '@snupo/jmc' },
+    },
+})
+```
+
+With esbuild, the options are `jsx: 'automatic'` and `jsxImportSource: '@snupo/jmc'`.
+
+### Classic
+
+Every `.tsx` file imports jmc's factory functions `jsx`, and `jsxf` if it uses fragments (`<>…</>`). In `tsconfig.json`:
 
 ```jsonc
 {
@@ -41,7 +71,7 @@ jmc uses the classic JSX transform with its own factory functions `jsx` and `jsx
 }
 ```
 
-Your bundler needs the same settings. With Vite's oxc transformer:
+With Vite's oxc transformer:
 
 ```ts
 // vite.config.ts
@@ -54,7 +84,7 @@ export default defineConfig({
 
 With esbuild, the options are `jsxFactory: 'jsx'` and `jsxFragment: 'jsxf'`.
 
-Every `.tsx` file then imports `jsx`, and `jsxf` if it uses fragments (`<>…</>`).
+Both setups render the same, and the same components work in both.
 
 ## The idea
 
@@ -124,6 +154,15 @@ updateview('#todos') // runs TodoList again
 ```
 
 When you update the root element of a function component, the function runs again. A component that returns a fragment has no single root element. It is updated through its parent.
+
+A component gets its children in `props.children`, as an array:
+
+```tsx
+const Box = (p: { title: string, children?: Children }) =>
+    <section title={p.title}>{p.children}</section>
+
+<Box title='hello'><b>world</b></Box>
+```
 
 ### Class components
 

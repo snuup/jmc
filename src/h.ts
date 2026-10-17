@@ -7,6 +7,8 @@ export type Selector = string | Node
 /** an updateview command: a target (selector or node), a depth (number) or an update context (object) */
 export type Command = Selector | J | number
 
+// TBD REMOVE the children parameter once we know it is unused: components get their children in props.children.
+// the second parameter remains for function components written before props.children existed
 export type FComponent = (props: J, children?: Children) => HU
 
 type HKindElement = 1
@@ -82,7 +84,12 @@ export function jsx(tag: any, p: any, ...cn: any[]): HElement | HComp | HFragmen
 
     let h: any = { kind, p: p ?? {} }
     if (kind != 4) h.tag = tag
-    if (cn?.length) h.cn = cn
+    if (cn?.length) {
+        h.cn = cn
+        // components get their children in props.children, as with the automatic runtime (jsx-runtime.ts).
+        // elements do not: setprops would write them to the element's read-only children property
+        if (kind == 2 || kind == 3) h.p = { ...h.p, children: cn }
+    }
     return h
 }
 
