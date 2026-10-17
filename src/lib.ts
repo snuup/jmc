@@ -1,4 +1,4 @@
-import type { Children, IClassComponent, HU, J, HFragment } from './h';
+import type { Children, IClassComponent, HU, J, HFragment } from './h.js'
 import { updateview } from './jmc.js'
 
 export type UC = J // update context

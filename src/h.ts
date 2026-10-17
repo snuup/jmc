@@ -28,7 +28,7 @@ export type Children = HU[]
 export type HText =
     | string // text node
     | number // text node
-    | boolean // rendered as text, like 0. null and undefined render nothing
+    | boolean // false renders nothing, like null and undefined. true renders as text
 
 export type HFragment = {
     kind: HKindFragment

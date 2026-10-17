@@ -1,11 +1,12 @@
 {
+    "extends": "../tsconfig.json",
     "compilerOptions": {
-        "strict": true, // although true shall be the default, without this weird type errors occur
-        "target": "ESNext",
-        "declaration": true,
-        "moduleResolution": "bundler", // without this, react types cannot resolve import * as CSS from "csstype";
+        "rootDir": "..",
+        "noEmit": true,
+        "skipLibCheck": true, // happy-dom's types need @types/node
         "jsx": "react",
         "jsxFactory": "jsx",
         "jsxFragmentFactory": "jsxf"
-    }
+    },
+    "include": ["."]
 }

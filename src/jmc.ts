@@ -7,7 +7,7 @@ import type {
     Children,
     HClassComponent,
     HU,
-} from './h'
+} from './h.js'
 import { rebind } from './base.js'
 
 const enum NodeType {
@@ -82,9 +82,7 @@ let syncchildren = (
     depth: number,
     uc: J,
 ): number => {
-    cn.flat(999)
-        .filter((hc) => hc != null) // skip null and undefined. 0 and false are rendered as text
-        .forEach((hc) => (i = sync(p, i, hc, undefined, depth, uc)))
+    cn.flat(999).forEach((hc) => (i = sync(p, i, hc, undefined, depth, uc)))
     return i
 }
 
@@ -103,7 +101,7 @@ function sync(
 ): number {
     let c = parent.childNodes[i]
 
-    if (h == null) {
+    if (h == null || h === false) { // like React, so {cond && <b />} works. 0 is still rendered
         if (hfun?.kind != 3) return i // renders nothing
         // a class component rendering nothing is attached to a placeholder, so it keeps its state and can show itself again
         if (c?.nodeType != NodeType.Comment) {
@@ -205,7 +203,7 @@ export function patch(
 export type Command = Selector | J | number
 
 export function updateview(...cmds: Command[]): void {
-    if (!cmds.length) cmds.push('body')
+    if (!cmds.some(c => typeof c == 'string' || c instanceof Node)) cmds.push('body') // no target given: body
     let uc: J = {}
     let depth = 999
 

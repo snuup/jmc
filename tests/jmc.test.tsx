@@ -1,15 +1,8 @@
 import { jsx, jsxf, patch, HElement, Component, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H, lazy } from "../src"
 import { describe, expect, beforeEach, it, vi } from 'vitest'
-import { Window } from 'happy-dom'
-import { textTracks } from "happy-dom/lib/PropertySymbol.js"
 
 beforeEach(() => {
-    const window = new Window({ url: 'http://localhost/' })
-    window.document.documentElement.innerHTML = `<html><body></body></html>`
-    // @ts-expect-error assigning globals
-    globalThis.window = window
-    // @ts-expect-error assigning globals
-    globalThis.document = window.document
+    document.documentElement.innerHTML = '<html><body></body></html>'
 })
 
 describe('jmc dom tests', () => {
@@ -38,7 +31,7 @@ describe('jmc dom tests', () => {
 
         patch(document.body, h)
         expect(document.body.className).toBe('cc')
-        expect(document.body.innerHTML).toBe('hase42truefalse')
+        expect(document.body.innerHTML).toBe('hase42true') // false renders nothing
     })
 
     it('HFunction', () => {

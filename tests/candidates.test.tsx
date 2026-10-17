@@ -175,11 +175,21 @@ describe('text rendering', () => {
         expect(document.body.innerHTML).toBe('0')
     })
 
-    // current behaviour, a design decision: React and most JSX libraries render nothing for false
-    test('false renders as the text "false", so {cond && <b />} shows "false"', () => {
-        const cond = false
-        patch(document.body, <body>{cond && <b />}</body>)
-        expect(document.body.innerHTML).toBe('false')
+    test('false renders nothing, so {cond && <b />} works', () => {
+        let cond = false
+        const App = () => <body>{cond && <b />}<i /></body>
+        patch(document.body, <App />)
+        expect(document.body.innerHTML).toBe('<i></i>')
+
+        cond = true
+        updateview(document.body)
+        expect(document.body.innerHTML).toBe('<b></b><i></i>')
+    })
+
+    test('a function component returning false renders nothing', () => {
+        const F = () => false
+        patch(document.body, <body><F /><i /></body>)
+        expect(document.body.innerHTML).toBe('<i></i>')
     })
 })
 
@@ -255,6 +265,17 @@ describe('updateview', () => {
         updateview()
 
         expect(document.body.textContent).toBe('b')
+    })
+
+    test('updateview with only an update context or depth, but no target, updates body', () => {
+        let seen: any[] = []
+        const App = () => <body><canvas update={(n, uc) => { seen.push(uc); return true }} /></body>
+        patch(document.body, <App />)
+
+        updateview({ resized: true })
+        updateview(5)
+
+        expect(seen).toEqual([{ resized: true }, {}])
     })
 
     test('updateview skips a node that jmc did not render', () => {

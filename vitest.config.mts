@@ -9,18 +9,11 @@ export default defineConfig({
             pragmaFrag: "jsxf",
         }
     },
-    // plugins: [
-    //     {
-    //         name: "strip-pure",
-    //         transform: (code: string) => code.replace(/\/\*\s*@__PURE__\s*\*\/\s*/g, "")
-    //     }
-    // ],
     test: {
         include: ['./tests/*.test.{js,ts,tsx}'],
         coverage: {
             provider: 'v8',
             reporter: ['text', 'json', 'html'],
-            // include: ['**/*.{ts,tsx}']
         },
         environment: 'happy-dom',
         snapshotFormat: {

@@ -1,14 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { H, HtmlHTMLAttributes, IntrinsicElementAttributes, Component, jsx, patch, updateview } from '../src'
-import { Window } from 'happy-dom'
 
 beforeEach(() => {
-    const window = new Window({ url: "http://localhost/" })
-    window.document.documentElement.innerHTML = `<html><body></body></html>`
-    // @ts-expect-error assigning globals
-    globalThis.window = window
-    // @ts-expect-error assigning globals
-    globalThis.document = window.document
+    document.documentElement.innerHTML = '<html><body></body></html>'
 })
 
 describe('class components', () => {
@@ -88,30 +82,7 @@ describe('class components', () => {
         expect(document.body.outerHTML).toBe('<body><div class="class component C">hi ho</div></body>')
     })
 
-    it('class component update with straight jsc update', () => {
-
-        let m = {
-            name: "lunar",
-            css: "mondo"
-        }
-
-        class C extends Component<{ name: string, css: string }> {
-            view(): H {
-                return <bunny class={this.props.css} carrot={{ grade: 4, breed: "fluffy" }}>{this.props.name}</bunny>
-            }
-        }
-
-        patch(document.body, <body><C {...m} /></body>)
-        expect(document.body.outerHTML).toBe('<body><bunny class="mondo">lunar</bunny></body>')
-
-
-        m.name = "solar"
-        m.css = "jupiter"
-        updateview("bunny")
-        expect(document.body.outerHTML).toBe('<body><bunny class="jupiter">solar</bunny></body>')
-    })
-
-    it('class component update with straight jsc update', () => {
+    it('class component updates when its root is updated by selector', () => {
 
         let m = {
             name: "lunar",
@@ -211,7 +182,7 @@ describe('class components', () => {
         expect(document.body.outerHTML).toBe('<body><bunny class="mondo" changed="now"></bunny></body>')
     })
 
-    it('class component updates', () => {
+    it('class component re-renders through updateview(1, selector) when update() returns nothing', () => {
 
         let m = {
             css: "value-1"

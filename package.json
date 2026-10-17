@@ -1,6 +1,15 @@
 {
     "name": "@snupo/jmc",
+    "description": "Minimal JSX/TSX view library that syncs directly with the real DOM",
+    "keywords": ["jsx", "tsx", "dom", "view", "ui", "typescript"],
     "author": "snupo",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/snuup/jmc.git"
+    },
+    "homepage": "https://github.com/snuup/jmc#readme",
+    "bugs": "https://github.com/snuup/jmc/issues",
     "version": "1.0.61",
     "publishConfig": {
         "access": "public"
@@ -14,6 +23,7 @@
             "import": "./dist/index.js"
         }
     },
+    "sideEffects": false,
     "files": [
         "dist",
         "src"
@@ -21,10 +31,11 @@
     "scripts": {
         "prebuild": "rimraf dist",
         "build": "tsc -p tsconfig.json",
+        "test": "vitest run",
         "release": "release-it patch"
     },
     "devDependencies": {
-        "@vitest/coverage-v8": "^4.1.10",
+        "@vitest/coverage-v8": "4.1.10",
         "happy-dom": "^16.8.1",
         "release-it": "^21.0.2",
         "rimraf": "^6.1.3",
@@ -34,7 +45,7 @@
     "release-it": {
         "hooks": {
             "before:init": [
-                "pnpm vitest"
+                "pnpm vitest run"
             ],
             "after:bump": "pnpm build"
         },

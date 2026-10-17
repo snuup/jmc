@@ -1,6 +1,6 @@
 import { updateview } from './jmc.js'
-import type { Command } from './jmc'
-import type { J, Selector } from './h'
+import type { Command } from './jmc.js'
+import type { J, Selector } from './h.js'
 
 // one queued update: a target with the depth and update context of the call that queued it
 type Pending = [target: Selector, depth: number, uc: J | undefined]
@@ -10,7 +10,7 @@ let isScheduled = false
 
 /** resolves a call's commands into pendings, so depth and uc stay with their own call */
 let enqueue = (cmds: Command[]) => {
-    if (!cmds.length) cmds = ['body'] // like updateview()
+    if (!cmds.some(c => typeof c == 'string' || c instanceof Node)) cmds = [...cmds, 'body'] // like updateview()
     let depth = 999
     let uc: J | undefined
     for (const c of cmds)
