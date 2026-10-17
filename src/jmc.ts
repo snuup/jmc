@@ -25,14 +25,16 @@ declare global {
     }
 }
 
-let attributeNames = new Set([
-    'selected',
-    'viewBox',
-    // other HTML attributes where your framework wants attribute semantics
-])
+/** settings to tweak jmc */
+export const jmcconfig = {
+    /** marks component roots with a comp="Name" attribute */
+    debug: false,
+    /** prop names always set as attributes, never as properties */
+    attributes: new Set(['selected', 'viewBox']),
+}
 
 const isproperty = (e: Element, name: string, value: any) =>
-    !attributeNames.has(name) &&
+    !jmcconfig.attributes.has(name) &&
     (value instanceof Object || ( // objects and functions
         e.namespaceURI !== 'http://www.w3.org/2000/svg' &&
         name in e &&
@@ -135,6 +137,7 @@ function sync(
             } else n = c as Element
 
             n.h = hfun ?? h // attach before update(), which may handle the update itself
+            if (jmcconfig.debug && hfun) n.setAttribute('comp', hfun.tag.name)
             if (!fresh && p.update?.(n, uc)) return i + 1
 
             // a const element is an island: jmc renders it once, then foreign code owns it. update() still runs

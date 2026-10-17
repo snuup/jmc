@@ -3,7 +3,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
     H, Component, jsx, jsxf, patch, updateview, lazy, cc, When, rebind, closestby, mount,
-    loggedmethods, loggedmethodsex, updateviewmicro, updateviewsync,
+    loggedmethods, loggedmethodsex, updateviewmicro, updateviewsync, jmcconfig,
 } from '../src'
 
 beforeEach(() => {
@@ -381,6 +381,39 @@ describe('batched updates', () => {
         await Promise.resolve()
 
         expect(document.body.textContent).toBe('b')
+    })
+})
+
+describe('jmcconfig', () => {
+    test('debug marks component roots with comp="Name" while switched on', () => {
+        class Panel extends Component { view(): H { return <section /> } }
+        const Badge = () => <b />
+        const App = () => <body><Badge /><Panel /><i /></body>
+
+        patch(document.body, <App />)
+        expect(document.body.innerHTML).toBe('<b></b><section></section><i></i>') // off by default
+
+        jmcconfig.debug = true
+        try {
+            updateview()
+            expect(document.body.getAttribute('comp')).toBe('App')
+            expect(document.body.innerHTML).toBe('<b comp="Badge"></b><section comp="Panel"></section><i></i>')
+        } finally {
+            jmcconfig.debug = false
+        }
+    })
+
+    test('attributes lists props that are always set as attributes', () => {
+        patch(document.body, <body><input value='a' /></body>)
+        expect(document.querySelector('input')!.getAttribute('value')).toBeNull() // set as property
+
+        jmcconfig.attributes.add('value')
+        try {
+            patch(document.body, <body><input value='b' /></body>)
+            expect(document.querySelector('input')!.getAttribute('value')).toBe('b') // set as attribute
+        } finally {
+            jmcconfig.attributes.delete('value')
+        }
     })
 })
 

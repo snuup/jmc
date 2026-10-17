@@ -155,7 +155,7 @@ A component whose `view()` returns `null` keeps its state and can show itself ag
 
 ### Props: attributes and properties
 
-jmc sets a prop as a DOM **property** when the value is an object or a function, or when the element has a property of that name, as `value`, `checked` and `onclick` do. Otherwise it sets an **attribute**. `style` given as a string is set as an attribute.
+jmc sets a prop as a DOM **property** when the value is an object or a function, or when the element has a property of that name, as `value`, `checked` and `onclick` do. Otherwise it sets an **attribute**. Names listed in `jmcconfig.attributes` are always set as attributes (see [Configuration](#configuration)). `style` given as a string is set as an attribute.
 
 `null`, `undefined` and `false` remove the attribute. On `aria-*` attributes, `false` is kept as the value `"false"`.
 
@@ -224,6 +224,21 @@ declare global {
     }
 }
 ```
+
+## Configuration
+
+`jmcconfig` holds the settings that adjust jmc:
+
+```ts
+import { jmcconfig } from '@snupo/jmc'
+
+jmcconfig.debug = true           // mark component roots with comp="Name"
+jmcconfig.attributes.add('list') // always set this prop as an attribute
+```
+
+**`debug`**: every component root shows the component's name, as in `<section comp="Panel">`, so the dev tools reveal which component rendered what. The attribute is only set while `debug` is on. To switch it from the browser console, make the object reachable there with `mount({ jmcconfig })`, then run `jmcconfig.debug = true; updateview()`.
+
+**`attributes`**: the prop names that jmc always sets as attributes, even where the element has a property of that name. By default `selected` and `viewBox`.
 
 ## Utilities
 
