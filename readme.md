@@ -23,6 +23,16 @@ patch(document.body, <App />)
 
 Upgrading from 1.0? See [UPGRADING.md](UPGRADING.md).
 
+## Working with Claude and other coding agents
+
+jmc ships a [design guide](design-guide.md) that explains to coding agents how a jmc app is structured: model, view and controller, and the rules between them. To have Claude follow it in your app, reference it from your project's `CLAUDE.md`:
+
+```md
+This app uses jmc. Follow @node_modules/@snupo/jmc/design-guide.md
+```
+
+The `@` import loads the guide into every session, and it stays current when you update jmc.
+
 ## Install
 
 ```sh
