@@ -193,7 +193,7 @@ patch(document.body, <body><Counter start={5} /></body>)
 | `view()` | returns the component's JSX: exactly one root element, or `null` to render nothing |
 | `props` | the current props, updated on every render by the parent |
 | `element` | the rendered root element |
-| `mounted()` | called once, after the first render |
+| `mounted()` | called once, after the first render, when the whole tree is in the DOM |
 | `update(uc)` | called before each re-render. Return `true` to skip the re-render, for example after updating the DOM yourself |
 | `updateview()` | updates this component |
 | `ismounted` | `true` once rendered |
@@ -238,6 +238,8 @@ Elements accept two lifecycle callbacks:
     update={(n, uc) => { draw(n, uc); return true }}  // before each update. true: skip the default update
 />
 ```
+
+`mounted` callbacks, of elements and class components alike, run after the render has finished, so they see the complete DOM, connected to the document. Children run before their parents. `update` runs during the render, because its result decides whether jmc updates the element.
 
 ### Islands
 

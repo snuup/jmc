@@ -140,7 +140,7 @@ class Dropdown extends Component<{ items: string[], onpick: (s: string) => void 
 
 Use a class component for a self-contained widget whose state no other part of the app needs, like `open` above. Such a component is its own small model and controller. State that the rest of the app reads or changes belongs in the model, and the code that changes it belongs in a controller. In the example, `onpick` would be a controller method.
 
-`mounted()` runs once after the first render, and `update(uc)` runs before each re-render (return `true` to skip it). See the readme for all members.
+`mounted()` runs once after the first render, when the whole tree is in the DOM, and `update(uc)` runs before each re-render (return `true` to skip it). See the readme for all members.
 
 ### Islands
 

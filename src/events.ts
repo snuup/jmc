@@ -1,5 +1,3 @@
-// future work: maybe lifecycle callbacks should occur in a phase 2 after a phase 1 that does all dom updates
-
 declare global {
     interface Element {
         eventmap?: { [type: string]: EventListener | null }

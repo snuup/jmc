@@ -25,6 +25,9 @@ type JNode<N extends Node = ChildNode> = N & {
     ep?: J
 }
 
+/** mounted callbacks collected by sync, run after it in the lifecycle phase. children before their parents */
+let mounts: (() => void)[] = []
+
 let removeexcesschildren = (n: Element, i: number) => {
     let c: ChildNode
     while ((c = n.childNodes[i])) {
@@ -106,7 +109,7 @@ function sync(
                     removeexcesschildren(n, j)
                 }
             }
-            if (fresh) p.mounted?.(n)
+            if (fresh && p.mounted) mounts.push(() => p.mounted(n))
 
             return i + 1
         }
@@ -130,7 +133,7 @@ function sync(
             let j = sync(parent, i, hv, old ?? h, depth, uc) // the attached H, so updates find the instance
             assertnonfragment(h, hv, i, j)
             ci.element = parent.childNodes[i]
-            if (!old) ci.mounted?.()
+            if (!old && ci.mounted) mounts.push(() => ci.mounted!())
             return j
         }
 
@@ -166,6 +169,12 @@ export function patch(
     let p = e.parentElement!
     let i = [...p.childNodes].indexOf(e as ChildNode)
     sync(p, i, h, undefined, depth, uc)
+
+    // lifecycle phase: the dom is complete now. taken first, a mounted callback calling updateview collects anew
+    let ms = mounts
+    mounts = []
+    ms.forEach(m => m())
+
     return p.childNodes[i] as HTMLElement
 }
 
