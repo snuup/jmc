@@ -220,4 +220,40 @@ describe('jmc regressions', () => {
 
         expect((div.h as any).p.v).toBe(2)
     })
+
+    // events are attached with addEventListener: on* properties fail silently for events without such a property
+    // (happy-dom fires on* expandos too, browsers do not, so check no property was set)
+    test('a custom event handler is attached as a listener', () => {
+        let calls = 0
+        const props = { onmyevent: () => { calls++ } } as {}
+        patch(document.body, <body><div {...props} /></body>)
+        const div = document.querySelector('div')!
+        expect((div as any).onmyevent).toBeUndefined()
+        div.dispatchEvent(new Event('myevent'))
+        expect(calls).toBe(1)
+    })
+
+    test('a replaced event handler is the only one that runs', () => {
+        let log: string[] = []
+        let f = () => { log.push('a') }
+        const App = () => <body><button onclick={f} /></body>
+        patch(document.body, <App />)
+
+        f = () => { log.push('b') }
+        updateview(document.body)
+
+        document.querySelector('button')!.click()
+        expect(log).toEqual(['b'])
+    })
+
+    test('an inline handler rendered many times runs once per event', () => {
+        let calls = 0
+        const App = () => <body><button onclick={() => { calls++ }} /></body>
+        patch(document.body, <App />)
+        updateview(document.body)
+        updateview(document.body)
+
+        document.querySelector('button')!.click()
+        expect(calls).toBe(1)
+    })
 })

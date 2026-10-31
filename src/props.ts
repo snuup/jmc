@@ -5,7 +5,7 @@ export const jmcconfig = {
     /** marks component roots with a comp="Name" attribute */
     debug: false,
     /** prop names always set as attributes, never as properties */
-    attributes: new Set(['selected', 'viewBox']),
+    attributes: new Set(['selected', 'viewBox', 'list']),
 }
 
 const isproperty = (e: Element, name: string, value: any) =>
@@ -16,6 +16,7 @@ const isproperty = (e: Element, name: string, value: any) =>
         name !== 'style'))
 
 let removeprop = (e: Element & J, p: string, old: any) => {
+    if (p.startsWith('on') && typeof old == 'function') return e.removeEventListener(p.slice(2), old)
     if (isproperty(e, p, old)) e[p] = typeof old === 'boolean' ? false : ''
     if (!(old instanceof Object)) e.removeAttribute(p) // reflected properties (title, id, ...) leave an empty attribute otherwise
 }
@@ -34,6 +35,11 @@ export let setprops = (e: Element & J, old: J = {}, now: J): J => {
         let v = now[p]
         if (v !== old[p] && !(v == null && old[p] == null)) { // strict: 0 vs '' or 1 vs true are changes. null vs undefined is not
             if (v == null) removeprop(e, p, old[p])
+            else if (p.startsWith('on') && typeof v == 'function') {
+                // listeners, not on* properties: those fail silently for events the element has no property for
+                if (typeof old[p] == 'function') e.removeEventListener(p.slice(2), old[p])
+                e.addEventListener(p.slice(2), v)
+            }
             else if (isproperty(e, p, v)) e[p] = v
             else if (v === false && !p.startsWith('aria-')) e.removeAttribute(p) // aria-*="false" is meaningful
             else e.setAttribute(p, v)

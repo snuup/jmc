@@ -206,7 +206,9 @@ A component whose `view()` returns `null` keeps its state and can show itself ag
 
 ### Props: attributes and properties
 
-jmc sets a prop as a DOM **property** when the value is an object or a function, or when the element has a property of that name, as `value`, `checked` and `onclick` do. Otherwise it sets an **attribute**. Names listed in `jmcconfig.attributes` are always set as attributes (see [Configuration](#configuration)). `style` given as a string is set as an attribute.
+jmc sets a prop as a DOM **property** when the value is an object or a function, or when the element has a property of that name, as `value` and `checked` do. Otherwise it sets an **attribute**. Names listed in `jmcconfig.attributes` are always set as attributes (see [Configuration](#configuration)). `style` given as a string is set as an attribute.
+
+A prop starting with `on` whose value is a function is attached with `addEventListener`, the event name being the rest of the prop name, case kept: `onclick` listens to `click`, `onmy-event` to `my-event`. So custom events work as well as built-in ones. Replacing the function swaps the listener, removing the prop removes it.
 
 `null`, `undefined` and `false` remove the attribute. On `aria-*` attributes, `false` is kept as the value `"false"`.
 

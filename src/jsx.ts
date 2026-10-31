@@ -696,14 +696,14 @@ export interface HTMLAttributesBase extends AdditionalElementAttributes {
     role?: string
 
     // clipboard events
-    onCopy?: ClipboardEvent
-    onCut?: ClipboardEvent
-    onPaste?: ClipboardEvent
+    oncopy?: EventHandler<ClipboardEvent>
+    oncut?: EventHandler<ClipboardEvent>
+    onpaste?: EventHandler<ClipboardEvent>
 
     // composition events
-    onCompositionend?: CompositionEvent
-    onCompositionstart?: CompositionEvent
-    onCompositionupdate?: CompositionEvent
+    oncompositionend?: EventHandler<CompositionEvent>
+    oncompositionstart?: EventHandler<CompositionEvent>
+    oncompositionupdate?: EventHandler<CompositionEvent>
 
     // drag drop events
     ondrag?: EventHandler<DragEvent>
@@ -749,52 +749,52 @@ export interface HTMLAttributesBase extends AdditionalElementAttributes {
     onmouseup?: EventHandler<MouseEvent>
 
     // media events
-    onAbort?: EventHandler<Event>
-    onCanplay?: EventHandler<Event>
-    onCanplaythrough?: EventHandler<Event>
-    onDurationchange?: EventHandler<Event>
-    onEmptied?: EventHandler<Event>
-    onEncrypted?: EventHandler<Event>
-    onEnded?: EventHandler<Event>
-    onLoadeddata?: EventHandler<Event>
-    onLoadedmetadata?: EventHandler<Event>
-    onLoadstart?: EventHandler<Event>
-    onPause?: EventHandler<Event>
-    onPlay?: EventHandler<Event>
-    onPlaying?: EventHandler<Event>
-    onProgress?: EventHandler<Event>
-    onRatechange?: EventHandler<Event>
-    onSeeked?: EventHandler<Event>
-    onSeeking?: EventHandler<Event>
-    onStalled?: EventHandler<Event>
-    onSuspend?: EventHandler<Event>
-    onTimeupdate?: EventHandler<Event>
-    onVolumechange?: EventHandler<Event>
-    onWaiting?: EventHandler<Event>
+    onabort?: EventHandler<Event>
+    oncanplay?: EventHandler<Event>
+    oncanplaythrough?: EventHandler<Event>
+    ondurationchange?: EventHandler<Event>
+    onemptied?: EventHandler<Event>
+    onencrypted?: EventHandler<Event>
+    onended?: EventHandler<Event>
+    onloadeddata?: EventHandler<Event>
+    onloadedmetadata?: EventHandler<Event>
+    onloadstart?: EventHandler<Event>
+    onpause?: EventHandler<Event>
+    onplay?: EventHandler<Event>
+    onplaying?: EventHandler<Event>
+    onprogress?: EventHandler<Event>
+    onratechange?: EventHandler<Event>
+    onseeked?: EventHandler<Event>
+    onseeking?: EventHandler<Event>
+    onstalled?: EventHandler<Event>
+    onsuspend?: EventHandler<Event>
+    ontimeupdate?: EventHandler<Event>
+    onvolumechange?: EventHandler<Event>
+    onwaiting?: EventHandler<Event>
 
     // selection events
-    onSelect?: EventHandler<Event>
+    onselect?: EventHandler<Event>
 
     // UI events
-    onScroll?: UIEvent
+    onscroll?: EventHandler<UIEvent>
 
     // touch events
-    onTouchcancel?: TouchEvent
-    onTouchend?: TouchEvent
-    onTouchmove?: TouchEvent
-    onTouchstart?: TouchEvent
+    ontouchcancel?: EventHandler<TouchEvent>
+    ontouchend?: EventHandler<TouchEvent>
+    ontouchmove?: EventHandler<TouchEvent>
+    ontouchstart?: EventHandler<TouchEvent>
 
     // wheel events
-    onWheel?: WheelEvent
+    onwheel?: EventHandler<WheelEvent>
 
     // animation events
-    onAnimationstart?: AnimationEvent
-    onAnimationend?: AnimationEvent
-    onAnimationiteration?: AnimationEvent
+    onanimationstart?: EventHandler<AnimationEvent>
+    onanimationend?: EventHandler<AnimationEvent>
+    onanimationiteration?: EventHandler<AnimationEvent>
 
     // transition events
-    onTransitionend?: TransitionEvent
-    onTransitionstart?: TransitionEvent
+    ontransitionend?: EventHandler<TransitionEvent>
+    ontransitionstart?: EventHandler<TransitionEvent>
 }
 
 export interface AnchorHTMLAttributes extends HTMLAttributes {

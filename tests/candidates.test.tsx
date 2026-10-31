@@ -147,16 +147,19 @@ describe('props', () => {
 
     test('a dropped event handler is removed', () => {
         let on = true
-        const f = () => { }
+        let calls = 0
+        const f = () => { calls++ }
         const App = () => <body>{on ? <button onclick={f} /> : <button />}</body>
         patch(document.body, <App />)
         const button = document.querySelector('button')!
-        expect(button.onclick).toBe(f)
+        button.click()
+        expect(calls).toBe(1)
 
         on = false
         updateview(document.body)
 
-        expect(button.onclick).toBeFalsy()
+        button.click()
+        expect(calls).toBe(1)
     })
 
     test('rendering keeps the thunk in h.p, so the next render evaluates it again', () => {
