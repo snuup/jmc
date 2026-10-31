@@ -2,7 +2,7 @@
 // test.fails marks a known open issue: the test passes while the issue exists and starts failing once it is fixed
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-    H, Component, jsx, jsxf, patch, updateview, lazy, Thunk, cc, When, rebind, closestby, mount,
+    H, Component, jsx, jsxf, patch, updateview, live, lazy, Thunk, cc, When, rebind, closestby, mount,
     loggedmethods, loggedmethodsex, updateviewmicro, updateviewsync, jmcconfig,
 } from '../src'
 
@@ -163,7 +163,7 @@ describe('props', () => {
     })
 
     test('rendering keeps the thunk in h.p, so the next render evaluates it again', () => {
-        const t = lazy(() => 'a')
+        const t = live(() => 'a')
         const h = <div title={t} />
         patch(document.body, <body>{h}</body>)
 
@@ -460,16 +460,20 @@ describe('base', () => {
         expect(closestby(b, (n) => n.nodeName == 'TABLE')).toBeNull()
     })
 
-    test('lazy wraps f in a Thunk', () => {
+    test('live wraps f in a Thunk', () => {
         const f = () => 1
-        const t = lazy(f)
+        const t = live(f)
         expect(t).toBeInstanceOf(Thunk)
         expect(t.f).toBe(f)
     })
 
-    test('svg props accept lazy and are evaluated', () => {
+    test('lazy is kept as an alias of live', () => {
+        expect(lazy).toBe(live)
+    })
+
+    test('svg props accept live and are evaluated', () => {
         let r = 5
-        const App = () => <body><svg xmlns="http://www.w3.org/2000/svg"><circle class={lazy(() => 'dot')} r={lazy(() => r)} /></svg></body>
+        const App = () => <body><svg xmlns="http://www.w3.org/2000/svg"><circle class={live(() => 'dot')} r={live(() => r)} /></svg></body>
         patch(document.body, <App />)
         const c = document.querySelector('circle')!
         expect(c.getAttribute('class')).toBe('dot')
@@ -479,8 +483,8 @@ describe('base', () => {
         expect(c.getAttribute('r')).toBe('7')
     })
 
-    test('a plain function is not accepted where lazy is expected', () => {
-        // @ts-expect-error class takes a string or lazy(() => string), not a bare function
+    test('a plain function is not accepted where live is expected', () => {
+        // @ts-expect-error class takes a string or live(() => string), not a bare function
         const e = <div class={() => 'a'} />
         expect(e).toBeTruthy()
     })

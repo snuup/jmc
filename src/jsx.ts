@@ -669,7 +669,7 @@ export interface JmcIntrinsicElements extends IntrinsicElementAttributes {
     foreignObject: SVGProps<SVGForeignObjectElement>
 }
 
-/** each prop accepts its value or lazy(() => value) */
+/** each prop accepts its value or live(() => value) */
 type Thunked<T> = { [K in keyof T]?: T[K] | Thunk<T[K]> }
 
 export type HTMLAttributes = Thunked<HTMLAttributesBase>

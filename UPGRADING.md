@@ -1,19 +1,21 @@
 # Upgrading from 1.2 to 1.3
 
-1.3 changes how `lazy` props and event props work. Both changes turn code that silently did nothing into compile errors or working code.
+1.3 changes how props evaluated at each render and event props work. Both changes turn code that silently did nothing into compile errors or working code.
 
 ## Required changes in 1.3
 
-### `lazy(f)` returns a `Thunk`, and a bare function is no longer a valid prop value
+### `lazy` is now `live`, returns a `Thunk`, and a bare function is no longer a valid prop value
 
-`lazy(f)` used to mark `f` and return it. It now returns a `Thunk` object that holds `f`. The prop types accept a value or a `Thunk`, so a function passed without `lazy` is now a type error:
+`lazy` is renamed to `live`: the value is not computed once later, but again at every render, so it stays current with the model. `lazy` still works as a deprecated alias and will be removed in a later version. A search and replace of `lazy(` with `live(` covers it.
+
+`lazy(f)` used to mark `f` and return it. `live(f)` returns a `Thunk` object that holds `f`. The prop types accept a value or a `Thunk`, so a function passed without `live` is now a type error:
 
 ```tsx
 <div class={() => cc({ active: vm.active })} />        // 1.2 compiled, 1.3 is a type error
-<div class={lazy(() => cc({ active: vm.active }))} />  // evaluated at each render
+<div class={live(() => cc({ active: vm.active }))} />  // evaluated at each render
 ```
 
-A bare function was never evaluated: jmc set the function itself as the property. Each place the compiler now flags was rendering wrongly before, and needs `lazy` around it.
+A bare function was never evaluated: jmc set the function itself as the property. Each place the compiler now flags was rendering wrongly before, and needs `live` around it.
 
 Event props still take plain functions.
 
@@ -37,8 +39,8 @@ A prop starting with `on` whose value is a function is attached as a listener fo
 
 ## New in 1.3
 
-- **SVG props accept `lazy`**, as HTML props do.
-- **`Thunk`** is exported, the type `lazy` returns.
+- **SVG props accept `live`**, as HTML props do.
+- **`Thunk`** is exported, the type `live` returns.
 
 # Upgrading from 1.0.x to 1.1
 

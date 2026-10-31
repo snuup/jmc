@@ -172,7 +172,7 @@ jmc exports a few helpers. Use them instead of writing your own:
 |---|---|---|
 | `cc(...)` | joins class names. Objects contribute their keys with truthy values | `class={cc('item', { active: t === vm.selected, done: t.done })}` in the view |
 | `<When cond={…}>` | renders its children only if `cond` is true | conditional blocks with several children. For a single element, `{cond && <p>…</p>}` is enough |
-| `lazy(f)` | a prop value that is evaluated at each render, not when the JSX is created | a prop that must read the model at update time |
+| `live(f)` | a prop value that is evaluated at each render, not when the JSX is created | a prop that must read the model at update time |
 | `DeepReadonly<T>` | a type that makes all nested fields read-only | the view's read-only access to the model, see [View](#view) |
 | `rebind(o)` | binds the prototype methods of `o` to `o` | every class instance whose methods use `this`, such as controllers: `export const todoctrl = rebind(new TodoController())`, so `onclick={todoctrl.clear}` works. Class components are rebound by jmc already |
 | `closestby(node, pred)` | the nearest ancestor of `node`, or `node` itself, matching `pred` | event delegation: find the item element from `event.target` |

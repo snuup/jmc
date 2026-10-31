@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { H, HClassComponent, Component, jsx, jsxf, patch, updateview, lazy } from '../src'
+import { H, HClassComponent, Component, jsx, jsxf, patch, updateview, live } from '../src'
 
 beforeEach(() => {
     document.documentElement.innerHTML = '<html><body></body></html>'
@@ -136,7 +136,7 @@ describe('jmc regressions', () => {
 
     test('a dropped thunked attribute is removed', () => {
         let showClass = true
-        const App = () => <body>{showClass ? <div class={lazy(() => 'a')} /> : <div />}</body>
+        const App = () => <body>{showClass ? <div class={live(() => 'a')} /> : <div />}</body>
 
         patch(document.body, <App />)
         expect(document.querySelector('div')!.getAttribute('class')).toBe('a')
@@ -149,7 +149,7 @@ describe('jmc regressions', () => {
 
     test('a thunked attribute evaluating to undefined is removed', () => {
         let css: string | undefined = 'a'
-        const App = () => <body><div class={lazy(() => css)} /></body>
+        const App = () => <body><div class={live(() => css)} /></body>
 
         patch(document.body, <App />)
         expect(document.querySelector('div')!.getAttribute('class')).toBe('a')

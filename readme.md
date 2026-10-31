@@ -212,10 +212,10 @@ A prop starting with `on` whose value is a function is attached with `addEventLi
 
 `null`, `undefined` and `false` remove the attribute. On `aria-*` attributes, `false` is kept as the value `"false"`.
 
-A prop whose value is wrapped in `lazy` is evaluated at each render:
+A prop whose value is wrapped in `live` is evaluated at each render:
 
 ```tsx
-<dd class={lazy(() => cc('item', { active: model.active }))} />
+<dd class={live(() => cc('item', { active: model.active }))} />
 ```
 
 ### Children
@@ -305,7 +305,7 @@ jmcconfig.attributes.add('list') // always set this prop as an attribute
 |---|---|
 | `cc(...)` | joins class names. Objects contribute their keys with truthy values: `cc('item', { active })` |
 | `<When cond={…}>` | renders its children only if `cond` is true |
-| `lazy(f)` | a prop value that is evaluated at each render |
+| `live(f)` | a prop value that is evaluated at each render |
 | `closestby(node, pred)` | the nearest ancestor (or the node itself) matching `pred` |
 | `focuselement(node)` | focuses the node |
 | `rebind(o)` | binds the prototype methods of `o` to `o` |

@@ -1,4 +1,4 @@
-import { jsx, jsxf, patch, HElement, Component, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H, lazy } from "../src"
+import { jsx, jsxf, patch, HElement, Component, updateview, HtmlHTMLAttributes, IntrinsicElementAttributes, HClassComponent, HFunctionComponent, H, live } from "../src"
 import { describe, expect, beforeEach, it, vi } from 'vitest'
 
 beforeEach(() => {
@@ -793,7 +793,7 @@ describe('jmc dom tests', () => {
     it('thunked properties', () => {
 
         let css = "a"
-        let App = <body class={lazy(() => css)}></body>
+        let App = <body class={live(() => css)}></body>
 
         patch(document.body, <App />)
         expect(document.body.outerHTML).toBe('<body class="a"></body>')

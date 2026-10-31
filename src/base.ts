@@ -28,6 +28,9 @@ export class Thunk<T> {
     constructor(public f: () => T) { }
 }
 
-export function lazy<T>(f: () => T) { return new Thunk(f) }
+export function live<T>(f: () => T) { return new Thunk(f) }
+
+/** @deprecated renamed to live */
+export const lazy = live
 
 export function mount(o: Record<string, any>) { Object.assign(globalThis, o) }
