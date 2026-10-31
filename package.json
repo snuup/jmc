@@ -47,7 +47,8 @@
     "scripts": {
         "prebuild": "rimraf dist",
         "build": "tsc -p tsconfig.json",
-        "test": "vitest run",
+        "test": "pnpm typecheck && vitest run",
+        "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tests && tsc -p tests/automatic",
         "release": "release-it patch"
     },
     "devDependencies": {
@@ -61,7 +62,7 @@
     "release-it": {
         "hooks": {
             "before:init": [
-                "pnpm vitest run"
+                "pnpm test"
             ],
             "after:bump": "pnpm build"
         },

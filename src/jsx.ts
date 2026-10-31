@@ -346,7 +346,7 @@ type AriaRole =
 //   - "number | string"
 //   - "string"
 //   - union of string literals
-interface SVGAttributes<T> extends AriaAttributes, HTMLAttributes {
+interface SVGAttributesBase<T> extends AriaAttributes, HTMLAttributesBase {
     // React-specific Attributes
     suppressHydrationWarning?: boolean | undefined;
 
@@ -649,7 +649,7 @@ interface SVGAttributes<T> extends AriaAttributes, HTMLAttributes {
 }
 
 
-type SVGProps<T extends SVGElement> = SVGAttributes<T>
+type SVGProps<T extends SVGElement> = Thunked<SVGAttributesBase<T>>
 
 /** the elements jmc knows. JSX reads them through jsx.JSX.IntrinsicElements, see h.ts */
 export interface JmcIntrinsicElements extends IntrinsicElementAttributes {
@@ -657,22 +657,22 @@ export interface JmcIntrinsicElements extends IntrinsicElementAttributes {
         for?: string
     }
 
-    svg: SVGProps<SVGSVGElement> & { class?: string | undefined, xmlns: "http://www.w3.org/2000/svg" }
-    path: SVGProps<SVGPathElement> & { class?: string | undefined }
-    textPath: SVGProps<SVGTextPathElement> & { class?: string | undefined, style?: string | undefined }
-    tspan: SVGProps<SVGTSpanElement> & { class?: string | undefined }
-    circle: SVGProps<SVGCircleElement> & { class?: string | undefined }
-    rect: SVGProps<SVGRectElement> & { class?: string | undefined }
-    line: SVGProps<SVGLineElement> & { class?: string | undefined }
-    text: SVGProps<SVGTextElement> & { class?: string | undefined, style?: string | undefined }
-    g: SVGProps<SVGGElement> & { class?: string | undefined }
-    foreignObject: SVGProps<SVGForeignObjectElement> & { class?: string | undefined }
+    svg: SVGProps<SVGSVGElement> & { xmlns: "http://www.w3.org/2000/svg" }
+    path: SVGProps<SVGPathElement>
+    textPath: SVGProps<SVGTextPathElement>
+    tspan: SVGProps<SVGTSpanElement>
+    circle: SVGProps<SVGCircleElement>
+    rect: SVGProps<SVGRectElement>
+    line: SVGProps<SVGLineElement>
+    text: SVGProps<SVGTextElement>
+    g: SVGProps<SVGGElement>
+    foreignObject: SVGProps<SVGForeignObjectElement>
 }
 
-/** a prop accepts its value or lazy(() => value) */
-export type HTMLAttributes = {
-    [K in keyof HTMLAttributesBase]?: HTMLAttributesBase[K] | Thunk<HTMLAttributesBase[K]>
-}
+/** each prop accepts its value or lazy(() => value) */
+type Thunked<T> = { [K in keyof T]?: T[K] | Thunk<T[K]> }
+
+export type HTMLAttributes = Thunked<HTMLAttributesBase>
 
 export interface HTMLAttributesBase extends AdditionalElementAttributes {
     class?: string

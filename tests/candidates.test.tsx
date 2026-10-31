@@ -467,6 +467,18 @@ describe('base', () => {
         expect(t.f).toBe(f)
     })
 
+    test('svg props accept lazy and are evaluated', () => {
+        let r = 5
+        const App = () => <body><svg xmlns="http://www.w3.org/2000/svg"><circle class={lazy(() => 'dot')} r={lazy(() => r)} /></svg></body>
+        patch(document.body, <App />)
+        const c = document.querySelector('circle')!
+        expect(c.getAttribute('class')).toBe('dot')
+        expect(c.getAttribute('r')).toBe('5')
+        r = 7
+        updateview(document.body)
+        expect(c.getAttribute('r')).toBe('7')
+    })
+
     test('a plain function is not accepted where lazy is expected', () => {
         // @ts-expect-error class takes a string or lazy(() => string), not a bare function
         const e = <div class={() => 'a'} />
