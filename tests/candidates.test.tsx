@@ -2,7 +2,7 @@
 // test.fails marks a known open issue: the test passes while the issue exists and starts failing once it is fixed
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-    H, Component, jsx, jsxf, patch, updateview, live, lazy, Thunk, cc, When, rebind, closestby, mount,
+    H, Component, jsx, jsxf, patch, updateview, live, Thunk, cc, When, rebind, closestby, mount,
     loggedmethods, loggedmethodsex, updateviewmicro, updateviewsync, jmcconfig,
 } from '../src'
 
@@ -466,11 +466,6 @@ describe('base', () => {
         expect(t).toBeInstanceOf(Thunk)
         expect(t.f).toBe(f)
     })
-
-    test('lazy is kept as an alias of live', () => {
-        expect(lazy).toBe(live)
-    })
-
     test('svg props accept live and are evaluated', () => {
         let r = 5
         const App = () => <body><svg xmlns="http://www.w3.org/2000/svg"><circle class={live(() => 'dot')} r={live(() => r)} /></svg></body>

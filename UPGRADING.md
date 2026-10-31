@@ -6,7 +6,7 @@
 
 ### `lazy` is now `live`, returns a `Thunk`, and a bare function is no longer a valid prop value
 
-`lazy` is renamed to `live`: the value is not computed once later, but again at every render, so it stays current with the model. `lazy` still works as a deprecated alias and will be removed in a later version. A search and replace of `lazy(` with `live(` covers it.
+`lazy` is renamed to `live`: the value is not computed once later, but again at every render, so it stays current with the model. `lazy` is gone. A search and replace of `lazy(` with `live(` covers it.
 
 `lazy(f)` used to mark `f` and return it. `live(f)` returns a `Thunk` object that holds `f`. The prop types accept a value or a `Thunk`, so a function passed without `live` is now a type error:
 
