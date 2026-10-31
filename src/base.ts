@@ -23,6 +23,11 @@ export const loggedmethods = <T extends Record<string, any>>(o: T): T => loggedm
 
 export function closestby(e: Node | null, pred: (e: Node) => boolean): Node | null { return (e == null || pred(e)) ? e : closestby(e.parentNode, pred) }
 
-export function lazy<T>(f: () => T) { (f as any).thunk = 1; return f }
+/** a prop value evaluated at each render */
+export class Thunk<T> {
+    constructor(public f: () => T) { }
+}
+
+export function lazy<T>(f: () => T) { return new Thunk(f) }
 
 export function mount(o: Record<string, any>) { Object.assign(globalThis, o) }

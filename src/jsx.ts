@@ -1,3 +1,4 @@
+import type { Thunk } from './base.js'
 /* eslint-disable @typescript-eslint/no-empty-interface */
 /* eslint-disable @typescript-eslint/ban-types */
 // This code is based on react definition in DefinitelyTyped published under the MIT license.
@@ -668,14 +669,9 @@ export interface JmcIntrinsicElements extends IntrinsicElementAttributes {
     foreignObject: SVGProps<SVGForeignObjectElement> & { class?: string | undefined }
 }
 
-// 1. Define the Thunk transformer for a single type
-type WithThunk<T> = T extends undefined
-    ? undefined
-    : T | (() => T | undefined)
-
-// 2. Map across all keys of the existing interface
+/** a prop accepts its value or lazy(() => value) */
 export type HTMLAttributes = {
-    [K in keyof HTMLAttributesBase]?: WithThunk<NonNullable<HTMLAttributesBase[K]>>
+    [K in keyof HTMLAttributesBase]?: HTMLAttributesBase[K] | Thunk<HTMLAttributesBase[K]>
 }
 
 export interface HTMLAttributesBase extends AdditionalElementAttributes {

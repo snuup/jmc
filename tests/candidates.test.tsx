@@ -2,7 +2,7 @@
 // test.fails marks a known open issue: the test passes while the issue exists and starts failing once it is fixed
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
-    H, Component, jsx, jsxf, patch, updateview, lazy, cc, When, rebind, closestby, mount,
+    H, Component, jsx, jsxf, patch, updateview, lazy, Thunk, cc, When, rebind, closestby, mount,
     loggedmethods, loggedmethodsex, updateviewmicro, updateviewsync, jmcconfig,
 } from '../src'
 
@@ -460,10 +460,17 @@ describe('base', () => {
         expect(closestby(b, (n) => n.nodeName == 'TABLE')).toBeNull()
     })
 
-    test('lazy marks the function as thunk and returns it', () => {
+    test('lazy wraps f in a Thunk', () => {
         const f = () => 1
-        expect(lazy(f)).toBe(f)
-        expect((f as any).thunk).toBeTruthy()
+        const t = lazy(f)
+        expect(t).toBeInstanceOf(Thunk)
+        expect(t.f).toBe(f)
+    })
+
+    test('a plain function is not accepted where lazy is expected', () => {
+        // @ts-expect-error class takes a string or lazy(() => string), not a bare function
+        const e = <div class={() => 'a'} />
+        expect(e).toBeTruthy()
     })
 
     test('mount puts the entries on globalThis', () => {
