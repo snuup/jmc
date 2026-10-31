@@ -1,3 +1,45 @@
+# Upgrading from 1.2 to 1.3
+
+1.3 changes how `lazy` props and event props work. Both changes turn code that silently did nothing into compile errors or working code.
+
+## Required changes in 1.3
+
+### `lazy(f)` returns a `Thunk`, and a bare function is no longer a valid prop value
+
+`lazy(f)` used to mark `f` and return it. It now returns a `Thunk` object that holds `f`. The prop types accept a value or a `Thunk`, so a function passed without `lazy` is now a type error:
+
+```tsx
+<div class={() => cc({ active: vm.active })} />        // 1.2 compiled, 1.3 is a type error
+<div class={lazy(() => cc({ active: vm.active }))} />  // evaluated at each render
+```
+
+A bare function was never evaluated: jmc set the function itself as the property. Each place the compiler now flags was rendering wrongly before, and needs `lazy` around it.
+
+Event props still take plain functions.
+
+### Event prop names are lowercase
+
+The event prop types now use the DOM's lowercase names, matching the other event props: `oncopy`, `onpaste`, `oncompositionend`, `onabort`, `onplay`, `onended`, and so on. The camel-cased names (`onCopy`, `onPlay`, …) are type errors now. They never worked: they were set as properties that the element doesn't have.
+
+## Behaviour changes in 1.3
+
+### Event props are attached with `addEventListener`
+
+A prop starting with `on` whose value is a function is attached as a listener for the event named by the rest of the prop: `onclick` listens to `click`, `onmy-event` to `my-event`. Custom events and events without an `on…` property on the element now work. The element's `on…` property is no longer set, so code reading `element.onclick` gets `null`.
+
+### `mounted` runs after the render has finished
+
+`mounted` callbacks of elements and class components used to run during the render, when the rest of the tree might not be built or connected yet. They now run after the render, when the whole tree is in the document. Children run before their parents.
+
+### `list` is always set as an attribute
+
+`jmcconfig.attributes` now includes `list`, so `<input list="…">` sets the attribute. The `list` property is read-only.
+
+## New in 1.3
+
+- **SVG props accept `lazy`**, as HTML props do.
+- **`Thunk`** is exported, the type `lazy` returns.
+
 # Upgrading from 1.0.x to 1.1
 
 Most of 1.1 is fixes. A few changes need small edits in your code, and some behaviour changed in ways worth checking in your app.
