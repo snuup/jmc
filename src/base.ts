@@ -30,4 +30,8 @@ export class Thunk<T> {
 
 export function live<T>(f: () => T) { return new Thunk(f) }
 
+export type Live<T> = T | Thunk<T>
+
+export function evallive<T>(v: Live<T>): T { return v instanceof Thunk ? v.f() : v }
+
 export function mount(o: Record<string, any>) { Object.assign(globalThis, o) }

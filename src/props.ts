@@ -1,5 +1,5 @@
 import type { J } from './h.js'
-import { Thunk } from './base.js'
+import { evallive, Thunk } from './base.js'
 
 /** settings to tweak jmc */
 export const jmcconfig = {
@@ -25,7 +25,7 @@ let removeprop = (e: Element & J, p: string, old: any) => {
 /** applies now over old and returns the applied values, with thunks evaluated, to serve as old on the next call */
 export let setprops = (e: Element & J, old: J = {}, now: J): J => {
     // evaluate thunks into a copy: now is h.p, which gets rendered again and must keep its thunks
-    now = Object.fromEntries(Object.entries(now).map(([k, v]) => [k, v instanceof Thunk ? v.f() : v]))
+    now = Object.fromEntries(Object.entries(now).map(([k, v]) => [k, evallive(v)]))
 
     // removals
     for (let p in old)
