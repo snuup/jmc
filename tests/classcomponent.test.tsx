@@ -209,6 +209,81 @@ describe('class components', () => {
         updateview()
         expect(document.body.outerHTML).toBe('<body><div class="value-3">bunny</div></body>')
     })
+
+    it('function component rendering a class component is attached to the root and keeps the instance', () => {
+
+        let m = { name: 'lunar' }
+        let instances = 0
+        class C extends Component<{ name: string }> {
+            constructor(p: { name: string }) { super(p); instances++ }
+            view(): H {
+                return <div>{this.props.name}</div>
+            }
+        }
+        let F = () => <C name={m.name} />
+
+        patch(document.body, <body><F /></body>)
+        expect(document.body.outerHTML).toBe('<body><div>lunar</div></body>')
+
+        m.name = 'solar'
+        updateview('div')
+        expect(document.body.outerHTML, 'the root is attached to F, so F runs again and passes the new name').toBe('<body><div>solar</div></body>')
+        expect(instances, 'C is reused').toBe(1)
+
+        m.name = 'stellar'
+        updateview()
+        expect(document.body.outerHTML).toBe('<body><div>stellar</div></body>')
+        expect(instances, 'C is reused when the parent renders').toBe(1)
+    })
+
+    it('class component rendering a class component keeps both instances', () => {
+
+        let m = { name: 'lunar' }
+        let outers = 0, inners = 0
+        class Inner extends Component<{ name: string }> {
+            constructor(p: { name: string }) { super(p); inners++ }
+            view(): H {
+                return <div>{this.props.name}</div>
+            }
+        }
+        class Outer extends Component {
+            constructor(p: {}) { super(p); outers++ }
+            view(): H {
+                return <Inner name={m.name} />
+            }
+        }
+
+        patch(document.body, <body><Outer /></body>)
+        expect(document.body.outerHTML).toBe('<body><div>lunar</div></body>')
+
+        m.name = 'solar'
+        updateview('div')
+        expect(document.body.outerHTML, 'the root is attached to Outer').toBe('<body><div>solar</div></body>')
+        updateview()
+        expect([outers, inners]).toEqual([1, 1])
+    })
+
+    it('function component rendering a class component that renders nothing keeps the instance', () => {
+
+        let m = { show: true }
+        let instances = 0
+        class C extends Component<{ show: boolean }> {
+            constructor(p: { show: boolean }) { super(p); instances++ }
+            view(): H | null {
+                return this.props.show ? <div>hi</div> : null
+            }
+        }
+        let F = () => <C show={m.show} />
+
+        patch(document.body, <body><F /></body>)
+        m.show = false
+        updateview()
+        expect(document.body.outerHTML).toBe('<body><!----></body>')
+        m.show = true
+        updateview()
+        expect(document.body.outerHTML).toBe('<body><div>hi</div></body>')
+        expect(instances).toBe(1)
+    })
 })
 
 declare module '../src' {

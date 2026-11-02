@@ -21,6 +21,8 @@ const enum NodeType {
 type JNode<N extends Node = ChildNode> = N & {
     /** the H this node updates from: the element's own H, or the outermost component rendering it */
     h?: HElement | HComp
+    /** the class components rendering this node, outermost first. they hold the instances, found again by position */
+    cs?: HClassComponent[]
     /** props last applied to this element. kept apart from h, which may be the owning component's H */
     ep?: J
 }
@@ -37,6 +39,12 @@ let removeexcesschildren = (n: Element, i: number) => {
     }
 }
 
+/** attaches node n, rendered from h by the components hs (outermost first), to them */
+let attach = (n: JNode, h: HElement | HComp, hs: HComp[]) => {
+    n.h = hs[0] ?? h
+    n.cs = hs.filter(x => x.kind == 3)
+}
+
 /** synchronizes children starting at the i-th node. returns the index after the last child synchronized */
 let syncchildren = (
     p: Element,
@@ -45,7 +53,7 @@ let syncchildren = (
     depth: number,
     uc: J,
 ): number => {
-    cn.flat(999).forEach((hc) => (i = sync(p, i, hc, undefined, depth, uc)))
+    cn.flat(999).forEach((hc) => (i = sync(p, i, hc, [], depth, uc)))
     return i
 }
 
@@ -58,7 +66,7 @@ function sync(
     parent: Element,
     i: number,
     h: HU,
-    hfun: HComp | undefined,
+    hs: HComp[], // the components rendering h, outermost first
     depth: number,
     uc: J,
 ): number {
@@ -67,7 +75,7 @@ function sync(
     // null, undefined and booleans render nothing, like in React, so {cond && <b />} works. 0 is still rendered.
     // nothing still takes its slot, as a placeholder: so the siblings after it keep their position, and with it their state
     if (h == null || typeof h == 'boolean') {
-        if (hfun?.kind != 3) h = '' // an empty text node, invisible
+        if (!hs.some(x => x.kind == 3)) h = '' // an empty text node, invisible
         else {
             // a class component rendering nothing is attached to a comment, so it keeps its state and can show itself again
             if (c?.nodeType != NodeType.Comment) {
@@ -75,7 +83,7 @@ function sync(
                 c ? c.replaceWith(n) : parent.append(n)
                 c = n
             }
-            c.h = hfun
+            attach(c, hs[0], hs)
             return i + 1
         }
     }
@@ -97,8 +105,8 @@ function sync(
                 c ? c.replaceWith(n) : parent.appendChild(n)
             } else n = c as Element & JNode
 
-            n.h = hfun ?? h // attach before update(), which may handle the update itself
-            if (jmcconfig.debug && hfun) n.setAttribute('comp', hfun.tag.name)
+            attach(n, h, hs) // before update(), which may handle the update itself
+            if (jmcconfig.debug && hs[0]) n.setAttribute('comp', hs[0].tag.name)
             if (!fresh && p.update?.(n, uc)) return i + 1
 
             // a const element is an island: jmc renders it once, then foreign code owns it. update() still runs
@@ -118,19 +126,25 @@ function sync(
             // function component
             // TBD REMOVE the second argument once we know it is unused: the children are in h.p.children
             let hr = h.tag(h.p, h.cn)
-            return sync(parent, i, hr, hfun ?? h, depth, uc)
+            return sync(parent, i, hr, [...hs, h], depth, uc)
         }
 
         case 3: {
-            // class component. reuses the instance attached to c, if c renders the same class
-            let old = c?.h?.tag == h.tag ? c.h as HClassComponent : undefined
+            // class component. reuses the instance attached to c, if c renders the same class at the same position
+            let outer = hs.filter(x => x.kind == 3)
+            let old = c?.cs?.[outer.length]
+            if (old?.tag != h.tag) old = undefined
             let ci = old ? old.i! : (h.i = rebind(new h.tag(h.p)))
             if (old) {
-                ci.props = old.p = h.p // set attached p too, for a repeatable update through c.h
-                if (ci.update?.(uc)) return i + 1 // update() substitutes view/sync when returning truthy
+                ci.props = old.p = h.p // set attached p too, for a repeatable update through the node
+                if (ci.update?.(uc)) { // update() substitutes view/sync when returning truthy
+                    c!.h = hs[0] ?? old // the components below old stay attached
+                    c!.cs = [...outer, ...c!.cs!.slice(outer.length)]
+                    return i + 1
+                }
             }
             let hv = ci.view()
-            let j = sync(parent, i, hv, old ?? h, depth, uc) // the attached H, so updates find the instance
+            let j = sync(parent, i, hv, [...hs, old ?? h], depth, uc) // the attached H, so updates find the instance
             assertnonfragment(h, hv, i, j)
             ci.element = parent.childNodes[i]
             if (!old && ci.mounted) mounts.push(() => ci.mounted!())
@@ -138,7 +152,7 @@ function sync(
         }
 
         case 4: {
-            // fragment. hfun is deliberately not passed on: a component returning a fragment is not attached
+            // fragment. hs is deliberately not passed on: a component returning a fragment is not attached
             // to any node, so it cannot update itself, only its parent can update it
             return syncchildren(parent, h.cn ?? [], i, --depth, uc)
         }
@@ -168,7 +182,7 @@ export function patch(
     }
     let p = e.parentElement!
     let i = [...p.childNodes].indexOf(e as ChildNode)
-    sync(p, i, h, undefined, depth, uc)
+    sync(p, i, h, [], depth, uc)
 
     // lifecycle phase: the dom is complete now. taken first, a mounted callback calling updateview collects anew
     let ms = mounts

@@ -252,22 +252,6 @@ describe('class components', () => {
 
         expect(document.querySelector('b')!.textContent).toBe('1')
     })
-
-    // known issue 5: the class H is attached to the root node, so the outer function component is lost
-    test.fails('updateview on the root of a class component inside a function component re-runs the function', () => {
-        let val = 'a'
-        class C extends Component<{ x: string }> {
-            view(): H { return <i>{this.props.x}</i> }
-        }
-        const F = () => <C x={val} />
-        patch(document.body, <body><F /></body>)
-        const root = document.querySelector('i')!
-
-        val = 'b'
-        updateview(root)
-
-        expect(root.textContent).toBe('b')
-    })
 })
 
 describe('namespaces', () => {
