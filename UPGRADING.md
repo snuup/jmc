@@ -1,3 +1,18 @@
+# Upgrading from 1.4 to 1.5
+
+## Required changes in 1.5
+
+### Function components no longer get their children as second argument
+
+Function components get their children only in `props.children`, like class components. The second argument, deprecated since 1.1, is gone:
+
+```tsx
+const Box = (p: { title: string }, cn?: Children) => <section>{cn}</section>                 // 1.4
+const Box = (p: { title: string, children?: Children }) => <section>{p.children}</section>    // 1.5
+```
+
+A component that still reads the second argument gets `undefined` and renders no children. TypeScript does not flag this when the component is used in JSX, so search for function components with two parameters. `FComponent` and `FComponentT` now take a single parameter.
+
 # Upgrading from 1.2 to 1.3
 
 1.3 changes how props evaluated at each render and event props work. Both changes turn code that silently did nothing into compile errors or working code.
@@ -178,7 +193,7 @@ When an element's `update(n, uc)` callback runs, `n.h` now already holds the H o
 ## New
 
 - **The automatic JSX runtime.** With `"jsx": "react-jsx"` and `"jsxImportSource": "@snupo/jmc"` in `tsconfig.json`, and the same in your bundler, the compiler imports what JSX needs by itself, so `.tsx` files no longer need `import { jsx, jsxf }`. The classic setup keeps working. See the readme's Install section for both setups.
-- **Components get their children in `props.children`**, in both setups, like in React. Class components see them as `this.props.children`. Declare them in the props type: `(p: { title: string, children?: Children })`. With the automatic runtime this is required for type checking, because there TypeScript checks children as a prop. Function components still receive their children as the second argument too, but that may be removed in a later version, so prefer `props.children`.
+- **Components get their children in `props.children`**, in both setups, like in React. Class components see them as `this.props.children`. Declare them in the props type: `(p: { title: string, children?: Children })`. With the automatic runtime this is required for type checking, because there TypeScript checks children as a prop. Function components also received their children as the second argument until 1.5, which removed it.
 - **`jmcconfig`** holds the settings that adjust jmc:
   - `jmcconfig.debug = true` marks component roots with `comp="Name"`, to see in the dev tools which component rendered what.
   - `jmcconfig.attributes` is the set of prop names always set as attributes, never as properties. It defaults to `selected` and `viewBox`, and you can add your own: `jmcconfig.attributes.add('list')`.

@@ -7,9 +7,8 @@ export type Selector = string | Node
 /** an updateview command: a target (selector or node), a depth (number) or an update context (object) */
 export type Command = Selector | J | number
 
-// TBD REMOVE the children parameter once we know it is unused: components get their children in props.children.
-// the second parameter remains for function components written before props.children existed
-export type FComponent = (props: J, children?: Children) => HU
+/** a function component. it gets its children in props.children */
+export type FComponent = (props: J) => HU
 
 type HKindElement = 1
 type HKindFunctionComponent = 2

@@ -2,11 +2,11 @@ import type { Children, IClassComponent, HU, J, HFragment } from './h.js'
 import { updateview } from './jmc.js'
 
 export type UC = J // update context
-export type FComponentT<P> = (pcn: P, cn?: Children) => HU // a function component with typed props
+export type FComponentT<P> = (props: P) => HU // a function component with typed props. children come in props.children
 
 export type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends Record<string, unknown> ? DeepReadonly<T[K]> : T[K]; }
 
-export const When = ({ cond }: { cond: boolean }, cn: Children): HFragment | null => cond ? { kind: 4, cn } : null
+export const When = ({ cond, children }: { cond: boolean, children?: Children }): HFragment | null => cond ? { kind: 4, cn: children } : null
 
 export abstract class Component<P extends J = {}> implements IClassComponent {
 

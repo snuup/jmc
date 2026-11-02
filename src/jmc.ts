@@ -124,8 +124,7 @@ function sync(
 
         case 2: {
             // function component
-            // TBD REMOVE the second argument once we know it is unused: the children are in h.p.children
-            let hr = h.tag(h.p, h.cn)
+            let hr = h.tag(h.p)
             return sync(parent, i, hr, [...hs, h], depth, uc)
         }
 

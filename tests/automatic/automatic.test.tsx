@@ -81,15 +81,6 @@ describe('children of components', () => {
 
         expect(document.body.innerHTML).toBe('<article><b></b><i></i></article>')
     })
-
-    // TBD REMOVE together with the second parameter of function components
-    test('a function component still gets its children as second argument', () => {
-        const Old = (_p: { children?: Children }, cn?: Children) => <section>{cn}</section>
-
-        patch(document.body, <body><Old><b /></Old></body>)
-
-        expect(document.body.innerHTML).toBe('<section><b></b></section>')
-    })
 })
 
 describe('runtime functions', () => {
