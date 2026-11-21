@@ -1,3 +1,19 @@
+# Upgrading from 1.5 to 1.6
+
+Nothing is required in 1.6.
+
+## New in 1.6
+
+### Ready-made input components
+
+jmc now ships input components in `@snupo/jmc/comps`: `TextArea`, `NumberStepper`, `RangeSlider`, `Select`, `ComboBox`, `DataListInput`, `Checkbox`, `ToggleGroup`, `RadioGroup`, `Tabs` and `Icon`. They are documented in `components.md`, and `pnpm demo` shows them live.
+
+A project that used jmc before probably has its own versions of these: a select box, a combo box, a textarea that grows, a checkbox with a third state. These can probably be replaced by the shipped ones. This is optional, nothing breaks if you keep your own. To switch a component:
+
+- Read its section in `components.md`. All of them take `value` and `setvalue`, and hand out values, not DOM events. `setvalue` is a controller method.
+- Compare the behaviour with your version (keys, what happens with text that is not an item, whether the list opens on click). Differences are listed per component.
+- Remove your copy and its stylesheet. The components bring their own CSS, which you adapt with `--jmc-*` variables.
+
 # Upgrading from 1.4 to 1.5
 
 ## Required changes in 1.5
