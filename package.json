@@ -53,7 +53,8 @@
         "dist",
         "src",
         "design-guide.md",
-        "components.md"
+        "components.md",
+        "UPGRADING.md"
     ],
     "scripts": {
         "prebuild": "rimraf dist",
