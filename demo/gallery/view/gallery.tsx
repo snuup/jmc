@@ -2,7 +2,7 @@ import { Checkbox, ComboBox, DataListInput, Icon, NumberStepper, RadioGroup, Ran
 import { m } from '../model/model'
 import { checkedstate } from '../model/derived'
 import { c } from '../controller/controller'
-import { ArrowLeftRight, ArrowUpDown, Eye } from './icons'
+import { ArrowLeftRight, ArrowUpDown, Eye } from '../../shared/icons'
 
 const colors: Record<string, string> = { trains: '#dc2626', buses: '#2563eb', trams: '#16a34a', ferries: '#9333ea' }
 

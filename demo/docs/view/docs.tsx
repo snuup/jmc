@@ -2,7 +2,7 @@ import { Checkbox, ComboBox, DataListInput, Icon, NumberStepper, RadioGroup, Ran
 import { m } from '../model/model'
 import { checkedstate } from '../model/derived'
 import { c } from '../controller/controller'
-import { ArrowLeftRight, ArrowUpDown, Eye } from '../../view/icons'
+import { ArrowLeftRight, ArrowUpDown, Eye } from '../../shared/icons'
 
 /** `text` between backticks becomes <code> */
 const rich = (s: string) => s.split('`').map((t, i) => i % 2 ? <code>{t}</code> : t)
