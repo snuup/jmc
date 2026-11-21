@@ -1,0 +1,63 @@
+@layer jmc {
+    .jmc-combobox {
+        position: relative;
+        display: inline-flex;
+        align-items: stretch;
+        color: var(--jmc-color, inherit);
+        background: var(--jmc-bg, #fff);
+        border: 1px solid var(--jmc-border, #cbd5e1);
+        border-radius: var(--jmc-radius, 6px);
+
+        &:focus-within { border-color: var(--jmc-accent, #3b82f6); }
+        &:has(input:disabled) { opacity: 0.5; }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            font: inherit;
+            padding: var(--jmc-padding, 0.3em 0.5em);
+            color: inherit;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            padding: 0 0.5em;
+            font: inherit;
+            color: inherit;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+
+            &:hover:not(:disabled) { opacity: 0.6; }
+            &:disabled { cursor: default; }
+        }
+
+        ul {
+            position: absolute;
+            z-index: 10;
+            top: 100%;
+            left: -1px; /* over the border */
+            min-width: calc(100% + 2px);
+            max-height: 14rem;
+            margin: 2px 0 0;
+            padding: 0.2rem 0;
+            overflow-y: auto;
+            list-style: none;
+            background: var(--jmc-bg, #fff);
+            border: 1px solid var(--jmc-border, #cbd5e1);
+            border-radius: var(--jmc-radius, 6px);
+            box-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+        }
+
+        li {
+            padding: 0.25em 0.6em;
+            cursor: pointer;
+            white-space: nowrap;
+
+            &:hover, &.active { background: var(--jmc-bg-focus, #f0f7ff); }
+            &.selected { font-weight: 600; }
+        }
+    }
+}

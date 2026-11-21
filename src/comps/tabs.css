@@ -1,0 +1,22 @@
+@layer jmc {
+    .jmc-tabs {
+        display: flex;
+        gap: 0.2em;
+        border-bottom: 1px solid var(--jmc-border, #cbd5e1);
+
+        button {
+            padding: var(--jmc-padding, 0.4em 0.9em);
+            font: inherit;
+            color: var(--jmc-color, inherit);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px; /* the selected underline covers the bar's border */
+            cursor: pointer;
+
+            &:hover { background: var(--jmc-bg-focus, #f0f7ff); }
+            &.selected { color: var(--jmc-accent, #3b82f6); border-bottom-color: var(--jmc-accent, #3b82f6); }
+            &:focus-visible { outline: none; color: #fff; background: var(--jmc-accent, #3b82f6); } /* after selected, so it wins */
+        }
+    }
+}

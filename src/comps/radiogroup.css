@@ -1,0 +1,20 @@
+@layer jmc {
+    .jmc-radio-group {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.3em 1em;
+
+        label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4em;
+            cursor: pointer;
+        }
+
+        input {
+            margin: 0;
+            accent-color: var(--jmc-accent, #3b82f6);
+            cursor: inherit;
+        }
+    }
+}

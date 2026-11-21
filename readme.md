@@ -312,6 +312,10 @@ jmcconfig.attributes.add('list') // always set this prop as an attribute
 | `mount({ … })` | puts values on `globalThis`, handy for debugging in the console |
 | `loggedmethods(o)` | logs each method call of `o` with its arguments and result |
 
+## Ready-made components
+
+`@snupo/jmc/comps` has input components for common needs: `TextArea` that grows with its text, `NumberStepper`, `RangeSlider`, `Select`, `ComboBox`, `DataListInput`, `Checkbox` with a third state, `ToggleGroup`, `RadioGroup`, `Tabs` and `Icon`. They are light DOM, themed with CSS variables, and follow the model and controller architecture. See [components.md](components.md).
+
 ## License
 
 [MIT](LICENSE)

@@ -1,0 +1,88 @@
+body {
+    max-width: 54rem;
+    margin: 0 auto;
+    padding: 1rem 1rem 4rem;
+    font: 16px/1.5 system-ui, sans-serif;
+    color: #0f172a;
+}
+
+h1 { margin-bottom: 0.2em; }
+a { color: #2563eb; }
+code { padding: 0.05em 0.3em; font-size: 0.88em; background: #f1f5f9; border-radius: 4px; }
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.9rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+
+article {
+    padding: 1.2rem 0;
+    border-top: 1px solid #e2e8f0;
+
+    h2 { margin: 0 0 0.3rem; font-size: 1.25rem; }
+
+    /* the live example, and the slice of the model it works on */
+    .live {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+        margin: 0.9rem 0;
+
+        @media (max-width: 40rem) { grid-template-columns: 1fr; }
+    }
+
+    .example {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: flex-start;
+        gap: 0.6rem 1rem;
+        padding: 0.9rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+
+        .jmc-textarea { flex: 1 1 100%; }
+    }
+
+    .model {
+        position: relative;
+        margin: 0;
+        padding: 1.6rem 0.75rem 0.75rem;
+
+        &::before {
+            content: 'model';
+            position: absolute;
+            top: 0.4rem;
+            left: 0.75rem;
+            font: 600 0.7rem system-ui, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        font-size: 0.9rem;
+
+        th, td { padding: 0.25rem 0.8rem 0.25rem 0; text-align: left; vertical-align: top; }
+        th { font-weight: 600; border-bottom: 1px solid #e2e8f0; }
+    }
+
+    .tablewrap { overflow-x: auto; }
+
+    ul { padding-left: 1.2rem; }
+}
+
+pre {
+    padding: 0.75rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    background: #f8fafc;
+    border-radius: 6px;
+
+    code { padding: 0; background: none; }
+}

@@ -934,6 +934,7 @@ export interface InputHTMLAttributes extends HTMLAttributes {
     formnovalidate?: boolean
     formtarget?: string
     height?: number | string
+    indeterminate?: boolean // a property only, there is no such attribute
     list?: string
     max?: number | string
     maxlength?: number

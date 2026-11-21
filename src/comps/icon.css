@@ -1,0 +1,6 @@
+@layer jmc {
+    .jmc-icon {
+        flex: none;
+        vertical-align: middle;
+    }
+}

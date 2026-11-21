@@ -1,0 +1,44 @@
+@layer jmc {
+    .jmc-stepper {
+        display: inline-flex;
+        align-items: stretch;
+        width: var(--jmc-stepper-width, 5.5rem);
+        overflow: hidden;
+        font: inherit;
+        color: var(--jmc-color, inherit);
+        background: var(--jmc-bg, #fff);
+        border: 1px solid var(--jmc-border, #cbd5e1);
+        border-radius: var(--jmc-radius, 6px);
+
+        button {
+            padding: 0 0.4em;
+            font: inherit;
+            color: inherit;
+            background: var(--jmc-bg-button, #eee);
+            border: none;
+            cursor: pointer;
+            user-select: none;
+
+            &:hover:not(:disabled) { opacity: 0.6; }
+            &:disabled { cursor: default; }
+            &:focus-visible { outline: none; color: #fff; background: var(--jmc-accent, #3b82f6); } /* the control's border shows the focus. a ring would be clipped by the rounded corners */
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 0;
+            font: inherit;
+            text-align: center;
+            color: inherit;
+            background: transparent;
+            border: none;
+            outline: none;
+
+            &:focus { background: var(--jmc-bg-focus, #f0f7ff); }
+        }
+
+        &:focus-within { border-color: var(--jmc-accent, #3b82f6); }
+        &.disabled { opacity: 0.5; }
+    }
+}

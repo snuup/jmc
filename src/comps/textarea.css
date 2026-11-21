@@ -1,0 +1,19 @@
+@layer jmc {
+    .jmc-textarea {
+        box-sizing: border-box;
+        width: 100%;
+        resize: none;
+        overflow: hidden;
+        font: inherit;
+        padding: var(--jmc-padding, 0.35em 0.5em);
+        color: var(--jmc-color, inherit);
+        background: var(--jmc-bg, #fff);
+        border: 1px solid var(--jmc-border, #cbd5e1);
+        border-radius: var(--jmc-radius, 6px);
+
+        &:focus {
+            outline: none;
+            border-color: var(--jmc-accent, #3b82f6);
+        }
+    }
+}

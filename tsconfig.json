@@ -2,6 +2,9 @@
     "compilerOptions": {
         "strict": true, // although true shall be the default, without this weird type errors occur
         "target": "ESNext",
+        "jsx": "react",
+        "jsxFactory": "jsx",
+        "jsxFragmentFactory": "jsxf",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,

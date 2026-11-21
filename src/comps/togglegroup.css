@@ -1,0 +1,29 @@
+@layer jmc {
+    .jmc-toggle-group {
+        display: inline-flex;
+        overflow: hidden;
+        border: 1px solid var(--jmc-border, #cbd5e1);
+        border-radius: var(--jmc-radius, 6px);
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--jmc-padding, 0.3em 0.7em);
+            font: inherit;
+            color: var(--jmc-color, inherit);
+            background: var(--jmc-bg, #fff);
+            border: none;
+            border-left: 1px solid var(--jmc-border, #cbd5e1);
+            cursor: pointer;
+
+            &:first-child { border-left: none; }
+            &:hover:not(.selected) { background: var(--jmc-bg-focus, #f0f7ff); }
+            &.selected { color: #fff; background: var(--jmc-accent, #3b82f6); }
+            /* keyboard focus: the item takes the accent, a selected one gets darker. an outline would be clipped by the rounded corners */
+            &:focus-visible { outline: none; color: #fff; background: var(--jmc-accent, #3b82f6); }
+            &.selected:focus-visible { background: color-mix(in srgb, var(--jmc-accent, #3b82f6), #000 30%); }
+            &:disabled { opacity: 0.5; cursor: default; }
+        }
+    }
+}

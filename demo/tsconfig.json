@@ -1,0 +1,20 @@
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "rootDir": "..",
+        "noEmit": true,
+        "skipLibCheck": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "@snupo/jmc",
+        "jsxFactory": null,
+        "jsxFragmentFactory": null,
+        "paths": {
+            "@snupo/jmc": ["../src/index.ts"],
+            "@snupo/jmc/comps": ["../src/comps/index.ts"],
+            "@snupo/jmc/jsx-runtime": ["../src/jsx-runtime.ts"],
+            "@snupo/jmc/jsx-dev-runtime": ["../src/jsx-dev-runtime.ts"]
+        }
+    },
+    "include": [".", "../src/comps/css.d.ts"],
+    "exclude": ["vite.config.mts"]
+}
