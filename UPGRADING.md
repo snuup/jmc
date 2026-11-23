@@ -1,3 +1,11 @@
+# Upgrading from 1.6 to 1.7
+
+Nothing is required in 1.7.
+
+## New in 1.7
+
+- **`ls`**: localStorage as an object with values stored as JSON, `ls.user = { name }` and `ls.user`. A project with its own `JSON.parse(localStorage.getItem(…))` helpers can use it instead. See the readme, section Utilities.
+
 # Upgrading from 1.5 to 1.6
 
 Nothing is required in 1.6.

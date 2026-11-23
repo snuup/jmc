@@ -308,9 +308,26 @@ jmcconfig.attributes.add('list') // always set this prop as an attribute
 | `live(f)` | a prop value that is evaluated at each render |
 | `closestby(node, pred)` | the nearest ancestor (or the node itself) matching `pred` |
 | `focuselement(node)` | focuses the node |
+| `ls` | localStorage as an object, values stored as JSON: `ls.user = { name }`, `ls.user` (`null` if missing), `delete ls.user` |
 | `rebind(o)` | binds the prototype methods of `o` to `o` |
 | `mount({ … })` | puts values on `globalThis`, handy for debugging in the console |
 | `loggedmethods(o)` | logs each method call of `o` with its arguments and result |
+
+### `ls`: localStorage as an object
+
+`ls` reads and writes `localStorage` like an object. Values are stored as JSON, so numbers, booleans, arrays and objects come back as they were put in:
+
+```ts
+ls.user = { name: 'x', tags: ['a'] }   // localStorage.setItem('user', '{"name":"x","tags":["a"]}')
+ls.user                                // { name: 'x', tags: ['a'] }
+ls.missing                             // null
+ls.user = undefined                    // removes the key, like delete ls.user
+```
+
+- Every property reads as `null` when there is no value, also names like `length` or `getItem`. Use `localStorage` itself for the storage methods.
+- A stored value that is not valid JSON, for example one written by other code, makes the read throw.
+- The real `localStorage` is only touched when a property is used, so importing jmc works on a server or in node.
+- In a jmc app, keep it in the controller: load into the model at start (`m.settings = ls.settings ?? defaults`) and write in the controller method that changes the model. The view never reads `ls`.
 
 ## Ready-made components
 
