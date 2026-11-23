@@ -31,14 +31,23 @@ export function cc(...namesOrObjects: (string | J | undefined)[]): string {
 
 export const focuselement = (e: Node) => (e as HTMLElement).focus()
 
-export type LocalStorageObject = { [key: string]: any }
+declare global {
+    /**
+     * the keys of `ls`. A project declares its own by extending this interface:
+     * `declare global { interface LocalStorage { settings: { dark: boolean } } }`
+     * Keys that are not declared are `any`.
+     */
+    interface LocalStorage {
+        [key: string]: any
+    }
+}
 
 /**
  * localStorage as an object. Values are stored as JSON: `ls.user = { name: 'x' }` stores it, `ls.user` reads it back,
  * `null` when there is none, `delete ls.user` removes it. Assigning `undefined` removes the key too.
  * The real localStorage is only touched when a property is used, so importing jmc works where there is none (server, node).
  */
-export const ls: LocalStorageObject = new Proxy({}, {
+export const ls = new Proxy({} as LocalStorage, {
     get(_, key) {
         if (typeof key != 'string') return undefined // symbols, as used by console.log and the like
         return JSON.parse(localStorage.getItem(key) ?? 'null')

@@ -324,6 +324,18 @@ ls.missing                             // null
 ls.user = undefined                    // removes the key, like delete ls.user
 ```
 
+- **Typed keys.** Declare the keys of your app by extending the global interface `LocalStorage`, in any `.ts` file of the project. Declared keys are checked, all others are `any`:
+
+  ```ts
+  declare global {
+      interface LocalStorage { settings: { dark: boolean }, lastpage: string }
+  }
+
+  ls.settings = { dark: true }   // checked
+  ls.lastpage = 5                // error: not a string
+  ```
+
+  A read of a missing key gives `null`, which the declared type does not show. Write `ls.settings ?? defaults`.
 - Every property reads as `null` when there is no value, also names like `length` or `getItem`. Use `localStorage` itself for the storage methods.
 - A stored value that is not valid JSON, for example one written by other code, makes the read throw.
 - The real `localStorage` is only touched when a property is used, so importing jmc works on a server or in node.
