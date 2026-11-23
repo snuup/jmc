@@ -31,15 +31,13 @@ export function cc(...namesOrObjects: (string | J | undefined)[]): string {
 
 export const focuselement = (e: Node) => (e as HTMLElement).focus()
 
-declare global {
-    /**
-     * the keys of `ls`. A project declares its own by extending this interface:
-     * `declare global { interface LocalStorage { settings: { dark: boolean } } }`
-     * Keys that are not declared are `any`.
-     */
-    interface LocalStorage {
-        [key: string]: any
-    }
+/**
+ * the keys of `ls`. A project declares its own by module augmentation:
+ * `declare module '@snupo/jmc' { interface LocalStorage { settings: { dark: boolean } } }`
+ * Keys that are not declared are `any`.
+ */
+export interface LocalStorage {
+    [key: string]: any
 }
 
 /**

@@ -1,7 +1,8 @@
 import { H, jsx, ls, patch, When } from "../src"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-declare global {
+// as a project does it with '@snupo/jmc'
+declare module '../src' {
     interface LocalStorage { settings: { dark: boolean } }
 }
 
@@ -26,7 +27,7 @@ describe('ls: localStorage as an object', () => {
         expect(ls.count).toBe(3)
     })
 
-    it('a project types its keys by extending the global interface LocalStorage', () => {
+    it('a project types its keys by augmenting the interface LocalStorage', () => {
         ls.settings = { dark: true }
         expect(ls.settings.dark).toBe(true)
         // @ts-expect-error the declared type of settings is checked

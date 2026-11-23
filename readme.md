@@ -324,10 +324,10 @@ ls.missing                             // null
 ls.user = undefined                    // removes the key, like delete ls.user
 ```
 
-- **Typed keys.** Declare the keys of your app by extending the global interface `LocalStorage`, in any `.ts` file of the project. Declared keys are checked, all others are `any`:
+- **Typed keys.** Declare the keys of your app by augmenting jmc's interface `LocalStorage`, in any `.ts` file of the project that has an `import` or `export`. Declared keys are checked, all others are `any`:
 
   ```ts
-  declare global {
+  declare module '@snupo/jmc' {
       interface LocalStorage { settings: { dark: boolean }, lastpage: string }
   }
 
