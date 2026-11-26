@@ -99,6 +99,8 @@ setcount(x: number) { m.count = x; updateview() }`}</code></pre>
                 'The buttons stop at `min` and `max`, but only while the value is inside them. Typed text may leave the range, from where the buttons step freely.',
                 'The text is committed on Enter or blur. A comma is accepted as the decimal separator, invalid text reverts to the current value, valid text is rounded to `decimals`.',
                 'Keys: Enter commits, Escape reverts, ArrowUp or `+` and ArrowDown or `-` commit the pending text and step. Other characters than digits, `.` and `,` are not accepted.',
+                'A button steps when it is pressed, not when it is released, and commits pending text first. Held, it repeats after 400ms, every 80ms. The repeat is a CSS animation on `:active`, whose `animationiteration` events step: so your CSS must not set `animation` on these buttons, and a reset that cuts all animations short (for reduced motion) leaves one step per press.',
+                '`setvalue` is called only with a new value: a button held at `min` or `max` doesn\'t call it again.',
             ]}>
             <NumberStepper value={m.numberstepper.price} setvalue={c.setprice} min={0} max={100} step={0.5} />
         </Doc>

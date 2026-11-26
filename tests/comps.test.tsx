@@ -60,6 +60,55 @@ describe('NumberStepper', () => {
         expect(input.value).toBe('2.50')
     })
 
+    it('steps once per press: on pointerdown, not again on the mouse click after it', () => {
+        const { m, plus } = setup()
+        plus.dispatchEvent(new MouseEvent('pointerdown', { button: 0 }))
+        expect(m.v).toBe(6)
+        plus.dispatchEvent(new MouseEvent('click', { detail: 1 }))
+        expect(m.v).toBe(6)
+        plus.dispatchEvent(new MouseEvent('pointerdown', { button: 2 })) // right button
+        expect(m.v).toBe(6)
+    })
+
+    it('repeats while held: each animationiteration steps', () => {
+        const { m, minus } = setup()
+        minus.dispatchEvent(new MouseEvent('pointerdown', { button: 0 }))
+        minus.dispatchEvent(new Event('animationiteration'))
+        minus.dispatchEvent(new Event('animationiteration'))
+        expect(m.v).toBe(2)
+    })
+
+    it('a disabled stepper does not step on press', () => {
+        const { m, plus } = setup({ disabled: true })
+        plus.dispatchEvent(new MouseEvent('pointerdown', { button: 0 }))
+        plus.dispatchEvent(new Event('animationiteration'))
+        expect(m.v).toBe(5)
+    })
+
+    it('calls setvalue only for a new value', () => {
+        const { setvalue, plus } = setup({ max: 5 })
+        plus.dispatchEvent(new MouseEvent('pointerdown', { button: 0 }))
+        plus.dispatchEvent(new Event('animationiteration'))
+        expect(setvalue).not.toHaveBeenCalled()
+    })
+
+    it('a press commits typed text first and steps from it', () => {
+        const { m, input, plus } = setup()
+        input.value = '20'
+        plus.dispatchEvent(new MouseEvent('pointerdown', { button: 0 }))
+        expect(m.v).toBe(21)
+        expect(input.value).toBe('21')
+        input.dispatchEvent(new Event('change')) // the blur after the press commits nothing more
+        expect(m.v).toBe(21)
+    })
+
+    it('a press does not round a value with more decimals than shown', () => {
+        const { m, plus } = setup({ step: 0.01 })
+        m.v = 0.123; updateview()
+        plus.dispatchEvent(new MouseEvent('pointerdown', { button: 0 }))
+        expect(m.v).toBe(0.13)
+    })
+
     it('steps with the arrow keys and drops other characters', () => {
         const { m, input } = setup()
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', cancelable: true }))

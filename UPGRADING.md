@@ -1,3 +1,19 @@
+# Upgrading from 1.7 to 1.8
+
+Nothing is required in 1.8.
+
+## Behaviour changes in 1.8
+
+### `NumberStepper`: buttons step on press and repeat while held
+
+The minus and plus buttons used to step on click, when the mouse button was released. They now step when pressed, and repeat while held: after 400ms, every 80ms. The repeat comes from a CSS animation on the held button, so CSS of your app that sets `animation` on `.jmc-stepper button` stops it. Keyboard activation (Enter, Space) steps once, as before.
+
+`setvalue` is now called only with a new value. Before, a button at `min` or `max` called it with the unchanged value.
+
+## New in 1.8
+
+- **Pointer event props** are typed: `onpointerdown`, `onpointermove`, `onpointerup`, `onpointercancel`, `onpointerover`, `onpointerout`, `onpointerenter`, `onpointerleave`, `ongotpointercapture`, `onlostpointercapture`. They worked before, since event props are attached with `addEventListener`, but were type errors.
+
 # Upgrading from 1.6 to 1.7
 
 Nothing is required in 1.7.

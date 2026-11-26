@@ -20,21 +20,35 @@ const round = (v: number, decimals: number) => {
     return Math.round((v + Number.EPSILON) * factor) / factor
 }
 
-/** a number input with minus and plus buttons */
+/** a number input with minus and plus buttons. holding a button repeats its step */
 export class NumberStepper extends Component<Props> {
 
     view() {
         const { disabled, class: cls } = this.props
         return <div class={cc('jmc-stepper', { disabled }, cls)}>
-            <button type='button' disabled={disabled} onclick={this.ondecrement}>&minus;</button>
+            {this.button(-1, '−')}
             <input type='text' disabled={disabled} value={this.text} onchange={this.onchange} onkeydown={this.onkeydown} />
-            <button type='button' disabled={disabled} onclick={this.onincrement}>&#43;</button>
+            {this.button(1, '+')}
         </div>
+    }
+
+    // the first step on press, the repeats from the css animation that runs while the button is held (:active).
+    // a click from the mouse comes after the press and must not step again. a click from the keyboard has detail 0
+    button(sign: number, label: string) {
+        const step = () => !this.props.disabled && this.press(sign * this.step) // pointer events still reach a disabled button
+        return <button type='button' disabled={this.props.disabled}
+            onpointerdown={(ev: PointerEvent) => ev.button == 0 && step()}
+            onanimationiteration={step}
+            onclick={(ev: MouseEvent) => ev.detail == 0 && step()}>{label}</button>
     }
 
     get step() { return this.props.step ?? 1 }
     get decimals() { return this.props.decimals ?? decimalsof(this.step) }
     get text() { return this.props.value.toFixed(this.decimals) }
+    get input() { return this.element.querySelector('input')! }
+
+    // setvalue only for a new value, so a button held at min or max doesn't call it again and again
+    set(v: number) { if (v != this.props.value) this.props.setvalue(v) }
 
     // min and max bound the buttons only while the value is inside them. typed text may leave the range,
     // and from there the buttons step freely
@@ -42,16 +56,26 @@ export class NumberStepper extends Component<Props> {
         const { value, min = -Infinity, max = Infinity } = this.props
         let v = round(value + by, this.decimals)
         if (value >= min && value <= max) v = Math.min(max, Math.max(min, v))
-        this.props.setvalue(v)
+        this.set(v)
     }
 
-    // fires on blur and enter. invalid text reverts to the current value, valid text is taken unclamped
-    onchange(ev: Event) {
-        const i = ev.target as HTMLInputElement
+    // a press comes before the input loses focus and commits its text, so the press commits it first and steps from there
+    press(by: number) {
+        this.commit(this.input)
+        this.increment(by)
+    }
+
+    // invalid text reverts to the current value, valid text is taken unclamped. unedited text is left alone,
+    // so a value with more decimals than shown isn't rounded by a press
+    commit(i: HTMLInputElement) {
+        if (i.value == this.text) return
         const v = Number(i.value.trim().replace(',', '.'))
-        if (i.value.trim() && Number.isFinite(v)) this.props.setvalue(round(v, this.decimals))
+        if (i.value.trim() && Number.isFinite(v)) this.set(round(v, this.decimals))
         i.value = this.text // jmc only writes a value when it changed, so rejected or rounded text would stay otherwise
     }
+
+    // fires on blur and enter
+    onchange(ev: Event) { this.commit(ev.target as HTMLInputElement) }
 
     onkeydown(ev: KeyboardEvent) {
         const i = ev.target as HTMLInputElement
@@ -60,14 +84,11 @@ export class NumberStepper extends Component<Props> {
             case 'Escape': i.value = this.text; i.blur(); break
             // steps commit pending text first, so they count from what was typed
             case '+':
-            case 'ArrowUp': ev.preventDefault(); this.onchange(ev); this.onincrement(); i.value = this.text; break
+            case 'ArrowUp': ev.preventDefault(); this.press(this.step); break
             case '-':
-            case 'ArrowDown': ev.preventDefault(); this.onchange(ev); this.ondecrement(); i.value = this.text; break
+            case 'ArrowDown': ev.preventDefault(); this.press(-this.step); break
             // digits and decimal separators only. other single chars are dropped, shortcuts (ctrl, meta) and named keys pass
             default: if (ev.key.length == 1 && !ev.ctrlKey && !ev.metaKey && !/[\d.,]/.test(ev.key)) ev.preventDefault()
         }
     }
-
-    onincrement() { this.increment(this.step) }
-    ondecrement() { this.increment(-this.step) }
 }

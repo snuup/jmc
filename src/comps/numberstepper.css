@@ -18,8 +18,11 @@
             border: none;
             cursor: pointer;
             user-select: none;
+            touch-action: manipulation;
 
             &:hover:not(:disabled) { opacity: 0.6; }
+            /* while held: after 400ms, each cycle of 80ms fires animationiteration, which steps */
+            &:active:not(:disabled) { animation: jmc-stepper-repeat 80ms 400ms infinite; }
             &:disabled { cursor: default; }
             &:focus-visible { outline: none; color: #fff; background: var(--jmc-accent, #3b82f6); } /* the control's border shows the focus. a ring would be clipped by the rounded corners */
         }
@@ -41,4 +44,7 @@
         &:focus-within { border-color: var(--jmc-accent, #3b82f6); }
         &.disabled { opacity: 0.5; }
     }
+
+    /* animates nothing visible: it exists for its iteration events */
+    @keyframes jmc-stepper-repeat { to { --jmc-stepper-repeat: 1 } }
 }

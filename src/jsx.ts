@@ -744,6 +744,18 @@ export interface HTMLAttributesBase extends AdditionalElementAttributes {
     onmouseover?: EventHandler<MouseEvent>
     onmouseup?: EventHandler<MouseEvent>
 
+    // pointer events
+    onpointerdown?: EventHandler<PointerEvent>
+    onpointermove?: EventHandler<PointerEvent>
+    onpointerup?: EventHandler<PointerEvent>
+    onpointercancel?: EventHandler<PointerEvent>
+    onpointerover?: EventHandler<PointerEvent>
+    onpointerout?: EventHandler<PointerEvent>
+    onpointerenter?: EventHandler<PointerEvent>
+    onpointerleave?: EventHandler<PointerEvent>
+    ongotpointercapture?: EventHandler<PointerEvent>
+    onlostpointercapture?: EventHandler<PointerEvent>
+
     // media events
     onabort?: EventHandler<Event>
     oncanplay?: EventHandler<Event>
